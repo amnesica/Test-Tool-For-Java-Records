@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,10 +65,155 @@ public class Main {
             //prüfe, ob Test durchgeführt werden soll und starte Generierung der Testfälle
             if (pruefeObTestfaelleGeneriertWerdenSollen(fileContent)) {
                 //TODO generiere Testfaelle
+                generiereTestfaelle();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Generiert die Testfaelle für den vorliegenden Record in recordInfo
+     */
+    private static void generiereTestfaelle() {
+        Path pathForNewTestDirectory = Paths.get(System.getProperty("user.dir") + "/generated/");
+        Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + "/generated/" + recordInfo.getName() + "_Testfaelle.java");
+        String nameTestKlasse = recordInfo.getName() + "_Testfaelle";
+
+        try {
+            erstelleNeueTestJavaDatei(pathForNewTestDirectory, pathForNewTestFile);
+
+            erstelleGrundlegendeTestStrukturInDatei(pathForNewTestFile, nameTestKlasse);
+
+            erstelleTestfaelleFunktionalitaet(pathForNewTestFile, nameTestKlasse);
+        } catch (IOException e) {
+            System.err.println("Error: Beim Erstellen der Testdatei gab es einen Fehler.\nTest-Tool wird beendet.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Erstellt die Testrecords mit den Testdaten und fügt diese in der Testdatei ein.
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @param nameTestKlasse Name der Testklasse
+     * @throws IOException IOException
+     */
+    private static ArrayList<String> erstelleTestRecords(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
+        //füge kompletten zu testenden Record ein
+        fuegeZuTestendenRecordEin(pathForNewTestFile);
+
+        //Liste mit den erstellten Testrecords
+        ArrayList<String> testRecords = new ArrayList<>();
+
+        //generiere Liste mit Testwerten für Testrecords
+        ArrayList<Integer> listTestWerte = new ArrayList<>();
+        Collections.addAll(listTestWerte, 1, Integer.MAX_VALUE, Integer.MIN_VALUE, -1, 0, Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1);
+        //TODO Möglichkeit einbauen, benutzerdefinierte Grenzwerte einzufügen (und diese der Liste listTestWerte hinzufügen)
+
+        //bestimme Anzahl zu erstellender Testrecords
+        int anzahlZuErstellenderTestrecords = listTestWerte.size() / recordInfo.getAmountComponents();
+        int fehlendeKomponenten = listTestWerte.size() % recordInfo.getAmountComponents();
+        if (fehlendeKomponenten != 0) {
+            do {
+                anzahlZuErstellenderTestrecords += 1;
+                fehlendeKomponenten -= 1;
+            } while (fehlendeKomponenten != 0);
+        }
+
+        //Erstelle Testrecords und verteile zu testende Werte
+        int indexListTestWerte = 0;
+        for (int i = 0; i < anzahlZuErstellenderTestrecords; i++) {
+            String testRecord = "record " + recordInfo.getName() + i + " = new " + recordInfo.getName() + "(";
+
+            for(int j = 0; j < recordInfo.getAmountComponents(); j++){
+                if (indexListTestWerte >= listTestWerte.size()) {
+                    indexListTestWerte = 0;
+                }
+                testRecord = testRecord.concat(String.valueOf(listTestWerte.get(indexListTestWerte)));
+                indexListTestWerte+=1;
+
+                //hänge ein "," oder ein ");" an, um Record abzuschließen
+                if(j == recordInfo.getAmountComponents() -1){
+                    testRecord = testRecord.concat(");");
+                }else{
+                    testRecord = testRecord.concat(",");
+                }
+            }
+            testRecords.add(testRecord);
+        }
+        return testRecords;
+    }
+
+    /**
+     * Fügt den zu testenden Record in die Testdatei ein.
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @throws IOException IOException
+     */
+    private static void fuegeZuTestendenRecordEin(Path pathForNewTestFile) throws IOException {
+        FileWriter fw = new FileWriter(pathForNewTestFile.toString(), true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.newLine();
+        bw.newLine();
+        bw.write("//zu testender Record");
+        bw.newLine();
+        bw.write(recordInfo.getRecordFull());
+        bw.newLine();
+        bw.close();
+    }
+
+    /**
+     * Erstellt die Testfaelle für das Qualitätskriterium "Funktionelle Eignung".
+     * Es wird ein Positiv- und ein Negativtest erstellt. Zuvor werden die Testrecords erstellt
+     */
+    private static void erstelleTestfaelleFunktionalitaet(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
+        ArrayList<String> testRecords;
+        testRecords = erstelleTestRecords(pathForNewTestFile, nameTestKlasse);
+
+        erstelleTestfallEqualsPositivtest(pathForNewTestFile, testRecords);
+
+    }
+
+    private static void erstelleTestfallEqualsPositivtest(Path pathForNewTestFile, ArrayList<String> testRecords) {
+        //TODO hier weitermachen!
+    }
+
+    /**
+     * Erstellt die grundlegende Struktur der Testdatei mit imports für JUnit.
+     * TODO: Letzter Testfall muss Klasse mit "}" abschließen
+     *
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @param nameTestKlasse     Name der generierten Testdatei
+     */
+    private static void erstelleGrundlegendeTestStrukturInDatei(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
+        String headerTestClass = "import static org.junit.jupiter.api.Assertions.*;\n" +
+                "\n" +
+                "import org.junit.jupiter.api.Test;\n" +
+                "\n" +
+                "public class " + nameTestKlasse + "{";
+
+        //schreibe in Datei, damit sie auch erstellt wird
+        FileWriter myWriter = null;
+        myWriter = new FileWriter(pathForNewTestFile.toString());
+        myWriter.write(headerTestClass);
+        myWriter.close();
+    }
+
+    /**
+     * Erstellt eine neue Datei für die generierten Testfaelle im "Projektverzeichnis/generated"
+     * und eine initiale Testdatei mit .java-Endung in dem neuen Verzeichnis "/generated"
+     */
+    private static void erstelleNeueTestJavaDatei(Path pathForNewTestDirectory, Path pathForNewTestFile) throws IOException {
+        //erstelle neue Datei
+        File newTestFile = new File(pathForNewTestFile.toString());
+
+        //erstelle Ordner, wenn dieser nicht existiert
+        Files.createDirectories(pathForNewTestDirectory);
+
+        //schreibe in Datei, damit sie auch erstellt wird
+        FileWriter myWriter = null;
+        myWriter = new FileWriter(pathForNewTestFile.toString());
+        myWriter.write("");
+        myWriter.close();
     }
 
     /**
@@ -126,16 +274,27 @@ public class Main {
      * @return true, wenn Konstruktor/Methode überschrieben wurde
      */
     private static boolean recordUeberschreibtMethodenOderKonstruktor() {
+        //Liste mit regulären Ausdrücken zum Durchsuchen des Records
+        List<Pattern> methodenPatterns = new ArrayList<>();
+
         //Reguläre Ausdrücke zum Durchsuchen des Records
         String constructorRegex = "(public " + recordInfo.getName() + "(\\s)*\\{)";
         String equalsRegex = "(public boolean equals(\\s)*\\()";
         String toStringRegex = "(public String toString(\\s)*\\()";
         String hashCodeRegex = "(public int hashCode(\\s)*\\()";
 
-        //Liste mit regulären Ausdrücken zum Durchsuchen des Records
-        List<Pattern> methodenPatterns = new ArrayList<>();
+        //Füge alle regulären Ausdrücke zur Liste hinzu
         Collections.addAll(methodenPatterns, Pattern.compile(constructorRegex), Pattern.compile(equalsRegex),
                 Pattern.compile(toStringRegex), Pattern.compile(hashCodeRegex));
+
+        //Füge alle Akzessoren zur Liste hinzu
+        for (Object key : recordInfo.getComponentMap().keySet()) {
+            String accessorRegex = "(public int " + key.toString() + "(\\s)*\\()";
+            methodenPatterns.add(Pattern.compile(accessorRegex));
+        }
+
+        //Liste für gefundene Matches
+        ArrayList<String> results = new ArrayList<>();
 
         //Durchsuche kompletten Record nach Patterns
         for (Pattern p : methodenPatterns) {
@@ -143,16 +302,50 @@ public class Main {
             //Bei erstem Match gebe true zurück
             if (m.find()) {
                 String output = m.group(0);
-                if (m.group(0).contains(recordInfo.getName())) {
-                    //wenn Name des Records enthalten ist -> Konstruktor wurde überschrieben
-                    System.out.println("Überschriebener Konstruktor: " + output.replace("(", ""));
-                } else {
-                    System.out.println("Überschriebene Methode: " + output.replace("(", ""));
+                //Formatiere output for dem Speichern
+                if (m.group(0).contains("{")) {
+                    results.add(output.replace("{", ""));
+                } else if (m.group(0).contains("(")) {
+                    results.add(output.replace("(", ""));
                 }
-                return true;
             }
         }
-        return false;
+
+        //Printe gefundene Ergebnisse oder Error wenn nicht gefunden wurde
+        if (!results.isEmpty()) {
+            //Speichere überschriebene Methoden und Konstruktoren in recordInfo ab
+            speichereUeberschriebeneMethoden(results);
+
+            System.out.println("Gefundene überschriebene Methoden und Konstruktoren:");
+            for (String result : results) {
+                if (result.contains(recordInfo.getName())) {
+                    //wenn Name des Records enthalten ist -> Konstruktor wurde überschrieben
+                    System.out.println("Konstruktor: " + result);
+                } else {
+                    System.out.println("Methode: " + result);
+                }
+            }
+            return true;
+        } else {
+            System.err.println("Der Record überschreibt keine Methoden oder Konstruktoren.\nTest-Tool wird beendet.");
+            return false;
+        }
+    }
+
+    /**
+     * Speichert die Bezeichner der überschriebenen Methoden und Konstruktoren in RecordInfo ab.
+     * Die Liste an gefundenen Methoden und Konstruktoren muss vorher konvertiert werden, damit
+     * auch nur immer das letzte Wort (d.h. Bezeichner) gespeichert wird
+     *
+     * @param results Liste von gefundenen Methoden und Konstruktoren
+     */
+    private static void speichereUeberschriebeneMethoden(ArrayList<String> results) {
+        ArrayList<String> overriddenMethods = new ArrayList<>();
+        for (String result : results) {
+            String lastWord = result.substring(result.lastIndexOf(" ") + 1);
+            overriddenMethods.add(lastWord);
+        }
+        recordInfo.setListOverriddenMethods(overriddenMethods);
     }
 
     /**
@@ -205,7 +398,7 @@ public class Main {
 
     /**
      * Speichert die Komponenten des Records in einer Hashmap ab, um zu erkennen, ob es sich nur um
-     * Integer-Werte handelt
+     * Integer-Werte handelt. Speichert Anzahl der Komponenten ab.
      *
      * @param fileContent Dateiinhalt als String
      */
@@ -230,11 +423,13 @@ public class Main {
                 if (!listWords.isEmpty()) {
                     for (int j = 0; j < listWords.size(); j++) {
                         if (j % 2 == 0) {
+                            //key=name, value=type
                             //hier andersherum, da sonst der vorherige Eintrag immer ersetzt wird, da Key gleich wäre (int)
                             componentMap.put(listWords.get(j + 1), listWords.get(j));
                         }
                     }
                     recordInfo.setComponentMap(componentMap);
+                    recordInfo.setAmountComponents(componentMap.keySet().size());
 
                     //beende Schleife nach Extrahieren
                     break;
@@ -323,6 +518,7 @@ public class Main {
                 }
                 System.err.println("Hinweis: Objekte können weiterhin verändert werden!\nTest-Tool wird beendet.");
             }
+            return false;
         } else if (!listFoundDataTypes.isEmpty()) { //old: && !listFoundObjects.isEmpty()
             //Warnung, wenn Komponente ein Objekt ist -> Objekte können weiterhin verändert werden
             System.err.println("Warnung: Komponente(n) mit Nicht-Integer-Wert(en) gefunden: ");
@@ -333,6 +529,7 @@ public class Main {
                 System.err.println(foundObjects);
             }
             System.err.println("Hinweis: Objekte können weiterhin verändert werden!\nTest-Tool wird beendet.");
+            return false;
         }
 
         //Wenn nur Integer-Komponenten gefunden worden -> gebe true aus

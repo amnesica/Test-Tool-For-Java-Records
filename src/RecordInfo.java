@@ -1,14 +1,17 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RecordInfo {
     private String filename;
     private String name;
-    private final boolean overriddenMethod = false;
 
-    private HashMap<Object, Object> componentMap;
     private String recordHeader;
     private String recordBody;
     private String recordFull;
+
+    private HashMap<Object, Object> componentMap;
+    private ArrayList<String> listOverriddenMethods;
+    private int amountComponents;
 
     public String getFilename() {
         return filename;
@@ -24,10 +27,6 @@ public class RecordInfo {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isOverriddenMethod() {
-        return overriddenMethod;
     }
 
     public HashMap<Object, Object> getComponentMap() {
@@ -60,5 +59,21 @@ public class RecordInfo {
 
     public void setRecordFull(String recordFull) {
         this.recordFull = recordFull;
+    }
+
+    public ArrayList<String> getListOverriddenMethods() {
+        return listOverriddenMethods;
+    }
+
+    public void setListOverriddenMethods(ArrayList<String> listOverriddenMethods) {
+        this.listOverriddenMethods = listOverriddenMethods;
+    }
+
+    public int getAmountComponents() {
+        return amountComponents;
+    }
+
+    public void setAmountComponents(int amountComponents) {
+        this.amountComponents = amountComponents;
     }
 }
