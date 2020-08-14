@@ -76,16 +76,23 @@ public class Main {
      * Generiert die Testfaelle für den vorliegenden Record in recordInfo
      */
     private static void generiereTestfaelle() {
-        Path pathForNewTestDirectory = Paths.get(System.getProperty("user.dir") + "/generated/");
-        Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + "/generated/" + recordInfo.getName() + "_Testfaelle.java");
-        String nameTestKlasse = recordInfo.getName() + "_Testfaelle";
+        Path pathForNewTestDirectory = Paths.get(System.getProperty("user.dir") + "/src/" + "/generated/");
+        Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + "/src/" + "/generated/" + recordInfo.getName() + "Testfaelle.java");
+        String nameTestKlasse = recordInfo.getName() + "Testfaelle";
 
         try {
             erstelleNeueTestJavaDatei(pathForNewTestDirectory, pathForNewTestFile);
 
             erstelleGrundlegendeTestStrukturInDatei(pathForNewTestFile, nameTestKlasse);
 
-            erstelleTestfaelleFunktionalitaet(pathForNewTestFile, nameTestKlasse);
+            fuegeZuTestendenRecordEin(pathForNewTestFile);
+
+            erstelleTestfaelleFunktionalitaet(pathForNewTestFile);
+
+            //TODO nicht-funktionale Testfälle
+
+            System.out.println("Testdatei wurde erfolgreich erstellt und kann ausgeführt werden.");
+            System.out.println("Pfad der generierten Datei: " + pathForNewTestFile);
         } catch (IOException e) {
             System.err.println("Error: Beim Erstellen der Testdatei gab es einen Fehler.\nTest-Tool wird beendet.");
             e.printStackTrace();
@@ -94,16 +101,14 @@ public class Main {
 
     /**
      * Erstellt die Testrecords mit den Testdaten und fügt diese in der Testdatei ein.
-     * @param pathForNewTestFile Pfad zur generierten Testdatei
-     * @param nameTestKlasse Name der Testklasse
-     * @throws IOException IOException
+     *
      */
-    private static ArrayList<String> erstelleTestRecords(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
-        //füge kompletten zu testenden Record ein
-        fuegeZuTestendenRecordEin(pathForNewTestFile);
-
+    private static void erstelleTestRecords() {
         //Liste mit den erstellten Testrecords
         ArrayList<String> testRecords = new ArrayList<>();
+
+        //Liste mit Namen der erstellten Testrecords
+        ArrayList<String> testRecordNames = new ArrayList<>();
 
         //generiere Liste mit Testwerten für Testrecords
         ArrayList<Integer> listTestWerte = new ArrayList<>();
@@ -123,29 +128,34 @@ public class Main {
         //Erstelle Testrecords und verteile zu testende Werte
         int indexListTestWerte = 0;
         for (int i = 0; i < anzahlZuErstellenderTestrecords; i++) {
-            String testRecord = "record " + recordInfo.getName() + i + " = new " + recordInfo.getName() + "(";
+            String testRecordName = recordInfo.getName() + i;
+            testRecordNames.add(testRecordName);
 
-            for(int j = 0; j < recordInfo.getAmountComponents(); j++){
+            String testRecord = recordInfo.getName() + " " + testRecordName + " = new " + recordInfo.getName() + "(";
+
+            for (int j = 0; j < recordInfo.getAmountComponents(); j++) {
                 if (indexListTestWerte >= listTestWerte.size()) {
                     indexListTestWerte = 0;
                 }
                 testRecord = testRecord.concat(String.valueOf(listTestWerte.get(indexListTestWerte)));
-                indexListTestWerte+=1;
+                indexListTestWerte += 1;
 
                 //hänge ein "," oder ein ");" an, um Record abzuschließen
-                if(j == recordInfo.getAmountComponents() -1){
+                if (j == recordInfo.getAmountComponents() - 1) {
                     testRecord = testRecord.concat(");");
-                }else{
+                } else {
                     testRecord = testRecord.concat(",");
                 }
             }
             testRecords.add(testRecord);
         }
-        return testRecords;
+        recordInfo.setTestRecordsPositiv(testRecords);
+        recordInfo.setTestRecordNames(testRecordNames);
     }
 
     /**
      * Fügt den zu testenden Record in die Testdatei ein.
+     *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @throws IOException IOException
      */
@@ -165,34 +175,403 @@ public class Main {
      * Erstellt die Testfaelle für das Qualitätskriterium "Funktionelle Eignung".
      * Es wird ein Positiv- und ein Negativtest erstellt. Zuvor werden die Testrecords erstellt
      */
-    private static void erstelleTestfaelleFunktionalitaet(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
-        ArrayList<String> testRecords;
-        testRecords = erstelleTestRecords(pathForNewTestFile, nameTestKlasse);
+    private static void erstelleTestfaelleFunktionalitaet(Path pathForNewTestFile) throws IOException {
+        //Erstelle TestRecords und speichere diese in recordInfo ab
+        erstelleTestRecords();
 
-        erstelleTestfallEqualsPositivtest(pathForNewTestFile, testRecords);
+        //füge manipulierten zu testenden Record für Negativtests ein
+        fuegeNegativtestRecordEin(pathForNewTestFile);
 
+        //Equals
+        erstelleTestfallEqualsPositivtest(pathForNewTestFile);
+        erstelleTestfallEqualsNegativtest(pathForNewTestFile);
+
+        //hashCode
+        erstelleTestfallHashCodePositivtest(pathForNewTestFile);
+
+        //toString
+        erstelleTestfallToStringPositivtest(pathForNewTestFile);
     }
 
-    private static void erstelleTestfallEqualsPositivtest(Path pathForNewTestFile, ArrayList<String> testRecords) {
-        //TODO hier weitermachen!
+    private static void erstelleTestfallToStringPositivtest(Path pathForNewTestFile) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        String headerMethod = "@Test" + "\n" +
+                "public void testeFunktionalitaetToStringPositivtest(){";
+
+        fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod);
+
+        //erstelle Assertions mit toString
+        for(int i = 0; i < recordInfo.getTestRecordNames().size(); i++){
+            sb.append("assertEquals(").append(recordInfo.getTestRecordNames().get(i))
+                    .append(".toString(),").append(recordInfo.getTestRecordNames().get(i)).append("copy.toString());\n");
+        }
+
+        //schließe Methode ab
+        sb.append("}\n");
+
+        //schließe Klass ab
+        sb.append("}\n");
+
+        FileWriter fw = new FileWriter(pathForNewTestFile.toString(), true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.newLine();
+        bw.newLine();
+        bw.write("//Testfall ToString - Positivtest");
+        bw.newLine();
+        bw.write(sb.toString());
+        bw.newLine();
+        bw.close();
+    }
+
+    private static void erstelleTestfallHashCodePositivtest(Path pathForNewTestFile) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        String headerMethod = "@Test" + "\n" +
+                "public void testeFunktionalitaetHashCodePositivtest(){";
+
+        fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod);
+
+        //erstelle Assertions mit hashCode
+        for(int i = 0; i < recordInfo.getTestRecordNames().size(); i++){
+            sb.append("assertEquals(").append(recordInfo.getTestRecordNames().get(i))
+                    .append(".hashCode(),").append(recordInfo.getTestRecordNames().get(i)).append("copy.hashCode());\n");
+        }
+
+        //schließe Methode ab
+        sb.append("}\n");
+
+       FileWriter fw = new FileWriter(pathForNewTestFile.toString(), true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.newLine();
+        bw.newLine();
+        bw.write("//Testfall HashCode - Positivtest");
+        bw.newLine();
+        bw.write(sb.toString());
+        bw.newLine();
+        bw.close();
+    }
+
+    private static void fuegeTestRecordsMitEqualsAnHeader(StringBuilder sb, String headerMethod) {
+        sb.append(headerMethod);
+
+        //füge TestRecords mit Testdaten sowie Kopien der Testrecords ein
+        for(int i = 0; i < recordInfo.getTestRecordsPositiv().size(); i++){
+            sb.append(recordInfo.getTestRecordsPositiv().get(i)).append("\n");
+            sb.append(recordInfo.getTestRecordCopies().get(i)).append("\n").append("\n");
+        }
+
+        //erstelle Assertions mit equals
+        for(int i = 0; i < recordInfo.getTestRecordNames().size(); i++){
+            sb.append("assertTrue(").append(recordInfo.getTestRecordNames().get(i))
+                    .append(".equals(").append(recordInfo.getTestRecordNames().get(i)).append("copy));\n");
+        }
+
+        sb.append("\n");
+    }
+
+    private static void erstelleTestfallEqualsNegativtest(Path pathForNewTestFile) throws IOException {
+        ArrayList<String> testRecordsNegativ = new ArrayList<>();
+        ArrayList<String> testRecordsNegativCopies = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+
+        //baue bereits erstellte records für Negativtest um
+        for(String testRecordPositiv : recordInfo.getTestRecordsPositiv()) {
+            String testRecordNegativ = testRecordPositiv.replace(recordInfo.getName(), recordInfo.getRecordNegativTestName());
+            testRecordsNegativ.add(testRecordNegativ);
+        }
+
+        //baue bereits erstellte copy records für Negativtest um
+        for(String testRecordPositivCopy : recordInfo.getTestRecordCopies()) {
+            String testRecordNegativCopy = testRecordPositivCopy.replace(recordInfo.getName(), recordInfo.getRecordNegativTestName());
+            testRecordsNegativCopies.add(testRecordNegativCopy);
+        }
+
+        String headerMethod = "@Test" + "\n" +
+                "public void testeFunktionalitaetEqualsNegativtest(){";
+        sb.append(headerMethod);
+
+        //füge TestRecords mit Testdaten sowie Kopien der Testrecords ein
+        for(int i = 0; i < testRecordsNegativ.size(); i++){
+            sb.append(testRecordsNegativ.get(i)).append("\n");
+            sb.append(testRecordsNegativCopies.get(i)).append("\n").append("\n");
+        }
+
+        //erstelle Assertions
+        for(int i = 0; i < recordInfo.getTestRecordNames().size(); i++){
+            sb.append("assertFalse(").append(recordInfo.getRecordNegativTestName()).append(i)
+                    .append(".equals(").append(recordInfo.getRecordNegativTestName()).append(i).append("copy));\n");
+        }
+
+        //schließe Methode ab
+        sb.append("}\n");
+
+        FileWriter fw = new FileWriter(pathForNewTestFile.toString(), true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.newLine();
+        bw.newLine();
+        bw.write("//Testfall Equals - Negativtest");
+        bw.newLine();
+        bw.write(sb.toString());
+        bw.newLine();
+        bw.close();
+    }
+
+    /**
+     * Erstellt einen Record für den Negativtest bei der Funktionalität. Hierbei wird bewusst ein nicht
+     * überschriebener Akzessor des originalen Records überschrieben. Wenn bereits alle Akzessoren
+     * überschrieben wurden, wird bei dem Akzessor der ersten Komponente ein "+ 1" beim "return" rangehängt,
+     * um den gewünschten Effekt zu erzielen.
+     *
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @throws IOException IOException
+     */
+    private static void fuegeNegativtestRecordEin(Path pathForNewTestFile) throws IOException {
+        String methodToOverrideBadly = bestimmeZuUeberschreibendeMethodeFuerNegativTest();
+
+        //Setze Negativtest-Record erst einmal auf zu testenden Record
+        recordInfo.setRecordNegativTest(recordInfo.getRecordFull());
+
+        if (recordInfo.getListOverriddenMethods().contains(methodToOverrideBadly)) {
+            //Akzessor wurde bereits überschrieben -> verändere Rückgabewert
+            manipuliereVorhandenenAkzessor(methodToOverrideBadly);
+        } else {
+            //füge Akzessor am Ende des Records an
+            //Initialisierung des RecordNegativTest
+            recordInfo.setRecordNegativTest(recordInfo.getRecordFull());
+
+            erstelleNeuenManipuliertenAkzessor(methodToOverrideBadly);
+        }
+        erstelleNegativTestRecord();
+        schreibeNegativtestRecordInDatei(pathForNewTestFile);
+    }
+
+    /**
+     * Erstellt einen NegativTestRecord für den Negativtest
+     */
+    private static void erstelleNegativTestRecord() {
+        String overriddenMethodOld = recordInfo.getRecordNegativTestOverriddenMethodOld();
+        String overriddenMethodNew = recordInfo.getRecordNegativTestOverriddenMethod();
+
+        //Ersetze vorhandene Methode
+        if(overriddenMethodOld != null && overriddenMethodNew != null){
+            recordInfo.setRecordNegativTest(recordInfo.getRecordNegativTest().replace(overriddenMethodOld, overriddenMethodNew));
+        }else{ //füge Methode am Ende des Records an
+            if(recordInfo.getRecordNegativTest().endsWith("}")){
+                String oldNegativTestRecord = recordInfo.getRecordNegativTest().substring(0,recordInfo.getRecordNegativTest().length() - 1);
+                //Ersetze alten RecordNegativTest mit "}" am Ende, um Record abzuschließen
+                recordInfo.setRecordNegativTest(oldNegativTestRecord.concat(overriddenMethodNew + "\n}"));
+            }
+        }
+
+        //Record für NegativTest soll <name>NegativTest heißen
+        ueberschreibeAlleBezeichnerFuerNegativTest();
+    }
+
+    /**
+     * Erstellt einen manipulierten Akzessor, welcher noch nicht im TestRecord überschrieben wurde.
+     * Dient der Erstellung eines NegativTestRecords.
+     * @param methodToOverrideBadly Name der Methode, welche manipuliert werden soll
+     */
+    private static void erstelleNeuenManipuliertenAkzessor(String methodToOverrideBadly) {
+        String newAccessor = "public int " + methodToOverrideBadly + "(){\nreturn " + methodToOverrideBadly + "+ 5;\n}";
+        recordInfo.setRecordNegativTestOverriddenMethod(newAccessor);
+    }
+
+    /**
+     * Schreibt den neuen NegativtestRecord in die Datei pathForNewTestFile
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @throws IOException IOException
+     */
+    private static void schreibeNegativtestRecordInDatei(Path pathForNewTestFile) throws IOException {
+        FileWriter fw = new FileWriter(pathForNewTestFile.toString(), true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.newLine();
+        bw.newLine();
+        bw.write("//zu testender Record für Negativtest");
+        bw.newLine();
+        bw.write(recordInfo.getRecordNegativTest());
+        bw.newLine();
+        bw.close();
+    }
+
+    /**
+     * Manipuliert einen vorhandenen Akzessor und speichert die manipulierte Methode
+     * im recordInfo ab
+     * @param methodToOverrideBadly Name der Methode, welche manipuliert werden soll
+     */
+    private static void manipuliereVorhandenenAkzessor(String methodToOverrideBadly) {
+        String beginOfAccessorRegex = "(public int " + methodToOverrideBadly + "(\\s)*\\()";
+        Pattern r = Pattern.compile(beginOfAccessorRegex);
+        Matcher m = r.matcher(recordInfo.getRecordNegativTest());
+
+        //Suche nach Akzessor im Body des Records
+        if (m.find()) {
+            int startIndex = m.start(); //m.end() + 1;
+            int indexEndMethod;
+
+            //Set um die Klammern zu zählen, wenn keine Klammer mehr drinn ist, ist Record zuende
+            ArrayList<Character> brackets = new ArrayList<>();
+
+            for (int i = startIndex; i < recordInfo.getRecordNegativTest().length(); i++) {
+                if (recordInfo.getRecordNegativTest().charAt(i) == '{') {
+                    //speichere Klammer in Liste
+                    brackets.add(recordInfo.getRecordNegativTest().charAt(i));
+                }
+                if (recordInfo.getRecordNegativTest().charAt(i) == '}') {
+                    if (!brackets.isEmpty()) {
+                        //wenn noch mehrere Klammern vorhanden sind -> entferne diese aus Liste
+                        if (brackets.size() != 1) {
+                            brackets.remove(0);
+                        } else {
+                            //letzte '}'-Klammer wurde gelesen (i+1 da sonst letzte '}'-Klammer fehlt)
+                            indexEndMethod = i + 1;
+
+                            //extrahiere Methode des Records (inklusive Header)
+                            String methodBody = recordInfo.getRecordNegativTest().substring(startIndex, indexEndMethod);
+
+                            //Setze zu manipulierenden Akzessor
+                            recordInfo.setRecordNegativTestOverriddenMethod(methodBody);
+
+                            veraendereRueckgabeWertDerMethode();
+
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Überschreibt alle alten Bezeichner damit Negativtest-Record <name>NegativTest heißt.
+     */
+    private static void ueberschreibeAlleBezeichnerFuerNegativTest() {
+        String nameNegativTestRecord = recordInfo.getName() + "NegativTest";
+
+        recordInfo.setRecordNegativTestName(nameNegativTestRecord);
+        recordInfo.setRecordNegativTest(recordInfo.getRecordNegativTest().replace(
+                recordInfo.getName(), nameNegativTestRecord));
+    }
+
+    /**
+     * Verändert den Rückgabewert der ausgewählten Akzessormethode zum Erstellen des
+     * Negativtest-Records. Der Rückgabewert wird um 5 erhöht. (TODO willkürlich)
+     */
+    private static void veraendereRueckgabeWertDerMethode() {
+        //Backup: (return(\s)*([\d\w\s,\.\[\]\{\}\(\)\<\>\*\+\-\=\!\?\^\$\|\%])*;)
+        String regexReturn = "(return(\\s)*([\\d\\w\\s,.\\[\\]{}()<>*+\\-=!?^$|%])*;)";
+        Pattern r = Pattern.compile(regexReturn);
+        Matcher m = r.matcher(recordInfo.getRecordNegativTestOverriddenMethod());
+
+        String overriddenMethodOld = recordInfo.getRecordNegativTestOverriddenMethod();
+        recordInfo.setRecordNegativTestOverriddenMethodOld(overriddenMethodOld);
+        String overriddenMethodNew;
+
+        //manipuliere Akzessor für jedes Match (da mehrere "returns" möglich)
+        while (m.find()) {
+            int indexEndOfReturn = m.end() - 1;
+
+            //fügt "+ 5" an letzter Stelle vor dem ";" ein
+            overriddenMethodNew = overriddenMethodOld.substring(0, indexEndOfReturn)
+                    + "+ 5"
+                    + overriddenMethodOld.substring(indexEndOfReturn);
+
+            //Ersetze extrahierten Akzessor mit manipulierter Methode
+            recordInfo.setRecordNegativTestOverriddenMethod(overriddenMethodNew);
+        }
+    }
+
+    /**
+     * Bestimmt einen nicht überschriebene Akzessor des zu testenden Records.
+     * Wenn alle Akzessoren überschrieben wurden, wird die erste Komponente
+     * in der HashMap ausgewählt.
+     *
+     * @return Name der zu überschreibenden Methode
+     */
+    private static String bestimmeZuUeberschreibendeMethodeFuerNegativTest() {
+        for (Object key : recordInfo.getComponentMap().keySet()) {
+            if (!recordInfo.getListOverriddenMethods().contains(key.toString())) {
+                return key.toString();
+            }
+        }
+
+        //Wenn alle Akzessoren überschrieben wurden, wähle einen aus
+        Map.Entry<Object, Object> entry = recordInfo.getComponentMap().entrySet().iterator().next();
+        return (String) entry.getKey();
+    }
+
+    /**
+     * Erstellt den Positivtest für "equals"
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     */
+    private static void erstelleTestfallEqualsPositivtest(Path pathForNewTestFile) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        //erstelle TestRecord Copies
+        erstelleTestRecordCopies();
+
+        String headerMethod = "@Test" + "\n" +
+                    "public void testeFunktionalitaetEqualsPositivtest(){";
+
+        fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod);
+
+        //schließe Methode ab
+        sb.append("}\n");
+
+        FileWriter fw = new FileWriter(pathForNewTestFile.toString(), true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.newLine();
+        bw.newLine();
+        bw.write("//Testfall Equals - Positivtest");
+        bw.newLine();
+        bw.write(sb.toString());
+        bw.newLine();
+        bw.close();
+    }
+
+    private static void erstelleTestRecordCopies() {
+        ArrayList<String> listTestRecordsCopy = new ArrayList<>();
+
+            for(int i = 0; i < recordInfo.getTestRecordsPositiv().size(); i++){
+                StringBuilder sb = new StringBuilder();
+                String testRecordCopyTemp = recordInfo.getName() + " " + recordInfo.getTestRecordNames().get(i) + "copy" + " = new " + recordInfo.getName() + "(";
+
+                sb.append(testRecordCopyTemp);
+
+                for (Object key : recordInfo.getComponentMap().keySet()) {
+                    sb.append(recordInfo.getName()).append(i).append(".").append(key.toString()).append("()").append(",");
+                    testRecordCopyTemp = sb.toString();
+                }
+                String testRecordCopyTemp2 = testRecordCopyTemp.substring(0, testRecordCopyTemp.length() - 1);
+                String testRecordCopyFinal = testRecordCopyTemp2.concat(");");
+
+                listTestRecordsCopy.add(testRecordCopyFinal);
+            }
+            recordInfo.setTestRecordCopies(listTestRecordsCopy);
+
     }
 
     /**
      * Erstellt die grundlegende Struktur der Testdatei mit imports für JUnit.
-     * TODO: Letzter Testfall muss Klasse mit "}" abschließen
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @param nameTestKlasse     Name der generierten Testdatei
      */
     private static void erstelleGrundlegendeTestStrukturInDatei(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
-        String headerTestClass = "import static org.junit.jupiter.api.Assertions.*;\n" +
+        //TODO package generated; wieder herausnehmen, wenn endgültiger Export-Path feststeht
+        String headerTestClass = "package generated;\n" +
+                "import static org.junit.jupiter.api.Assertions.*;\n" +
                 "\n" +
                 "import org.junit.jupiter.api.Test;\n" +
                 "\n" +
+                "/**\n" +
+                " * Automatisch generierte Testklasse mit JUnit-Tests für den Record \"" + recordInfo.getName() + "\"\n" +
+                " */" + "\n" +
                 "public class " + nameTestKlasse + "{";
 
         //schreibe in Datei, damit sie auch erstellt wird
-        FileWriter myWriter = null;
+        FileWriter myWriter;
         myWriter = new FileWriter(pathForNewTestFile.toString());
         myWriter.write(headerTestClass);
         myWriter.close();
@@ -204,13 +583,13 @@ public class Main {
      */
     private static void erstelleNeueTestJavaDatei(Path pathForNewTestDirectory, Path pathForNewTestFile) throws IOException {
         //erstelle neue Datei
-        File newTestFile = new File(pathForNewTestFile.toString());
+        new File(pathForNewTestFile.toString());
 
         //erstelle Ordner, wenn dieser nicht existiert
         Files.createDirectories(pathForNewTestDirectory);
 
         //schreibe in Datei, damit sie auch erstellt wird
-        FileWriter myWriter = null;
+        FileWriter myWriter;
         myWriter = new FileWriter(pathForNewTestFile.toString());
         myWriter.write("");
         myWriter.close();
@@ -255,6 +634,8 @@ public class Main {
                             System.err.println("Der angegebene Record überschreibt keine automatisch generierten Methoden und muss daher nicht getestet werden." + "\nTest-Tool wird beendet.");
                             return false;
                         }
+                    }else{
+                        return false;
                     }
                 }
             } else {
@@ -325,9 +706,9 @@ public class Main {
                     System.out.println("Methode: " + result);
                 }
             }
+            System.out.println("--------------------------------------------------------");
             return true;
         } else {
-            System.err.println("Der Record überschreibt keine Methoden oder Konstruktoren.\nTest-Tool wird beendet.");
             return false;
         }
     }
@@ -413,13 +794,14 @@ public class Main {
                 recordInfo.setName(extrahiereRecordName(fileContent));
                 //Ausgabe des Namens auf Konsole
                 System.out.println("Name des Records: " + recordInfo.getName());
+                System.out.println("--------------------------------------------------------");
 
                 //speichere String-Komponenten-Liste in Arraylist
                 String componentsAsString = fileContent.substring(indexEntryPointRecordAfterMatch, indexEndOfComponentList);
                 ArrayList<String> listWords = extrahiereKomponentenInArrayList(componentsAsString);
 
                 //speichere einzelne Komponenten in Hashmap
-                HashMap<Object, Object> componentMap = new HashMap<>();
+                LinkedHashMap<Object, Object> componentMap = new LinkedHashMap<>();
                 if (!listWords.isEmpty()) {
                     for (int j = 0; j < listWords.size(); j++) {
                         if (j % 2 == 0) {

@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class RecordInfo {
     private String filename;
@@ -9,9 +9,18 @@ public class RecordInfo {
     private String recordBody;
     private String recordFull;
 
-    private HashMap<Object, Object> componentMap;
+    private LinkedHashMap<Object, Object> componentMap;
     private ArrayList<String> listOverriddenMethods;
     private int amountComponents;
+
+    private ArrayList<String> testRecordsPositiv;
+    private ArrayList<String> testRecordNames;
+    private ArrayList<String> testRecordCopies;
+
+    private String recordNegativTest;
+    private String recordNegativTestName;
+    private String recordNegativTestOverriddenMethod;
+    private String recordNegativTestOverriddenMethodOld;
 
     public String getFilename() {
         return filename;
@@ -29,11 +38,11 @@ public class RecordInfo {
         this.name = name;
     }
 
-    public HashMap<Object, Object> getComponentMap() {
+    public LinkedHashMap<Object, Object> getComponentMap() {
         return componentMap;
     }
 
-    public void setComponentMap(HashMap<Object, Object> componentMap) {
+    public void setComponentMap(LinkedHashMap<Object, Object> componentMap) {
         this.componentMap = componentMap;
     }
 
@@ -75,5 +84,61 @@ public class RecordInfo {
 
     public void setAmountComponents(int amountComponents) {
         this.amountComponents = amountComponents;
+    }
+
+    public String getRecordNegativTest() {
+        return recordNegativTest;
+    }
+
+    public void setRecordNegativTest(String recordNegativTest) {
+        this.recordNegativTest = recordNegativTest;
+    }
+
+    public String getRecordNegativTestOverriddenMethod() {
+        return recordNegativTestOverriddenMethod;
+    }
+
+    public void setRecordNegativTestOverriddenMethod(String recordNegativTestOverriddenMethod) {
+        this.recordNegativTestOverriddenMethod = recordNegativTestOverriddenMethod;
+    }
+
+    public String getRecordNegativTestName() {
+        return recordNegativTestName;
+    }
+
+    public void setRecordNegativTestName(String recordNegativTestName) {
+        this.recordNegativTestName = recordNegativTestName;
+    }
+
+    public String getRecordNegativTestOverriddenMethodOld() {
+        return recordNegativTestOverriddenMethodOld;
+    }
+
+    public void setRecordNegativTestOverriddenMethodOld(String recordNegativTestOverriddenMethodOld) {
+        this.recordNegativTestOverriddenMethodOld = recordNegativTestOverriddenMethodOld;
+    }
+
+    public ArrayList<String> getTestRecordsPositiv() {
+        return testRecordsPositiv;
+    }
+
+    public void setTestRecordsPositiv(ArrayList<String> testRecordsPositiv) {
+        this.testRecordsPositiv = testRecordsPositiv;
+    }
+
+    public ArrayList<String> getTestRecordNames() {
+        return testRecordNames;
+    }
+
+    public void setTestRecordNames(ArrayList<String> testRecordNames) {
+        this.testRecordNames = testRecordNames;
+    }
+
+    public ArrayList<String> getTestRecordCopies() {
+        return testRecordCopies;
+    }
+
+    public void setTestRecordCopies(ArrayList<String> testRecordCopies) {
+        this.testRecordCopies = testRecordCopies;
     }
 }
