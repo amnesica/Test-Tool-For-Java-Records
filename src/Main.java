@@ -38,24 +38,26 @@ public class Main {
      */
     private static void starteTestTool(String path) {
 
-        //Datei mit Records, die als Argument mitgegeben wird
+        //Setze Infos zu Datei mit Records, die als Argument mitgegeben wurde
         FileToTest fileToTest = new FileToTest();
-
-        //old: fileToTest.setPath(Paths.get(System.getProperty("user.dir") + "/src/" + fileToTest.getFilename()));
         fileToTest.setPath(Paths.get(path));
-
         fileToTest.setFilename(Paths.get(path).getFileName().toString());
+
         System.out.println("Dateiname der Test-Datei: " + fileToTest.getFilename());
+        System.out.println("--------------------------------------------------------");
 
         try {
             //extrahiere Inhalt der Datei in String
-            fileToTest.setFileContent(new String(Files.readAllBytes(fileToTest.getPath())));
+            String fileContent = new String(Files.readAllBytes(fileToTest.getPath()));
+            fileToTest.setFileContent(fileContent);
 
             //prüfe, ob Test durchgeführt werden soll und starte Generierung der Testfälle
             if (new RecordExtractor().pruefeObTestfaelleGeneriertWerdenSollen(fileToTest)) {
                 //TODO generiere Testfaelle für mehrere Records
-                for (RecordToTest recordToTest : fileToTest.getListRecordsToTest()) {
-                    new TestGenerator().generiereTestfaelle(recordToTest);
+                for (RecordToTest recordToTest : fileToTest.getListRecords()) {
+                    if(recordToTest.isRecordShouldBeTested()){
+                        new TestGenerator().generiereTestfaelle(recordToTest);
+                    }
                 }
             }
         } catch (IOException e) {

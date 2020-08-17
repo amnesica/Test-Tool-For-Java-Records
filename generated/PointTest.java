@@ -14,6 +14,10 @@ public class PointTest {
         public int x() {
             return x;
         }
+
+        public void doSomething() {
+            //do something
+        }
     }
 
 
@@ -21,6 +25,10 @@ public class PointTest {
     record PointNegativTest(int x, int y, int z) {
         public int x() {
             return x;
+        }
+
+        public void doSomething() {
+            //do something
         }
 
         public int y() {

@@ -52,7 +52,7 @@ public class TestGenerator {
 
             //TODO nicht-funktionale Testfälle
 
-            System.out.println("Testdatei wurde erfolgreich erstellt und kann ausgeführt werden.");
+            System.out.println("Testdatei für " + recordToTest.getName() + " wurde erfolgreich erstellt und kann ausgeführt werden.");
             System.out.println("Pfad der generierten Datei: " + pathForNewTestFile);
         } catch (IOException e) {
             System.err.println("Error: Beim Erstellen der Testdatei gab es einen Fehler.\nTest-Tool wird beendet.");

@@ -15,9 +15,6 @@ public class FileToTest {
     //Liste mit allen gefundenen Records
     private ArrayList<RecordToTest> listRecords;
 
-    //Liste mit gefundenen Records, für die Testfälle erstellt werden sollen
-    private ArrayList<RecordToTest> listRecordsToTest;
-
     public Path getPath() {
         return path;
     }
@@ -42,22 +39,14 @@ public class FileToTest {
         this.fileContent = fileContent;
     }
 
-    public void fuegeRecordToTestZuListeHinzu(RecordToTest recordToTest) {
-        if (listRecordsToTest == null) {
-            listRecordsToTest = new ArrayList<>();
+    public void fuegeRecordZuListeDerZuTestendenRecordsHinzu(RecordToTest recordToTest) {
+        if (listRecords == null) {
+            listRecords = new ArrayList<>();
         }
-        listRecordsToTest.add(recordToTest);
-    }
-
-    public ArrayList<RecordToTest> getListRecordsToTest() {
-        return listRecordsToTest;
+        listRecords.add(recordToTest);
     }
 
     public ArrayList<RecordToTest> getListRecords() {
         return listRecords;
-    }
-
-    public void setListRecords(ArrayList<RecordToTest> listRecords) {
-        this.listRecords = listRecords;
     }
 }
