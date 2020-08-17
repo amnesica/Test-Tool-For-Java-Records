@@ -90,7 +90,7 @@ public class RecordExtractor {
 
     /**
      * Speichert den Body des Records als "RecordBody" in recordInfo ab
-     *
+     * TODO: bisher muss das erste Zeichen nach dem Header eine "{"-Klammer sein. Ändern!
      * @param recordToTest recordToTest
      */
     private void speichereBody(RecordToTest recordToTest) {

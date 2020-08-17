@@ -1,11 +1,18 @@
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+/**
+ * Klasse für einen Record, der vom Programm aus der Datei herausgelesen wurde und getestet werden soll.
+ */
 public class RecordToTest {
+    //Name des Records
     private String name;
 
+    //Bestandteile des Records
     private String recordHeader;
     private String recordBody;
+
+    //Kompletter Record
     private String recordFull;
 
     //Index direkt vor dem Finden eines Records
@@ -17,14 +24,19 @@ public class RecordToTest {
     //Index des Endes der Komponenten-Liste
     private int indexEndOfComponentList = 0;
 
+    //Boolean, ob Record getestet werden soll
     private boolean recordShouldBeTested;
 
+    //Komponenten des Records
     private LinkedHashMap<Object, Object> componentMap;
     private ArrayList<String> listFoundObjects;
     ArrayList<String> listFoundDataTypes;
 
-    private ArrayList<String> listOverriddenMethods;
+    //Anzahl der Komponenten
     private int amountComponents;
+
+    //Ueberschriebene Methoden des Records
+    private ArrayList<String> listOverriddenMethods;
 
     public String getName() {
         return name;

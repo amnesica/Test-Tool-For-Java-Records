@@ -30,12 +30,15 @@
       <w>beim</w>
       <w>beispielaufruf</w>
       <w>benutzerdefinierte</w>
+      <w>berechne</w>
       <w>bereits</w>
       <w>beruhend</w>
+      <w>bestandteile</w>
       <w>bestimme</w>
       <w>bestimmt</w>
       <w>bewusst</w>
       <w>bezeichner</w>
+      <w>bisher</w>
       <w>bitte</w>
       <w>daher</w>
       <w>damit</w>
@@ -49,13 +52,16 @@
       <w>diese</w>
       <w>dieser</w>
       <w>direkt</w>
+      <w>dokumente</w>
       <w>drinn</w>
+      <w>durch</w>
       <w>durchfuehrt</w>
       <w>durchgefuehrt</w>
       <w>durchgeführt</w>
       <w>durchsuche</w>
       <w>durchsuchen</w>
       <w>effekt</w>
+      <w>effizient</w>
       <w>eignung</w>
       <w>einbauen</w>
       <w>eine</w>
@@ -63,6 +69,7 @@
       <w>einen</w>
       <w>einer</w>
       <w>eines</w>
+      <w>eingestuft</w>
       <w>einmal</w>
       <w>einstiegspunkt</w>
       <w>eintrag</w>
@@ -78,6 +85,7 @@
       <w>enthalten</w>
       <w>enthält</w>
       <w>erfolgreich</w>
+      <w>ergebnis</w>
       <w>ergebnisse</w>
       <w>erhöht</w>
       <w>erkennen</w>
@@ -106,10 +114,12 @@
       <w>fehlermeldung</w>
       <w>fehlt</w>
       <w>feld</w>
+      <w>festgelegten</w>
       <w>feststeht</w>
       <w>finden</w>
       <w>formatiere</w>
       <w>fuege</w>
+      <w>fuehre</w>
       <w>fuer</w>
       <w>funktion</w>
       <w>funktionale</w>
@@ -118,13 +128,17 @@
       <w>funktionelle</w>
       <w>füge</w>
       <w>fügt</w>
+      <w>führe</w>
+      <w>führt</w>
       <w>gebe</w>
       <w>geben</w>
+      <w>gedauert</w>
       <w>gefunden</w>
       <w>gefundene</w>
       <w>gefundenen</w>
       <w>gelesen</w>
       <w>generiere</w>
+      <w>generierefunktionale</w>
       <w>generieren</w>
       <w>generiert</w>
       <w>generierte</w>
@@ -139,7 +153,9 @@
       <w>geändert</w>
       <w>gibt</w>
       <w>gleich</w>
+      <w>grenzwert</w>
       <w>grenzwerte</w>
+      <w>grenzwerten</w>
       <w>grundlegende</w>
       <w>gültige</w>
       <w>handelt</w>
@@ -147,6 +163,7 @@
       <w>heißt</w>
       <w>heraus</w>
       <w>herausgegeben</w>
+      <w>herausgelesen</w>
       <w>herausnehmen</w>
       <w>hier</w>
       <w>hierbei</w>
@@ -155,14 +172,19 @@
       <w>hinzufügen</w>
       <w>hänge</w>
       <w>immer</w>
+      <w>ineffizient</w>
       <w>informationen</w>
       <w>inhalt</w>
       <w>inhalten</w>
       <w>initiale</w>
       <w>initialisiere</w>
+      <w>initialisiert</w>
       <w>initialisierten</w>
       <w>initialisierung</w>
       <w>inklusive</w>
+      <w>instantiieren</w>
+      <w>instantiierung</w>
+      <w>instanz</w>
       <w>jedes</w>
       <w>kann</w>
       <w>kanonischen</w>
@@ -173,6 +195,7 @@
       <w>klasse</w>
       <w>kompilieren</w>
       <w>kompletten</w>
+      <w>kompletter</w>
       <w>komponente</w>
       <w>komponenten</w>
       <w>komponentenliste</w>
@@ -184,6 +207,9 @@
       <w>kopier</w>
       <w>können</w>
       <w>könnte</w>
+      <w>leistung</w>
+      <w>leistungseffizienz</w>
+      <w>leistungseffizienztest</w>
       <w>letzte</w>
       <w>letzter</w>
       <w>liste</w>
@@ -197,14 +223,17 @@
       <w>mehrere</w>
       <w>methode</w>
       <w>methoden</w>
+      <w>millisekunden</w>
       <w>mitgegeben</w>
       <w>mitgenommen</w>
       <w>mitkommt</w>
+      <w>mittels</w>
       <w>möglich</w>
       <w>möglichkeit</w>
       <w>nach</w>
       <w>namen</w>
       <w>namens</w>
+      <w>nanosekunden</w>
       <w>negativ</w>
       <w>negativtest</w>
       <w>negativtests</w>
@@ -239,6 +268,7 @@
       <w>schließe</w>
       <w>schreibe</w>
       <w>schreibt</w>
+      <w>sein</w>
       <w>setze</w>
       <w>sich</w>
       <w>sind</w>
@@ -256,6 +286,9 @@
       <w>stelle</w>
       <w>struktur</w>
       <w>suche</w>
+      <w>temporaere</w>
+      <w>temporäre</w>
+      <w>temporären</w>
       <w>testdatei</w>
       <w>testdaten</w>
       <w>teste</w>
@@ -273,6 +306,8 @@
       <w>ueberschreibende</w>
       <w>ueberschreibt</w>
       <w>ueberschriebene</w>
+      <w>universität</w>
+      <w>unterstützt</w>
       <w>valide</w>
       <w>veraendere</w>
       <w>verteile</w>
@@ -289,6 +324,7 @@
       <w>warnung</w>
       <w>weiterhin</w>
       <w>weitermachen</w>
+      <w>weißt</w>
       <w>welche</w>
       <w>welcher</w>
       <w>wenn</w>
@@ -304,11 +340,16 @@
       <w>wähle</w>
       <w>wäre</w>
       <w>würde</w>
+      <w>zeichen</w>
+      <w>zeit</w>
+      <w>zeitmessung</w>
       <w>zuende</w>
       <w>zurück</w>
+      <w>zuviele</w>
       <w>zuvor</w>
       <w>zwei</w>
       <w>zählen</w>
+      <w>ändern</w>
       <w>über</w>
       <w>überprüft</w>
       <w>überschreibenden</w>

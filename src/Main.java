@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -55,12 +56,19 @@ public class Main {
             if (new RecordExtractor().pruefeObTestfaelleGeneriertWerdenSollen(fileToTest)) {
                 //TODO generiere Testfaelle für mehrere Records
                 for (RecordToTest recordToTest : fileToTest.getListRecords()) {
-                    if(recordToTest.isRecordShouldBeTested()){
-                        new TestGenerator().generiereTestfaelle(recordToTest);
+                    if (recordToTest.isRecordShouldBeTested()) {
+                        TestGenerator testGenerator = new TestGenerator();
+
+                        //Generiere funktionale Testfaelle
+                        testGenerator.generierefunktionaleTestfaelle(recordToTest);
+
+                        //TODO Führe nicht-funktionale Testfälle durch
+                        testGenerator.fuehreLeistungseffizienztestDurch(recordToTest);
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InvocationTargetException | NoSuchMethodException | IllegalAccessException |
+                InstantiationException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

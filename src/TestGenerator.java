@@ -2,11 +2,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +33,7 @@ public class TestGenerator {
     /**
      * Generiert die Testfaelle für den vorliegenden Record in recordInfo
      */
-    void generiereTestfaelle(RecordToTest recordToTest) {
+    void generierefunktionaleTestfaelle(RecordToTest recordToTest) {
 
         //Speichere recordToTest als Feld ab
         this.recordToTest = recordToTest;
@@ -42,18 +44,18 @@ public class TestGenerator {
         Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + "/generated/" + nameTestKlasse + ".java");
 
         try {
-            erstelleNeueTestJavaDatei(pathForNewTestDirectory, pathForNewTestFile);
+            erstelleNeueTestDatei(pathForNewTestDirectory, pathForNewTestFile);
 
-            erstelleGrundlegendeTestStrukturInDatei(pathForNewTestFile, nameTestKlasse);
+            erstelleGrundlegendeTestStrukturJUnitInDatei(pathForNewTestFile, nameTestKlasse);
 
             fuegeZuTestendenRecordEin(pathForNewTestFile, recordToTest);
 
             erstelleTestfaelleFunktionalitaet(pathForNewTestFile);
 
-            //TODO nicht-funktionale Testfälle
-
+            System.out.println("Test auf Funktionalität (" + recordToTest.getName() + "):");
             System.out.println("Testdatei für " + recordToTest.getName() + " wurde erfolgreich erstellt und kann ausgeführt werden.");
             System.out.println("Pfad der generierten Datei: " + pathForNewTestFile);
+            System.out.println("--------------------------------------------------------");
         } catch (IOException e) {
             System.err.println("Error: Beim Erstellen der Testdatei gab es einen Fehler.\nTest-Tool wird beendet.");
             e.printStackTrace();
@@ -493,7 +495,7 @@ public class TestGenerator {
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @param nameTestKlasse     Name der generierten Testdatei
      */
-    private void erstelleGrundlegendeTestStrukturInDatei(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
+    private void erstelleGrundlegendeTestStrukturJUnitInDatei(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
         //TODO package generated; wieder herausnehmen, wenn endgültiger Export-Path feststeht
         String headerTestClass = "package generated;\n" +
                 "import static org.junit.jupiter.api.Assertions.*;\n" +
@@ -513,10 +515,10 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt eine neue Datei für die generierten Testfaelle im "Projektverzeichnis/generated"
-     * und eine initiale Testdatei mit .java-Endung in dem neuen Verzeichnis "/generated"
+     * Erstellt eine neue Datei für die generierten Testfaelle und eine initiale Testdatei
+     * mit .java-Endung in dem neuen Verzeichnis "/generated"
      */
-    private void erstelleNeueTestJavaDatei(Path pathForNewTestDirectory, Path pathForNewTestFile) throws IOException {
+    private void erstelleNeueTestDatei(Path pathForNewTestDirectory, Path pathForNewTestFile) throws IOException {
         //erstelle neue Datei
         new File(pathForNewTestFile.toString());
 
@@ -529,4 +531,124 @@ public class TestGenerator {
         myWriter.write("");
         myWriter.close();
     }
+
+    /**
+     * Führt den Leistungseffizienztest mit dem recordToTest durch. Test wird nicht
+     * durchgeführt, wenn Record mehr als 10 Komponenten enthält
+     * @param recordToTest recordToTest
+     */
+    void fuehreLeistungseffizienztestDurch(RecordToTest recordToTest) throws IOException, ClassNotFoundException,
+            IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        System.out.println("Test auf Leistungseffizienz (" + recordToTest.getName() + "):");
+
+        if(recordToTest.getAmountComponents() <= 10){
+            //erstelle temporäre Datei mit Record, um Record zu instantiieren
+            erstelleTemporaereDateiMitRecord(recordToTest);
+
+            HashMap<Integer, Integer> mapGrenzwerte = new HashMap<>();
+            initialisiereMapGrenzwerte(mapGrenzwerte);
+
+            //Starte Zeitmessung
+            long startTime = System.nanoTime();
+
+            String className = recordToTest.getName() + "PerformanceTest";
+            String innerClassName = recordToTest.getName();
+
+            String fullPathOfTheClass = "tmp." +
+                    className +
+                    "$" +
+                    innerClassName;
+
+            //TODO Erstelle neue Instanz des zu testenden Records
+            Class cls = Class.forName(fullPathOfTheClass);
+            java.lang.Record myTestObject = (java.lang.Record) cls.getDeclaredConstructor().newInstance();
+            //Object recordToTestInstance = (Object) Class.forName("tmp." + recordToTest.getName() + "PerformanceTest." + recordToTest.getName()).getDeclaredConstructor().newInstance();
+            //old: Object recordToTestInstance = (Object) Class.forName("tmp." + recordToTest.getName() + "PerformanceTest." + recordToTest.getName()).getDeclaredConstructor().newInstance();
+
+            //Beende Zeitmessung
+            long endTime = System.nanoTime();
+
+            //berechne Zeit
+            long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+            long durationInMilliseconds = duration / 1000000;
+            System.out.println("Eine Instantiierung des Records " + recordToTest.getName() + " hat " + duration + " Nanosekunden gedauert (" + durationInMilliseconds + " Millisekunden)");
+
+            //TODO > oder >=
+            if(duration > mapGrenzwerte.get(recordToTest.getAmountComponents())){
+                System.err.println("Ergebnis: Der Record " + recordToTest.getName() + " ist über dem festgelegten Grenzwert von "
+                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " und wurde als ineffizient eingestuft.");
+            }else{
+                System.out.println("Ergebnis: Der Record " + recordToTest.getName() + " ist nicht über dem festgelegten Grenzwert von "
+                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " und wurde als effizient eingestuft.");
+            }
+
+            System.out.println("--------------------------------------------------------");
+        }else{
+            //Zuviele Komponenten
+            System.err.println("Error: Der Leistungseffizienztest wird nur bis zu 10 Komponenten unterstützt.\n" +
+                    "Der Record " + recordToTest.getName() +  " weißt " + recordToTest.getAmountComponents() + " Komponenten auf.");
+        }
+    }
+
+    /**
+     * Erstellt eine temporäre Datei für die Instantiierung des TestRecords mittels Reflection
+     * @param recordToTest recordToTest
+     * @throws IOException IOException
+     */
+    private void erstelleTemporaereDateiMitRecord(RecordToTest recordToTest) throws IOException {
+        //Spezifiziere Pfade für temporäre Datei und Name der Datei
+        Path pathForNewTmpDirectory = Paths.get(System.getProperty("user.dir") + "/src/tmp/");
+        String nameTestKlasse = recordToTest.getName() + "PerformanceTest";
+        Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + "/src/tmp/" + nameTestKlasse + ".java");
+
+        //erstelle Datei und schreibe temporären Record in Datei
+        erstelleNeueTestDatei(pathForNewTmpDirectory, pathForNewTestFile);
+        schreibeInTemporaereDateiLeistung(pathForNewTestFile, nameTestKlasse);
+    }
+
+    /**
+     * Initialisiert die Hashmap mit den festgelegten Grenzwerten für den Leistungseffizienztest.
+     * @param mapGrenzwerte mapGrenzwerte
+     */
+    private void initialisiereMapGrenzwerte(HashMap<Integer, Integer> mapGrenzwerte) {
+        mapGrenzwerte.put(1, 10000000);
+        mapGrenzwerte.put(2, 15000000);
+        mapGrenzwerte.put(3, 20000000);
+        mapGrenzwerte.put(4, 25000000);
+        mapGrenzwerte.put(5, 30000000);
+        mapGrenzwerte.put(6, 35000000);
+        mapGrenzwerte.put(7, 40000000);
+        mapGrenzwerte.put(8, 45000000);
+        mapGrenzwerte.put(9, 50000000);
+        mapGrenzwerte.put(10, 55000000);
+    }
+
+    /**
+     * Erstellt die grundlegende Struktur der Testdatei mit imports für JUnit.
+     *
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @param nameTestKlasse     Name der generierten Testdatei
+     */
+    private void schreibeInTemporaereDateiLeistung(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        String headerTestClass = "package tmp;\n" +
+                "\n" +
+                "/**\n" +
+                " * Automatisch generierte Testklasse mit dem Record \"" + recordToTest.getName() + "\" für den Leistungseffizienztest.\n" +
+                " */" + "\n" +
+                "public class " + nameTestKlasse + "{\n";
+
+        String recordFull = recordToTest.getRecordFull();
+
+        sb.append(headerTestClass).append(recordFull).append("\n}");
+
+        //schreibe in Datei, damit sie auch erstellt wird
+        FileWriter myWriter;
+        myWriter = new FileWriter(pathForNewTestFile.toString());
+        myWriter.write(sb.toString());
+        myWriter.close();
+    }
+
+
 }
