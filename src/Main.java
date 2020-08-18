@@ -5,12 +5,14 @@ import java.nio.file.Paths;
 
 /**
  * Einstiegspunkt des Test-Tools
- * Aufruf: java Main <PfadZurDatei> --enable-preview -source 14
  *
- * TODO
- * Kompilieren: javac --enable-preview -source 14 *.java
- * Aufruf: java Main /home/amnesica/Dokumente/Universität_Hamburg/Bachelorarbeit/Test-Tool/DebugRecords.java --enable-preview -source 14
- *         java --enable-preview Main DebugRecords.java
+ * Aufruf:          java Main <PfadZurDatei> --enable-preview -source 14
+ * Kompilieren:     javac --enable-preview -source 14 *.java
+ *
+ * Beispiel-Aufruf: java Main /home/amnesica/Dokumente/Universität_Hamburg/Bachelorarbeit/Test-Tool/DebugRecords.java --enable-preview -source 14
+ *                  java --enable-preview Main DebugRecords.java
+ *
+ * Hinweis: Aufruf in IDE mit '/home/amnesica/Schreibtisch/DebugRecords.java' als Program Arguments
  */
 public class Main {
 
@@ -54,7 +56,7 @@ public class Main {
 
             //prüfe, ob Test durchgeführt werden soll und starte Generierung der Testfälle
             if (new RecordExtractor().pruefeObTestfaelleGeneriertWerdenSollen(fileToTest)) {
-                //TODO generiere Testfaelle für mehrere Records
+                //generiere Testfaelle für mehrere Records
                 for (RecordToTest recordToTest : fileToTest.getListRecords()) {
                     if (recordToTest.isRecordShouldBeTested()) {
                         TestGenerator testGenerator = new TestGenerator();
@@ -62,13 +64,14 @@ public class Main {
                         //Generiere funktionale Testfaelle
                         testGenerator.generierefunktionaleTestfaelle(recordToTest);
 
-                        //TODO Führe nicht-funktionale Testfälle durch
+                        //Führe Test auf Leistungseffizienz durch
                         testGenerator.fuehreLeistungseffizienztestDurch(recordToTest);
+
+                        //TODO Test auf Wartbarkeit
                     }
                 }
             }
-        } catch (IOException | InvocationTargetException | NoSuchMethodException | IllegalAccessException |
-                InstantiationException | ClassNotFoundException e) {
+        } catch (IOException | InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

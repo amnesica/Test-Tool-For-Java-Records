@@ -12,6 +12,7 @@
       <w>andersherum</w>
       <w>angegebene</w>
       <w>angegebenen</w>
+      <w>anscheinend</w>
       <w>anzahl</w>
       <w>auch</w>
       <w>aufruf</w>
@@ -28,6 +29,7 @@
       <w>beendet</w>
       <w>beginn</w>
       <w>beim</w>
+      <w>beispiel</w>
       <w>beispielaufruf</w>
       <w>benutzerdefinierte</w>
       <w>berechne</w>
@@ -52,6 +54,7 @@
       <w>diese</w>
       <w>dieser</w>
       <w>direkt</w>
+      <w>djava</w>
       <w>dokumente</w>
       <w>drinn</w>
       <w>durch</w>
@@ -60,6 +63,7 @@
       <w>durchgeführt</w>
       <w>durchsuche</w>
       <w>durchsuchen</w>
+      <w>dynamisch</w>
       <w>effekt</w>
       <w>effizient</w>
       <w>eignung</w>
@@ -182,6 +186,7 @@
       <w>initialisierten</w>
       <w>initialisierung</w>
       <w>inklusive</w>
+      <w>innerhalb</w>
       <w>instantiieren</w>
       <w>instantiierung</w>
       <w>instanz</w>
@@ -193,6 +198,9 @@
       <w>klammer</w>
       <w>klammern</w>
       <w>klasse</w>
+      <w>klassen</w>
+      <w>klassennamen</w>
+      <w>kompiliere</w>
       <w>kompilieren</w>
       <w>kompletten</w>
       <w>kompletter</w>
@@ -221,6 +229,7 @@
       <w>manipulierter</w>
       <w>mehr</w>
       <w>mehrere</w>
+      <w>messe</w>
       <w>methode</w>
       <w>methoden</w>
       <w>millisekunden</w>
@@ -268,8 +277,10 @@
       <w>schließe</w>
       <w>schreibe</w>
       <w>schreibt</w>
+      <w>schreibtisch</w>
       <w>sein</w>
       <w>setze</w>
+      <w>setzen</w>
       <w>sich</w>
       <w>sind</w>
       <w>soll</w>
@@ -322,6 +333,7 @@
       <w>vorherige</w>
       <w>vorliegenden</w>
       <w>warnung</w>
+      <w>wartbarkeit</w>
       <w>weiterhin</w>
       <w>weitermachen</w>
       <w>weißt</w>
@@ -344,6 +356,7 @@
       <w>zeit</w>
       <w>zeitmessung</w>
       <w>zuende</w>
+      <w>zurueck</w>
       <w>zurück</w>
       <w>zuviele</w>
       <w>zuvor</w>

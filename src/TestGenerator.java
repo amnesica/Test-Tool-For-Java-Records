@@ -1,15 +1,15 @@
+import javax.tools.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -535,38 +535,104 @@ public class TestGenerator {
     /**
      * Führt den Leistungseffizienztest mit dem recordToTest durch. Test wird nicht
      * durchgeführt, wenn Record mehr als 10 Komponenten enthält
+     * HINWEIS: "-Djava.system.class.loader=DynamicClassLoader" als VM Options in Edit Configuration setzen! (oder anscheinend auch nicht?!)
+     *
      * @param recordToTest recordToTest
      */
     void fuehreLeistungseffizienztestDurch(RecordToTest recordToTest) throws IOException, ClassNotFoundException,
             IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         System.out.println("Test auf Leistungseffizienz (" + recordToTest.getName() + "):");
 
-        if(recordToTest.getAmountComponents() <= 10){
-            //erstelle temporäre Datei mit Record, um Record zu instantiieren
-            erstelleTemporaereDateiMitRecord(recordToTest);
+        if (recordToTest.getAmountComponents() <= 10) {
 
+            //Initialisiere Map mit Grenzwerten
             HashMap<Integer, Integer> mapGrenzwerte = new HashMap<>();
             initialisiereMapGrenzwerte(mapGrenzwerte);
 
-            //Starte Zeitmessung
-            long startTime = System.nanoTime();
-
+            //Spezifiziere Klassennamen für temporären Record und erstelle Record als String innerhalb Testklasse
             String className = recordToTest.getName() + "PerformanceTest";
-            String innerClassName = recordToTest.getName();
+            String sourceCode = erstelleKlasseMitTestRecordAlString(className);
 
-            String fullPathOfTheClass = "tmp." +
-                    className +
-                    "$" +
-                    innerClassName;
+            //Schreibe String mit Record in temporäre Datei
+            File parent = new File(System.getProperty("user.dir"));
+            File sourceFile = new File(parent, className + ".java");
+            sourceFile.deleteOnExit();
+            FileWriter writer = new FileWriter(sourceFile);
+            writer.write(sourceCode);
+            writer.close();
 
-            //TODO Erstelle neue Instanz des zu testenden Records
-            Class cls = Class.forName(fullPathOfTheClass);
-            java.lang.Record myTestObject = (java.lang.Record) cls.getDeclaredConstructor().newInstance();
-            //Object recordToTestInstance = (Object) Class.forName("tmp." + recordToTest.getName() + "PerformanceTest." + recordToTest.getName()).getDeclaredConstructor().newInstance();
-            //old: Object recordToTestInstance = (Object) Class.forName("tmp." + recordToTest.getName() + "PerformanceTest." + recordToTest.getName()).getDeclaredConstructor().newInstance();
+            //Kompiliere mit 'enable-preview'
+            JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+            File parentDir = sourceFile.getParentFile();
+            javaCompiler.run(null, null, null, "--enable-preview", "--release", "14", sourceFile.toString());
 
-            //Beende Zeitmessung
-            long endTime = System.nanoTime();
+            //Füge Klassen dynamisch zu Custom Classloader hinzu
+            URLClassLoader urlClassLoader = URLClassLoader.newInstance(new URL[]{parentDir.toURI().toURL()});
+
+            //Initialisiere Zeitmessung
+            long startTime = 0;
+            long endTime = 0;
+
+            //Erstelle neue Instanz des zu testenden Records und messe die Zeit
+            switch (recordToTest.getAmountComponents()) {
+                case 1 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class).newInstance(10);
+                    endTime = System.nanoTime();
+                }
+                case 2 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class).newInstance(10, 9);
+                    endTime = System.nanoTime();
+                }
+                case 3 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class).newInstance(10, 9, 8);
+                    endTime = System.nanoTime();
+                }
+                case 4 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class).newInstance(10, 9, 8, 7);
+                    endTime = System.nanoTime();
+                }
+                case 5 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
+                            int.class).newInstance(10, 9, 8, 7, 6);
+                    endTime = System.nanoTime();
+                }
+                case 6 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
+                            int.class, int.class).newInstance(10, 9, 8, 7, 6, 5);
+                    endTime = System.nanoTime();
+                }
+                case 7 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
+                            int.class, int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4);
+                    endTime = System.nanoTime();
+                }
+                case 8 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
+                            int.class, int.class, int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4, 3);
+                    endTime = System.nanoTime();
+                }
+                case 9 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
+                            int.class, int.class, int.class, int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4, 3, 2);
+                    endTime = System.nanoTime();
+                }
+                case 10 -> {
+                    startTime = System.nanoTime();
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
+                            int.class, int.class, int.class, int.class, int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
+                    endTime = System.nanoTime();
+                }
+                default -> System.out.println("Hier ist etwas schiefgegangen!");
+            }
 
             //berechne Zeit
             long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
@@ -574,40 +640,25 @@ public class TestGenerator {
             System.out.println("Eine Instantiierung des Records " + recordToTest.getName() + " hat " + duration + " Nanosekunden gedauert (" + durationInMilliseconds + " Millisekunden)");
 
             //TODO > oder >=
-            if(duration > mapGrenzwerte.get(recordToTest.getAmountComponents())){
+            if (duration > mapGrenzwerte.get(recordToTest.getAmountComponents())) {
                 System.err.println("Ergebnis: Der Record " + recordToTest.getName() + " ist über dem festgelegten Grenzwert von "
                         + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " und wurde als ineffizient eingestuft.");
-            }else{
+            } else {
                 System.out.println("Ergebnis: Der Record " + recordToTest.getName() + " ist nicht über dem festgelegten Grenzwert von "
                         + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " und wurde als effizient eingestuft.");
             }
 
             System.out.println("--------------------------------------------------------");
-        }else{
+        } else {
             //Zuviele Komponenten
             System.err.println("Error: Der Leistungseffizienztest wird nur bis zu 10 Komponenten unterstützt.\n" +
-                    "Der Record " + recordToTest.getName() +  " weißt " + recordToTest.getAmountComponents() + " Komponenten auf.");
+                    "Der Record " + recordToTest.getName() + " weißt " + recordToTest.getAmountComponents() + " Komponenten auf.");
         }
     }
 
     /**
-     * Erstellt eine temporäre Datei für die Instantiierung des TestRecords mittels Reflection
-     * @param recordToTest recordToTest
-     * @throws IOException IOException
-     */
-    private void erstelleTemporaereDateiMitRecord(RecordToTest recordToTest) throws IOException {
-        //Spezifiziere Pfade für temporäre Datei und Name der Datei
-        Path pathForNewTmpDirectory = Paths.get(System.getProperty("user.dir") + "/src/tmp/");
-        String nameTestKlasse = recordToTest.getName() + "PerformanceTest";
-        Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + "/src/tmp/" + nameTestKlasse + ".java");
-
-        //erstelle Datei und schreibe temporären Record in Datei
-        erstelleNeueTestDatei(pathForNewTmpDirectory, pathForNewTestFile);
-        schreibeInTemporaereDateiLeistung(pathForNewTestFile, nameTestKlasse);
-    }
-
-    /**
      * Initialisiert die Hashmap mit den festgelegten Grenzwerten für den Leistungseffizienztest.
+     *
      * @param mapGrenzwerte mapGrenzwerte
      */
     private void initialisiereMapGrenzwerte(HashMap<Integer, Integer> mapGrenzwerte) {
@@ -626,29 +677,18 @@ public class TestGenerator {
     /**
      * Erstellt die grundlegende Struktur der Testdatei mit imports für JUnit.
      *
-     * @param pathForNewTestFile Pfad zur generierten Testdatei
-     * @param nameTestKlasse     Name der generierten Testdatei
+     * @param nameTestKlasse Name der generierten Testdatei
      */
-    private void schreibeInTemporaereDateiLeistung(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
+    private String erstelleKlasseMitTestRecordAlString(String nameTestKlasse) {
         StringBuilder sb = new StringBuilder();
 
-        String headerTestClass = "package tmp;\n" +
-                "\n" +
+        String headerTestClass =
                 "/**\n" +
-                " * Automatisch generierte Testklasse mit dem Record \"" + recordToTest.getName() + "\" für den Leistungseffizienztest.\n" +
-                " */" + "\n" +
-                "public class " + nameTestKlasse + "{\n";
+                        " * Automatisch generierte Testklasse mit dem Record \"" + recordToTest.getName() + "\" für den Leistungseffizienztest.\n" +
+                        " */" + "\n" + "public class " + nameTestKlasse + "{\n";
 
-        String recordFull = recordToTest.getRecordFull();
+        String recordFull = "public " + recordToTest.getRecordFull();
 
-        sb.append(headerTestClass).append(recordFull).append("\n}");
-
-        //schreibe in Datei, damit sie auch erstellt wird
-        FileWriter myWriter;
-        myWriter = new FileWriter(pathForNewTestFile.toString());
-        myWriter.write(sb.toString());
-        myWriter.close();
+        return sb.append(headerTestClass).append(recordFull).append("\n}").toString();
     }
-
-
 }
