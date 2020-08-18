@@ -691,4 +691,26 @@ public class TestGenerator {
 
         return sb.append(headerTestClass).append(recordFull).append("\n}").toString();
     }
+
+    /**
+     * Führt den Test auf Wartbarkeit beim recordToTest durch.
+     * @param recordToTest RecordToTest
+     */
+    public void fuehreTestAufWartbarkeitDurch(RecordToTest recordToTest) {
+        System.out.println("Test auf Wartbarkeit (" + recordToTest.getName() + "):");
+
+        pruefeAufLongFunction(recordToTest);
+    }
+
+    /**
+     * Prüft, ob der Record recordToTest eine Long Function enthält.
+     * Wenn ja, wird das Ergebnis auf der Konsole ausgegeben.
+     * @param recordToTest RecordToTest
+     */
+    private void pruefeAufLongFunction(RecordToTest recordToTest) {
+        //TODO Test nicht ausreichend für long function
+        if(recordToTest.getRecordFull().lines().count() > 15){
+            System.err.println("Hinweis: Beim Record " + recordToTest.getName() + " wurde eine zu lange Methode gefunden, welche die Wartbarkeit verschlechtern könnte.");
+        }
+    }
 }

@@ -68,6 +68,7 @@ public class Main {
                         testGenerator.fuehreLeistungseffizienztestDurch(recordToTest);
 
                         //TODO Test auf Wartbarkeit
+                        testGenerator.fuehreTestAufWartbarkeitDurch(recordToTest);
                     }
                 }
             }
