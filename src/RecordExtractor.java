@@ -1,3 +1,7 @@
+import ToTest.FileToTest;
+import ToTest.MethodToTest;
+import ToTest.RecordToTest;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,7 +13,6 @@ public class RecordExtractor {
 
     /**
      * Überprüft, ob Testfälle erstellt werden sollen
-     * TODO mehrere Records erkennen können
      *
      * @return true, wenn Testfälle generiert werden sollen
      */
@@ -17,7 +20,7 @@ public class RecordExtractor {
         if (!fileToTest.getFileContent().isEmpty() && fileToTest.getFileContent().contains("public class") &&
                 fileToTest.getFileContent().contains("record")) {
 
-            //Speichere FileToTest als Feld
+            //Speichere ToTest.FileToTest als Feld
             this.fileToTest = fileToTest;
 
             //Regulärer Ausdruck um Beginn des Records zu ermitteln (record\s\w+\()
@@ -33,7 +36,7 @@ public class RecordExtractor {
                 recordToTest.setIndexEntryPointRecordBeforeMatch(m.start());
                 recordToTest.setIndexEntryPointRecordAfterMatch(m.end());
 
-                //speichere Komponenten in RecordToTest
+                //speichere Komponenten in ToTest.RecordToTest
                 speichereKomponenten(recordToTest);
             }
 
@@ -41,21 +44,24 @@ public class RecordExtractor {
                 if (recordToTest.getComponentMap() != null) {
                     if (recordEnthaeltNurInteger(recordToTest.getComponentMap(), recordToTest)) {
 
-                        //extrahiere kompletten Record (mit Body)
+                        //extrahiere kompletten Record (mit Body) und Body an sich
                         speichereBody(recordToTest);
                         speichereKomplettenRecord(recordToTest);
 
                         //prüfe, ob automatisch generierte Methoden oder Konstruktor im Record überschrieben wurden
                         if (recordUeberschreibtMethodenOderKonstruktor(recordToTest)) {
+                            //extrahiere Methoden des Records
+                            speichereMethoden(recordToTest);
+
+                            //Setze Record soll getestet werden
                             recordToTest.setRecordShouldBeTested(true);
                         }
                     }
                 }
             }
-
         } else {
             //Es wurde gar kein Record gefunden
-            System.err.println("Error: Es wurde kein Record in der angegebenen Datei gefunden." + "\nTest-Tool wird beendet.");
+            System.out.println("Error: Es wurde kein Record in der angegebenen Datei gefunden." + "\nTest-Tool wird beendet.");
             return false;
         }
 
@@ -63,19 +69,33 @@ public class RecordExtractor {
         if (fileToTest.getListRecords() != null && !fileToTest.getListRecords().isEmpty()) {
             for (RecordToTest recordToTest : fileToTest.getListRecords()) {
                 if (!recordToTest.isRecordShouldBeTested()) {
-                    if(recordToTest.getListFoundObjects().isEmpty() && recordToTest.getListFoundDataTypes().isEmpty()){
-                        System.err.println("Hinweis: Der Record " + recordToTest.getName() + " überschreibt keine automatisch generierten Methoden und muss daher nicht getestet werden.");
-                    }else{
+                    if (recordToTest.getListFoundObjects().isEmpty() && recordToTest.getListFoundDataTypes().isEmpty()) {
+                        System.out.println("Hinweis: Der Record " + recordToTest.getName() + " überschreibt keine automatisch generierten Methoden und muss daher nicht getestet werden.");
+                    } else {
                         gebeFehlermeldungWennRecordNichtNurIntegerEnthaelt(recordToTest);
                     }
-                }else{
+                } else {
                     gebeRecordInformationenAufKonsole(recordToTest);
                 }
             }
             return true;
         } else {
-            System.err.println("Error: Es wurde kein Record in der angegebenen Datei gefunden." + "\nTest-Tool wird beendet.");
+            System.out.println("Error: Es wurde kein Record in der angegebenen Datei gefunden." + "\nTest-Tool wird beendet.");
             return false;
+        }
+    }
+
+    /**
+     * Speichert die Methoden in recordToTest.getListAllDeclaredMethods() als String ab
+     *
+     * @param recordToTest RecordToTest
+     */
+    private void speichereMethoden(RecordToTest recordToTest) {
+        if (recordToTest.getListAllDeclaredMethods() != null && recordToTest.getRecordFull() != null) {
+            for (MethodToTest methodToTest : recordToTest.getListAllDeclaredMethods()) {
+                String fullMethod = leseBodyAus(recordToTest.getRecordFull(), methodToTest.getStartIndex());
+                methodToTest.setFullMethod(fullMethod);
+            }
         }
     }
 
@@ -90,54 +110,77 @@ public class RecordExtractor {
 
     /**
      * Speichert den Body des Records als "RecordBody" in recordInfo ab
-     * TODO: bisher muss das erste Zeichen nach dem Header eine "{"-Klammer sein. Ändern!
+     *
      * @param recordToTest recordToTest
      */
     private void speichereBody(RecordToTest recordToTest) {
         // + 1, da sonst die letzte ')'-Klammer des Headers mitgenommen werden würde
         int indexStartBody = recordToTest.getIndexEndOfComponentList() + 1;
-        int indexEndBody;
 
+        String body = leseBodyAus(fileToTest.getFileContent(), indexStartBody);
+        if (body != null) {
+            recordToTest.setRecordBody(body);
+        }
+    }
+
+    /**
+     * Gibt den extrahierten Body eines Strings zurück, der einen Body enthält (Klasse, Methode, Konstruktor)
+     *
+     * @param stringMitBody  String, der einen Body enthält
+     * @param indexStartBody StartIndex
+     * @return Body des Strings
+     */
+    private String leseBodyAus(String stringMitBody, int indexStartBody) {
         //Set um die Klammern zu zählen, wenn keine Klammer mehr drinn ist, ist Record zuende
         ArrayList<Character> brackets = new ArrayList<>();
 
-        if (fileToTest.getFileContent().charAt(indexStartBody) == '{') {
-            for (int i = indexStartBody; i < fileToTest.getFileContent().length(); i++) {
-                if (fileToTest.getFileContent().charAt(i) == '{') {
+        int indexAnfang = 0;
+        for (int j = indexStartBody; j < stringMitBody.length(); j++) {
+            if (stringMitBody.charAt(j) == '{') {
+                //Setze Anfangsindex und breche Schleife ab
+                indexAnfang = j;
+                break;
+            }
+        }
+
+        //Lese Body aus
+        if (stringMitBody.charAt(indexAnfang) == '{') { //old: indexStartBody
+            for (int i = indexStartBody; i < stringMitBody.length(); i++) {
+                if (stringMitBody.charAt(i) == '{') {
                     //speichere Klammer in Liste
-                    brackets.add(fileToTest.getFileContent().charAt(i));
+                    brackets.add(stringMitBody.charAt(i));
                 }
-                if (fileToTest.getFileContent().charAt(i) == '}') {
+                if (stringMitBody.charAt(i) == '}') {
                     if (!brackets.isEmpty()) {
                         //wenn noch mehrere Klammern vorhanden sind -> entferne diese aus Liste
                         if (brackets.size() != 1) {
                             brackets.remove(0);
                         } else {
                             //letzte '}'-Klammer wurde gelesen (i+1 da sonst letzte '}'-Klammer fehlt)
-                            indexEndBody = i + 1;
+                            int indexEndBody = i + 1;
 
-                            //extrahiere Body des Records
-                            String body = fileToTest.getFileContent().substring(indexStartBody, indexEndBody);
-                            recordToTest.setRecordBody(body);
-                            return;
+                            //extrahiere Body des stringMitBody
+                            return stringMitBody.substring(indexStartBody, indexEndBody);
                         }
                     }
                 }
             }
         }
+        return null;
     }
 
     /**
      * Gibt Informationen zum recordToTest auf der Konsole aus: Name,
      * überschrieben Methoden oder Konstruktoren
+     *
      * @param recordToTest recordToTest
      */
-    private void gebeRecordInformationenAufKonsole(RecordToTest recordToTest){
+    private void gebeRecordInformationenAufKonsole(RecordToTest recordToTest) {
         //Ausgabe des Namens auf Konsole
         System.out.println("Name des Records: " + recordToTest.getName());
 
         //Ausgabe überschriebenen Methoden und Konstruktoren auf der Konsole
-        if(recordToTest.getListOverriddenMethods() != null && !recordToTest.getListOverriddenMethods().isEmpty()){
+        if (recordToTest.getListOverriddenMethods() != null && !recordToTest.getListOverriddenMethods().isEmpty()) {
             System.out.println("Gefundene überschriebene Methoden und Konstruktoren:");
             for (String overriddenMethod : recordToTest.getListOverriddenMethods()) {
                 if (overriddenMethod.contains(recordToTest.getName())) {
@@ -155,7 +198,7 @@ public class RecordExtractor {
      * Speichert die Komponenten des Records in einer Hashmap ab, um zu erkennen, ob es sich nur um
      * Integer-Werte handelt. Speichert Anzahl der Komponenten ab.
      *
-     * @param recordToTest RecordToTest
+     * @param recordToTest ToTest.RecordToTest
      */
     private void speichereKomponenten(RecordToTest recordToTest) {
         for (int i = recordToTest.getIndexEntryPointRecordAfterMatch(); i < fileToTest.getFileContent().length(); i++) {
@@ -253,7 +296,7 @@ public class RecordExtractor {
             }
         }
 
-        //Speichere Listen an RecordToTest ab
+        //Speichere Listen an ToTest.RecordToTest ab
         recordToTest.setListFoundObjects(listFoundObjects);
         recordToTest.setListFoundDataTypes(listFoundDataTypes);
 
@@ -278,36 +321,35 @@ public class RecordExtractor {
         //Gebe Error oder Warnung heraus
         if (!listFoundDataTypes.isEmpty() && listFoundObjects.isEmpty()) {
             if (listFoundDataTypes.size() == 1) {
-                System.err.println("Error: Komponente mit Nicht-Integer-Wert gefunden:\n" + listFoundDataTypes.get(0) + "\nTest-Tool wird beendet.");
+                System.out.println("Error: Komponente mit Nicht-Integer-Wert gefunden:\n" + listFoundDataTypes.get(0) + "\nTest-Tool wird beendet.");
             } else {
-                System.err.println("Error: Komponenten mit Nicht-Integer-Wert gefunden: ");
+                System.out.println("Error: Komponenten mit Nicht-Integer-Wert gefunden: ");
                 for (String foundTypes : listFoundDataTypes) {
-                    System.err.println(foundTypes);
+                    System.out.println(foundTypes);
                 }
-                //System.err.println("Test-Tool wird beendet.");
             }
 
         } else if (!listFoundObjects.isEmpty() && listFoundDataTypes.isEmpty()) {
             if (listFoundObjects.size() == 1) {
-                System.err.println("Warnung: Komponente mit Objekt gefunden:\n" + listFoundObjects.get(0) + "\nHinweis: Objekte können weiterhin verändert werden!\nTest-Tool wird beendet.");
+                System.out.println("Warnung: Komponente mit Objekt gefunden:\n" + listFoundObjects.get(0) + "\nHinweis: Objekte können weiterhin verändert werden!\nTest-Tool wird beendet.");
             } else {
-                System.err.println("Warnung: Komponente mit Objekt gefunden: ");
+                System.out.println("Warnung: Komponente mit Objekt gefunden: ");
                 for (String foundObjects : listFoundObjects) {
-                    System.err.println(foundObjects);
+                    System.out.println(foundObjects);
                 }
-                System.err.println("Hinweis: Objekte können weiterhin verändert werden!"); //Test-Tool wird beendet.
+                System.out.println("Hinweis: Objekte können weiterhin verändert werden!"); //Test-Tool wird beendet.
             }
 
         } else if (!listFoundDataTypes.isEmpty()) { //old: && !listFoundObjects.isEmpty()
             //Warnung, wenn Komponente ein Objekt ist -> Objekte können weiterhin verändert werden
-            System.err.println("Warnung: Komponente(n) mit Nicht-Integer-Wert(en) gefunden: ");
+            System.out.println("Warnung: Komponente(n) mit Nicht-Integer-Wert(en) gefunden: ");
             for (String foundTypes : listFoundDataTypes) {
-                System.err.println(foundTypes);
+                System.out.println(foundTypes);
             }
             for (String foundObjects : listFoundObjects) {
-                System.err.println(foundObjects);
+                System.out.println(foundObjects);
             }
-            System.err.println("Hinweis: Objekte können weiterhin verändert werden!"); //Test-Tool wird beendet.
+            System.out.println("Hinweis: Objekte können weiterhin verändert werden!"); //Test-Tool wird beendet.
         }
     }
 
@@ -342,51 +384,137 @@ public class RecordExtractor {
      * @return true, wenn Konstruktor/Methode überschrieben wurde
      */
     private boolean recordUeberschreibtMethodenOderKonstruktor(RecordToTest recordToTest) {
-        //Liste mit regulären Ausdrücken zum Durchsuchen des Records
-        List<Pattern> methodenPatterns = new ArrayList<>();
+        //Liste mit regulären Ausdrücken zum Durchsuchen des Records nach überschriebenen automatisch generierten Methoden
+        List<Pattern> ueberschriebeneMethodenPatterns = erstellePatternListeUeberschriebeneMethoden(recordToTest);
 
-        //Reguläre Ausdrücke zum Durchsuchen des Records
+        //Liste mit regulären Ausdrücken zum Durchsuchen des Records nach allen anderen deklarierten Methoden
+        List<Pattern> sonstigeMethodenPatterns = erstellePatternListeSonstigeMethoden();
+
+        //Listen für gefundene Matches
+        ArrayList<String> results = new ArrayList<>();
+        ArrayList<MethodToTest> listAllDeclaredMethods = new ArrayList<>();
+
+        //Durchsuche kompletten Record nach Patterns für überschriebene Methoden und Konstruktoren
+        for (Pattern p : ueberschriebeneMethodenPatterns) {
+            Matcher m = p.matcher(recordToTest.getRecordFull());
+
+            //Bei erstem Match gebe true zurück
+            if (m.find()) {
+                int indexStart = m.start();
+                int indexEnd = m.end();
+                String output = m.group(0);
+                MethodToTest methodToTest = new MethodToTest();
+
+                //Formatiere output for dem Speichern
+                if (m.group(0).contains("{")) {
+                    String formattedOutput = output.replace("{", "");
+                    results.add(formattedOutput);
+
+                    methodToTest.setName(formattedOutput);
+                    methodToTest.setStartIndex(indexStart);
+                    methodToTest.setEndIndex(indexEnd);
+
+                    listAllDeclaredMethods.add(methodToTest);
+                } else if (m.group(0).contains("(")) {
+                    String formattedOutput = output.replace("(", "");
+                    results.add(formattedOutput);
+
+                    methodToTest.setName(formattedOutput);
+                    methodToTest.setStartIndex(indexStart);
+                    methodToTest.setEndIndex(indexEnd);
+
+                    listAllDeclaredMethods.add(methodToTest);
+                }
+            }
+        }
+
+        //Durchsuche kompletten Record nach Patterns für sonstige Methoden
+        for (Pattern p : sonstigeMethodenPatterns) {
+            Matcher m = p.matcher(recordToTest.getRecordFull());
+
+            //while hier, da es mehrere weitere Methoden geben kann
+            while (m.find()) {
+                int indexStart = m.start();
+                int indexEnd = m.end();
+                String output = m.group(0);
+                MethodToTest methodToTest = new MethodToTest();
+
+                //Formatiere output for dem Speichern
+                if (m.group(0).contains("{")) {
+                    String formattedOutput = output.replace("{", "");
+
+                    methodToTest.setName(formattedOutput);
+                    methodToTest.setStartIndex(indexStart);
+                    methodToTest.setEndIndex(indexEnd);
+
+                    //verhindere Doppelungen
+                    if (!listAllDeclaredMethods.contains(methodToTest)) {
+                        listAllDeclaredMethods.add(methodToTest);
+                    }
+                } else if (m.group(0).contains("(")) {
+                    String formattedOutput = output.replace("(", "");
+
+                    methodToTest.setName(formattedOutput);
+                    methodToTest.setStartIndex(indexStart);
+                    methodToTest.setEndIndex(indexEnd);
+
+                    if (!listAllDeclaredMethods.contains(methodToTest)) {
+                        listAllDeclaredMethods.add(methodToTest);
+                    }
+                }
+            }
+        }
+
+        //Printe gefundene Ergebnisse oder Error wenn nicht gefunden wurde und speichere Ergebnisse ab
+        if (!results.isEmpty()) {
+            //Speichere überschriebene Methoden und Konstruktoren in recordInfo ab
+            speichereUeberschriebeneMethoden(results, recordToTest);
+
+            //Speichere alle gefundenen Methoden in listAllDeclaredMethods im Record ab
+            recordToTest.setListAllDeclaredMethods(listAllDeclaredMethods);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private List<Pattern> erstellePatternListeSonstigeMethoden() {
+        List<Pattern> sonstigeMethodenPatterns = new ArrayList<>();
+
+        //Reguläre Ausdrücke zum Finden von allen anderen deklarierten Methoden im Record
+        String otherPublicRegex = "(public ((?!record)\\w)+ (\\w)+(\\s)*\\()";
+        String otherPrivateRegex = "(private ((?!record)\\w)+ (\\w)+(\\s)*\\()";
+        String otherProtectedRegex = "(protected ((?!record)\\w)+ (\\w)+(\\s)*\\()";
+        String otherPackagePrivateRegex = "( {2}((?!record)\\w)+ (\\w)+(\\s)*\\()";
+
+        //Füge alle regulären Ausdrücke zum Durchsuchen des Records nach allen anderen deklarierten Methoden zur Liste hinzu
+        Collections.addAll(sonstigeMethodenPatterns, Pattern.compile(otherPublicRegex), Pattern.compile(otherPrivateRegex),
+                Pattern.compile(otherProtectedRegex), Pattern.compile(otherPackagePrivateRegex));
+
+        return sonstigeMethodenPatterns;
+    }
+
+    private List<Pattern> erstellePatternListeUeberschriebeneMethoden(RecordToTest recordToTest) {
+        List<Pattern> ueberschriebeneMethodenPatterns = new ArrayList<>();
+
+        //Reguläre Ausdrücke zum Durchsuchen des Records nach überschriebenen automatisch generierten Methoden
         String constructorRegex = "(public " + recordToTest.getName() + "(\\s)*\\{)";
         String equalsRegex = "(public boolean equals(\\s)*\\()";
         String toStringRegex = "(public String toString(\\s)*\\()";
         String hashCodeRegex = "(public int hashCode(\\s)*\\()";
 
-        //Füge alle regulären Ausdrücke zur Liste hinzu
-        Collections.addAll(methodenPatterns, Pattern.compile(constructorRegex), Pattern.compile(equalsRegex),
+        //Füge alle regulären Ausdrücke zum Durchsuchen des Records nach überschriebenen automatisch generierten Methoden zur Liste hinzu
+        Collections.addAll(ueberschriebeneMethodenPatterns, Pattern.compile(constructorRegex), Pattern.compile(equalsRegex),
                 Pattern.compile(toStringRegex), Pattern.compile(hashCodeRegex));
 
-        //Füge alle Akzessoren zur Liste hinzu
+        //Füge alle regulären Ausdrücke für überschriebene Akzessoren zur Liste hinzu
         for (Object key : recordToTest.getComponentMap().keySet()) {
             String accessorRegex = "(public int " + key.toString() + "(\\s)*\\()";
-            methodenPatterns.add(Pattern.compile(accessorRegex));
+            ueberschriebeneMethodenPatterns.add(Pattern.compile(accessorRegex));
         }
 
-        //Liste für gefundene Matches
-        ArrayList<String> results = new ArrayList<>();
-
-        //Durchsuche kompletten Record nach Patterns
-        for (Pattern p : methodenPatterns) {
-            Matcher m = p.matcher(recordToTest.getRecordFull());
-            //Bei erstem Match gebe true zurück
-            if (m.find()) {
-                String output = m.group(0);
-                //Formatiere output for dem Speichern
-                if (m.group(0).contains("{")) {
-                    results.add(output.replace("{", ""));
-                } else if (m.group(0).contains("(")) {
-                    results.add(output.replace("(", ""));
-                }
-            }
-        }
-
-        //Printe gefundene Ergebnisse oder Error wenn nicht gefunden wurde
-        if (!results.isEmpty()) {
-            //Speichere überschriebene Methoden und Konstruktoren in recordInfo ab
-            speichereUeberschriebeneMethoden(results, recordToTest);
-            return true;
-        } else {
-            return false;
-        }
+        return ueberschriebeneMethodenPatterns;
     }
 
     /**

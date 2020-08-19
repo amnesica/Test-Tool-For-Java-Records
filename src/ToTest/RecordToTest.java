@@ -1,3 +1,5 @@
+package ToTest;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -30,13 +32,17 @@ public class RecordToTest {
     //Komponenten des Records
     private LinkedHashMap<Object, Object> componentMap;
     private ArrayList<String> listFoundObjects;
-    ArrayList<String> listFoundDataTypes;
+    private ArrayList<String> listFoundDataTypes;
 
     //Anzahl der Komponenten
     private int amountComponents;
 
     //Ueberschriebene Methoden des Records
     private ArrayList<String> listOverriddenMethods;
+
+    //Liste mit allen Methoden im Body des zu testenden Records mit Start- und
+    // Endindex als Parameter
+    private ArrayList<MethodToTest> listAllDeclaredMethods;
 
     public String getName() {
         return name;
@@ -110,12 +116,12 @@ public class RecordToTest {
         this.listFoundDataTypes = listFoundDataTypes;
     }
 
-    public void setRecordShouldBeTested(boolean recordShouldBeTested) {
-        this.recordShouldBeTested = recordShouldBeTested;
-    }
-
     public boolean isRecordShouldBeTested() {
         return recordShouldBeTested;
+    }
+
+    public void setRecordShouldBeTested(boolean recordShouldBeTested) {
+        this.recordShouldBeTested = recordShouldBeTested;
     }
 
     public int getIndexEntryPointRecordBeforeMatch() {
@@ -140,5 +146,13 @@ public class RecordToTest {
 
     public void setIndexEndOfComponentList(int indexEndOfComponentList) {
         this.indexEndOfComponentList = indexEndOfComponentList;
+    }
+
+    public ArrayList<MethodToTest> getListAllDeclaredMethods() {
+        return listAllDeclaredMethods;
+    }
+
+    public void setListAllDeclaredMethods(ArrayList<MethodToTest> listAllDeclaredMethods) {
+        this.listAllDeclaredMethods = listAllDeclaredMethods;
     }
 }

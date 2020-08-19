@@ -1,3 +1,6 @@
+import ToTest.FileToTest;
+import ToTest.RecordToTest;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
@@ -5,14 +8,11 @@ import java.nio.file.Paths;
 
 /**
  * Einstiegspunkt des Test-Tools
- *
- * Aufruf:          java Main <PfadZurDatei> --enable-preview -source 14
+ * <p>
  * Kompilieren:     javac --enable-preview -source 14 *.java
- *
- * Beispiel-Aufruf: java Main /home/amnesica/Dokumente/Universität_Hamburg/Bachelorarbeit/Test-Tool/DebugRecords.java --enable-preview -source 14
- *                  java --enable-preview Main DebugRecords.java
- *
- * Hinweis: Aufruf in IDE mit '/home/amnesica/Schreibtisch/DebugRecords.java' als Program Arguments
+ * Aufruf:          java --enable-preview Main <PfadZurDatei>
+ * <p>
+ * Hinweis: Aufruf in IDE mit <PfadZurDatei> als Program Arguments
  */
 public class Main {
 
@@ -30,7 +30,7 @@ public class Main {
             starteTestTool(args[0]);
 
         } else {
-            System.err.println("Error: Bitte geben sie eine gültige Java-Datei als Argument an\nTest-Tool wird beendet.");
+            System.out.println("Error: Bitte geben sie eine gültige Java-Datei als Argument an\nTest-Tool wird beendet.");
         }
     }
 
@@ -56,6 +56,7 @@ public class Main {
 
             //prüfe, ob Test durchgeführt werden soll und starte Generierung der Testfälle
             if (new RecordExtractor().pruefeObTestfaelleGeneriertWerdenSollen(fileToTest)) {
+
                 //generiere Testfaelle für mehrere Records
                 for (RecordToTest recordToTest : fileToTest.getListRecords()) {
                     if (recordToTest.isRecordShouldBeTested()) {
@@ -67,7 +68,7 @@ public class Main {
                         //Führe Test auf Leistungseffizienz durch
                         testGenerator.fuehreLeistungseffizienztestDurch(recordToTest);
 
-                        //TODO Test auf Wartbarkeit
+                        //Führe Test auf Wartbarkeit durch
                         testGenerator.fuehreTestAufWartbarkeitDurch(recordToTest);
                     }
                 }

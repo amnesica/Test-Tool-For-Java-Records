@@ -1,4 +1,8 @@
-import javax.tools.*;
+import ToTest.MethodToTest;
+import ToTest.RecordToTest;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -30,6 +34,9 @@ public class TestGenerator {
     //Name des TestRecords für den NegativTest
     private String nameNegativTestRecord;
 
+    //Classloader für Reflection mit dynamisch erstellten Klassen
+    private URLClassLoader urlClassLoader;
+
     /**
      * Generiert die Testfaelle für den vorliegenden Record in recordInfo
      */
@@ -57,7 +64,7 @@ public class TestGenerator {
             System.out.println("Pfad der generierten Datei: " + pathForNewTestFile);
             System.out.println("--------------------------------------------------------");
         } catch (IOException e) {
-            System.err.println("Error: Beim Erstellen der Testdatei gab es einen Fehler.\nTest-Tool wird beendet.");
+            System.out.println("Error: Beim Erstellen der Testdatei gab es einen Fehler.\nTest-Tool wird beendet.");
             e.printStackTrace();
         }
     }
@@ -73,7 +80,12 @@ public class TestGenerator {
         //generiere Liste mit Testwerten für Testrecords
         ArrayList<Integer> listTestWerte = new ArrayList<>();
         Collections.addAll(listTestWerte, 1, Integer.MAX_VALUE, Integer.MIN_VALUE, -1, 0, Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1);
+
         //TODO Möglichkeit einbauen, benutzerdefinierte Grenzwerte einzufügen (und diese der Liste listTestWerte hinzufügen)
+        ArrayList<Integer> listCustomValues = getBenutzerdefiniertenGrenzwerte(recordToTest);
+        if(listCustomValues != null && !listCustomValues.isEmpty()){
+            listTestWerte.addAll(listCustomValues);
+        }
 
         //bestimme Anzahl zu erstellender Testrecords
         int anzahlZuErstellenderTestrecords = listTestWerte.size() / recordToTest.getAmountComponents();
@@ -114,6 +126,63 @@ public class TestGenerator {
 
             listTestRecordsPositiv.add(testRecord);
         }
+    }
+
+    /**
+     * Fragt auf der Kommandozeile nach benutzerdefinierten Werten und fügt diese der zu testenden Liste hinzu.
+     * @param recordToTest
+     * @return
+     */
+    private ArrayList<Integer> getBenutzerdefiniertenGrenzwerte(RecordToTest recordToTest) {
+        ArrayList<Integer> listCustomValues = new ArrayList<>();
+        Scanner scanner = new Scanner (System.in);
+
+        String decision = null;
+        boolean repeat = true;
+        while(repeat)
+        {
+            System.out.println("Wollen Sie für den Record " + recordToTest.getName() + " benutzerdefinierte Grenzwerte hinzufügen? (j/n)");
+            decision = scanner.nextLine();
+
+            switch(decision)
+            {
+                case "j":
+                case "n":
+                    repeat = false;
+                    break;
+                default:
+                    System.out.println("Bitte geben Sie nur 'j' oder 'n' an.");
+                    break;
+            }
+        }
+
+        if(decision.equals("j")){
+            System.out.println("Geben Sie benutzerdefinierte Grenzwerte ein mit einem \"Enter\" getrennt ein. Wenn sie fertig sind schreiben Sie \"fertig\"!");
+
+            boolean repeat2 = true;
+            while(repeat2){
+                String stringCustomValue = scanner.nextLine();
+                if(!stringCustomValue.equals("fertig")){
+                    try{
+                        //füge Wert der Liste hinzu
+                        int intCustomValue = Integer.parseInt(stringCustomValue);
+                        listCustomValues.add(intCustomValue);
+                    }catch(NumberFormatException e){
+                        System.out.println("Bitte geben Sie nur Integer-Werte ein! Versuchen Sie es nochmal:");
+                    }
+                }else{
+                    repeat2 = false;
+                }
+            }
+
+            System.out.println("Fertig registriert!");
+            System.out.println("Inhalt der Liste");
+            for(Integer integer : listCustomValues){
+                System.out.println(integer);
+            }
+        }
+
+        return listCustomValues;
     }
 
     /**
@@ -535,7 +604,7 @@ public class TestGenerator {
     /**
      * Führt den Leistungseffizienztest mit dem recordToTest durch. Test wird nicht
      * durchgeführt, wenn Record mehr als 10 Komponenten enthält
-     * HINWEIS: "-Djava.system.class.loader=DynamicClassLoader" als VM Options in Edit Configuration setzen! (oder anscheinend auch nicht?!)
+     * HINWEIS: "-Djava.system.class.loader=DynamicClassLoader" als VM Options in Edit Configuration setzen! (TODO oder anscheinend auch nicht?!)
      *
      * @param recordToTest recordToTest
      */
@@ -556,7 +625,7 @@ public class TestGenerator {
             //Schreibe String mit Record in temporäre Datei
             File parent = new File(System.getProperty("user.dir"));
             File sourceFile = new File(parent, className + ".java");
-            sourceFile.deleteOnExit();
+            //TODO sourceFile.deleteOnExit();
             FileWriter writer = new FileWriter(sourceFile);
             writer.write(sourceCode);
             writer.close();
@@ -567,7 +636,7 @@ public class TestGenerator {
             javaCompiler.run(null, null, null, "--enable-preview", "--release", "14", sourceFile.toString());
 
             //Füge Klassen dynamisch zu Custom Classloader hinzu
-            URLClassLoader urlClassLoader = URLClassLoader.newInstance(new URL[]{parentDir.toURI().toURL()});
+            urlClassLoader = URLClassLoader.newInstance(new URL[]{parentDir.toURI().toURL()});
 
             //Initialisiere Zeitmessung
             long startTime = 0;
@@ -631,7 +700,7 @@ public class TestGenerator {
                             int.class, int.class, int.class, int.class, int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
                     endTime = System.nanoTime();
                 }
-                default -> System.out.println("Hier ist etwas schiefgegangen!");
+                default -> System.out.println("Leistungseffizienztest: Hier ist etwas schiefgegangen!");
             }
 
             //berechne Zeit
@@ -641,17 +710,17 @@ public class TestGenerator {
 
             //TODO > oder >=
             if (duration > mapGrenzwerte.get(recordToTest.getAmountComponents())) {
-                System.err.println("Ergebnis: Der Record " + recordToTest.getName() + " ist über dem festgelegten Grenzwert von "
-                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " und wurde als ineffizient eingestuft.");
+                System.out.println("Ergebnis: Der Record " + recordToTest.getName() + " ist über dem festgelegten Grenzwert von "
+                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " Nanosekunden und wurde als ineffizient eingestuft.");
             } else {
                 System.out.println("Ergebnis: Der Record " + recordToTest.getName() + " ist nicht über dem festgelegten Grenzwert von "
-                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " und wurde als effizient eingestuft.");
+                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " Nanosekunden und wurde als effizient eingestuft.");
             }
 
             System.out.println("--------------------------------------------------------");
         } else {
             //Zuviele Komponenten
-            System.err.println("Error: Der Leistungseffizienztest wird nur bis zu 10 Komponenten unterstützt.\n" +
+            System.out.println("Error: Der Leistungseffizienztest wird nur bis zu 10 Komponenten unterstützt.\n" +
                     "Der Record " + recordToTest.getName() + " weißt " + recordToTest.getAmountComponents() + " Komponenten auf.");
         }
     }
@@ -675,7 +744,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt die grundlegende Struktur der Testdatei mit imports für JUnit.
+     * Erstellt die Klasse mit dem Testrecords als String und gibt diesen zurück
      *
      * @param nameTestKlasse Name der generierten Testdatei
      */
@@ -694,23 +763,87 @@ public class TestGenerator {
 
     /**
      * Führt den Test auf Wartbarkeit beim recordToTest durch.
-     * @param recordToTest RecordToTest
+     *
+     * @param recordToTest ToTest.RecordToTest
      */
-    public void fuehreTestAufWartbarkeitDurch(RecordToTest recordToTest) {
+    void fuehreTestAufWartbarkeitDurch(RecordToTest recordToTest) throws ClassNotFoundException {
         System.out.println("Test auf Wartbarkeit (" + recordToTest.getName() + "):");
 
+        //Long Function
         pruefeAufLongFunction(recordToTest);
+
+        //Large Class
+        pruefeAufLargeClass(recordToTest);
+
+        //Long Parameter List
+        pruefeAufLongParameterList(recordToTest);
+
+        System.out.println("--------------------------------------------------------");
     }
 
     /**
-     * Prüft, ob der Record recordToTest eine Long Function enthält.
-     * Wenn ja, wird das Ergebnis auf der Konsole ausgegeben.
+     * Prüft, ob der Record recordToTest eine zu große Klasse ist
+     *
+     * @param recordToTest RecordToTest
+     * @throws ClassNotFoundException ClassNotFoundException
+     */
+    private void pruefeAufLargeClass(RecordToTest recordToTest) throws ClassNotFoundException {
+        //Prüfe Anzahl der Methoden
+        if (recordToTest.getListAllDeclaredMethods().size() > 10) {
+            System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
+                    " wurden sehr viele Methoden erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+        }
+
+        //Prüfe Anzahl der Felder
+        if (getAnzahlDeklarierterFelder(recordToTest.getName() + "PerformanceTest" + "$" + recordToTest.getName()) > 10) {
+            System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
+                    " wurden sehr viele Felder erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+        }
+
+        //Prüfe LOC des Records gesamt
+        if (recordToTest.getRecordFull().lines().count() > 160) {
+            System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
+                    " wurden sehr viele LOC erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+        }
+    }
+
+    /**
+     * Prüft, ob der Record recordToTest eine zu lange Methode enthält
+     *
      * @param recordToTest RecordToTest
      */
     private void pruefeAufLongFunction(RecordToTest recordToTest) {
-        //TODO Test nicht ausreichend für long function
-        if(recordToTest.getRecordFull().lines().count() > 15){
-            System.err.println("Hinweis: Beim Record " + recordToTest.getName() + " wurde eine zu lange Methode gefunden, welche die Wartbarkeit verschlechtern könnte.");
+        for (MethodToTest methodToTest : recordToTest.getListAllDeclaredMethods()) {
+            if (methodToTest.getFullMethod().lines().count() > 15) {
+                System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
+                        " wurde eine zu lange Methode (Long Function) \"" + methodToTest.getName() + "\" gefunden, welche die Wartbarkeit verschlechtern könnte.");
+            }
+        }
+    }
+
+    /**
+     * Gibt die Anzahl der Felder der Klasse exklusive der Felder, welche durch die Komponenten zur Laufzeit
+     * erzeugt werden mit dem angegebenen className zurück.
+     * Aufruf: getAmountOfDeclaredFields(recordToTest.getName() + "PerformanceTest" + "$" + recordToTest.getName())
+     *
+     * @param className className
+     * @return amount of declared fields as int
+     * @throws ClassNotFoundException ClassNotFoundException
+     */
+    private int getAnzahlDeklarierterFelder(String className) throws ClassNotFoundException {
+        return urlClassLoader.loadClass(className).getDeclaredFields().length - recordToTest.getAmountComponents();
+    }
+
+    /**
+     * Prüft, ob der Record recordToTest eine Long Parameter List enthält.
+     * Wenn ja, wird das Ergebnis auf der Konsole ausgegeben.
+     *
+     * @param recordToTest ToTest.RecordToTest
+     */
+    private void pruefeAufLongParameterList(RecordToTest recordToTest) {
+        if (recordToTest.getAmountComponents() > 5) {
+            System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
+                    " wurde eine zu lange Parameterliste (Long Parameter List) gefunden, welche die Wartbarkeit verschlechtern könnte.");
         }
     }
 }
