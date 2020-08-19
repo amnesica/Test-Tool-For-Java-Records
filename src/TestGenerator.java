@@ -81,9 +81,9 @@ public class TestGenerator {
         ArrayList<Integer> listTestWerte = new ArrayList<>();
         Collections.addAll(listTestWerte, 1, Integer.MAX_VALUE, Integer.MIN_VALUE, -1, 0, Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1);
 
-        //TODO Möglichkeit einbauen, benutzerdefinierte Grenzwerte einzufügen (und diese der Liste listTestWerte hinzufügen)
+        //Möglichkeit einbauen, benutzerdefinierte Grenzwerte einzufügen (und diese der Liste listTestWerte hinzufügen)
         ArrayList<Integer> listCustomValues = getBenutzerdefiniertenGrenzwerte(recordToTest);
-        if(listCustomValues != null && !listCustomValues.isEmpty()){
+        if(!listCustomValues.isEmpty()){
             listTestWerte.addAll(listCustomValues);
         }
 
@@ -130,8 +130,8 @@ public class TestGenerator {
 
     /**
      * Fragt auf der Kommandozeile nach benutzerdefinierten Werten und fügt diese der zu testenden Liste hinzu.
-     * @param recordToTest
-     * @return
+     * @param recordToTest RecordToTest
+     * @return ArrayList<Integer> mit den hinzugefügten Werten
      */
     private ArrayList<Integer> getBenutzerdefiniertenGrenzwerte(RecordToTest recordToTest) {
         ArrayList<Integer> listCustomValues = new ArrayList<>();
@@ -144,15 +144,9 @@ public class TestGenerator {
             System.out.println("Wollen Sie für den Record " + recordToTest.getName() + " benutzerdefinierte Grenzwerte hinzufügen? (j/n)");
             decision = scanner.nextLine();
 
-            switch(decision)
-            {
-                case "j":
-                case "n":
-                    repeat = false;
-                    break;
-                default:
-                    System.out.println("Bitte geben Sie nur 'j' oder 'n' an.");
-                    break;
+            switch (decision) {
+                case "j", "n" -> repeat = false;
+                default -> System.out.println("Bitte geben Sie nur 'j' oder 'n' an.");
             }
         }
 
@@ -173,12 +167,6 @@ public class TestGenerator {
                 }else{
                     repeat2 = false;
                 }
-            }
-
-            System.out.println("Fertig registriert!");
-            System.out.println("Inhalt der Liste");
-            for(Integer integer : listCustomValues){
-                System.out.println(integer);
             }
         }
 
@@ -625,7 +613,6 @@ public class TestGenerator {
             //Schreibe String mit Record in temporäre Datei
             File parent = new File(System.getProperty("user.dir"));
             File sourceFile = new File(parent, className + ".java");
-            //TODO sourceFile.deleteOnExit();
             FileWriter writer = new FileWriter(sourceFile);
             writer.write(sourceCode);
             writer.close();
