@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /**
- * Klasse für einen Record, der vom Programm aus der Datei herausgelesen wurde und getestet werden soll.
+ * Klasse, die einen Record repräsentiert, der vom Programm aus der Eingabedatei herausgelesen wurde und
+ * getestet werden soll
  */
 public class RecordToTest {
+
     //Name des Records
     private String name;
 
@@ -40,8 +42,7 @@ public class RecordToTest {
     //Ueberschriebene Methoden des Records
     private ArrayList<String> listOverriddenMethods;
 
-    //Liste mit allen Methoden im Body des zu testenden Records mit Start- und
-    // Endindex als Parameter
+    //Liste mit allen Methoden im Body des zu testenden Records
     private ArrayList<MethodToTest> listAllDeclaredMethods;
 
     public String getName() {

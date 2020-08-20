@@ -6,13 +6,18 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Klasse, die Informationen über die Records in der Datei FileToTest extrahiert und prüft, ob Testfaelle generiert
+ * werden sollen
+ */
 public class RecordExtractor {
 
     //Datei mit zu testenden Records
     private FileToTest fileToTest;
 
     /**
-     * Überprüft, ob Testfälle erstellt werden sollen
+     * Überprüft, ob Testfälle erstellt werden sollen. Die Methode sucht nach Records in der Datei fileToTest und
+     * extrahiert Basis-Informationen über die gefundenen Records
      *
      * @return true, wenn Testfälle generiert werden sollen
      */
@@ -61,16 +66,20 @@ public class RecordExtractor {
             }
         } else {
             //Es wurde gar kein Record gefunden
-            System.out.println("Error: Es wurde kein Record in der angegebenen Datei gefunden." + "\nTest-Tool wird beendet.");
+            System.out.println("Error: Es wurde kein Record in der angegebenen Datei gefunden." +
+                    "\nTest-Tool wird beendet.");
             return false;
         }
 
-
+        //Gibt Rückmeldung über die gefundenen Records auf der Konsole
         if (fileToTest.getListRecords() != null && !fileToTest.getListRecords().isEmpty()) {
             for (RecordToTest recordToTest : fileToTest.getListRecords()) {
                 if (!recordToTest.isRecordShouldBeTested()) {
-                    if (recordToTest.getListFoundObjects().isEmpty() && recordToTest.getListFoundDataTypes().isEmpty()) {
-                        System.out.println("Hinweis: Der Record " + recordToTest.getName() + " überschreibt keine automatisch generierten Methoden und muss daher nicht getestet werden.");
+                    if (recordToTest.getListFoundObjects().isEmpty() &&
+                            recordToTest.getListFoundDataTypes().isEmpty()) {
+                        System.out.println("Hinweis: Der Record " + recordToTest.getName() +
+                                " überschreibt keine automatisch generierten Methoden und muss " +
+                                "daher nicht getestet werden.");
                     } else {
                         gebeFehlermeldungWennRecordNichtNurIntegerEnthaelt(recordToTest);
                     }
@@ -80,7 +89,8 @@ public class RecordExtractor {
             }
             return true;
         } else {
-            System.out.println("Error: Es wurde kein Record in der angegebenen Datei gefunden." + "\nTest-Tool wird beendet.");
+            System.out.println("Error: Es wurde kein Record in der angegebenen Datei gefunden." +
+                    "\nTest-Tool wird beendet.");
             return false;
         }
     }
@@ -100,7 +110,9 @@ public class RecordExtractor {
     }
 
     /**
-     * Speichert den kompletten Record mit Header und Body als "RecordFull" in recordInfo ab
+     * Speichert den kompletten Record mit Header und Body als "RecordFull" in recordToTest ab
+     *
+     * @param recordToTest RecordToTest
      */
     private void speichereKomplettenRecord(RecordToTest recordToTest) {
         if (recordToTest.getRecordHeader() != null && recordToTest.getRecordBody() != null) {
@@ -109,7 +121,7 @@ public class RecordExtractor {
     }
 
     /**
-     * Speichert den Body des Records als "RecordBody" in recordInfo ab
+     * Speichert den Body des Records als "RecordBody" in recordToTest ab
      *
      * @param recordToTest recordToTest
      */
@@ -187,6 +199,7 @@ public class RecordExtractor {
                     //wenn Name des Records enthalten ist -> Konstruktor wurde überschrieben
                     System.out.println("Konstruktor: " + overriddenMethod);
                 } else {
+                    //sonst Methode
                     System.out.println("Methode: " + overriddenMethod);
                 }
             }
@@ -195,10 +208,10 @@ public class RecordExtractor {
     }
 
     /**
-     * Speichert die Komponenten des Records in einer Hashmap ab, um zu erkennen, ob es sich nur um
-     * Integer-Werte handelt. Speichert Anzahl der Komponenten ab.
+     * Speichert die Komponenten des Records in einer Hashmap ab, um später zu erkennen, ob es sich nur um
+     * Integer-Werte handelt. Speichert außerdem die Anzahl der Komponenten ab
      *
-     * @param recordToTest ToTest.RecordToTest
+     * @param recordToTest recordToTest
      */
     private void speichereKomponenten(RecordToTest recordToTest) {
         for (int i = recordToTest.getIndexEntryPointRecordAfterMatch(); i < fileToTest.getFileContent().length(); i++) {
@@ -208,12 +221,14 @@ public class RecordExtractor {
 
                 //extrahiere Record Header mit Name und Komponentenliste (+ 1, damit letzte ')'-Klammer noch mitkommt)
                 recordToTest.setRecordHeader(fileToTest.getFileContent().
-                        substring(recordToTest.getIndexEntryPointRecordBeforeMatch(), recordToTest.getIndexEndOfComponentList() + 1));
+                        substring(recordToTest.getIndexEntryPointRecordBeforeMatch(),
+                                recordToTest.getIndexEndOfComponentList() + 1));
                 recordToTest.setName(extrahiereRecordName(fileToTest.getFileContent(), recordToTest));
 
                 //speichere String-Komponenten-Liste in Arraylist
                 String componentsAsString = fileToTest.getFileContent().
-                        substring(recordToTest.getIndexEntryPointRecordAfterMatch(), recordToTest.getIndexEndOfComponentList());
+                        substring(recordToTest.getIndexEntryPointRecordAfterMatch(),
+                                recordToTest.getIndexEndOfComponentList());
                 ArrayList<String> listWords = extrahiereKomponentenInArrayList(componentsAsString);
 
                 //speichere einzelne Komponenten in Hashmap
@@ -252,21 +267,23 @@ public class RecordExtractor {
             String word = s.next();
             listWords.add(word.replace("(", ""));
         }
-        //last word is name of record
+
+        //letztes Wort ist Name des Records
         return listWords.get(listWords.size() - 1);
     }
 
     /**
-     * Überprüft, ob der Record nur Integer als Komponenten enthält. Wenn eine Komponente ein Object ist,
-     * wird eine Warnung herausgegeben, dass der Wert der Variable geändert werden könnte
+     * Überprüft, ob der Record nur Integer als Komponenten enthält
      *
      * @param componentMap HashMap mit Komponenten, wobei key=Bezeichner, value=type
+     * @param recordToTest RecordToTest
      * @return true, wenn Record nur Integer als Komponenten enthält
      */
     private boolean recordEnthaeltNurInteger(HashMap<Object, Object> componentMap, RecordToTest recordToTest) {
-        //prüfe, ob Record nur Integer-Werte enthält
+        //Liste um zu prüfen, ob Record nur Integer-Werte enthält
         ArrayList<String> dataTypes = new ArrayList<>();
-        Collections.addAll(dataTypes, "boolean", "char", "byte", "short", "long", "float", "double", "String");
+        Collections.addAll(dataTypes, "boolean", "char", "byte", "short",
+                "long", "float", "double", "String");
 
         ArrayList<String> listFoundKeysNotInt = new ArrayList<>();
         ArrayList<String> listFoundObjects = new ArrayList<>();
@@ -296,7 +313,7 @@ public class RecordExtractor {
             }
         }
 
-        //Speichere Listen an ToTest.RecordToTest ab
+        //Speichere Listen an recordToTest ab
         recordToTest.setListFoundObjects(listFoundObjects);
         recordToTest.setListFoundDataTypes(listFoundDataTypes);
 
@@ -307,7 +324,8 @@ public class RecordExtractor {
 
     /**
      * Gibt eine Fehlermeldung beruhend auf den Inhalten in den Listen listFoundObjects und listFoundDataTypes,
-     * als nach Nicht-Record Komponenten gesucht wurde
+     * als nach Nicht-Record Komponenten gesucht wurde aus. Wenn in der Parameterliste ein Objekt entdeckt wurde,
+     * wird ein Hinweis ausgegeben, dass Objekte weiterhin verändert werden können
      *
      * @param recordToTest recordToTest
      */
@@ -321,7 +339,7 @@ public class RecordExtractor {
         //Gebe Error oder Warnung heraus
         if (!listFoundDataTypes.isEmpty() && listFoundObjects.isEmpty()) {
             if (listFoundDataTypes.size() == 1) {
-                System.out.println("Error: Komponente mit Nicht-Integer-Wert gefunden:\n" + listFoundDataTypes.get(0) + "\nTest-Tool wird beendet.");
+                System.out.println("Error: Komponente mit Nicht-Integer-Wert gefunden:\n" + listFoundDataTypes.get(0));
             } else {
                 System.out.println("Error: Komponenten mit Nicht-Integer-Wert gefunden: ");
                 for (String foundTypes : listFoundDataTypes) {
@@ -331,13 +349,14 @@ public class RecordExtractor {
 
         } else if (!listFoundObjects.isEmpty() && listFoundDataTypes.isEmpty()) {
             if (listFoundObjects.size() == 1) {
-                System.out.println("Warnung: Komponente mit Objekt gefunden:\n" + listFoundObjects.get(0) + "\nHinweis: Objekte können weiterhin verändert werden!\nTest-Tool wird beendet.");
+                System.out.println("Warnung: Komponente mit Objekt gefunden:\n" + listFoundObjects.get(0) +
+                        "\nHinweis: Objekte können weiterhin verändert werden!");
             } else {
                 System.out.println("Warnung: Komponente mit Objekt gefunden: ");
                 for (String foundObjects : listFoundObjects) {
                     System.out.println(foundObjects);
                 }
-                System.out.println("Hinweis: Objekte können weiterhin verändert werden!"); //Test-Tool wird beendet.
+                System.out.println("Hinweis: Objekte können weiterhin verändert werden!");
             }
 
         } else if (!listFoundDataTypes.isEmpty()) { //old: && !listFoundObjects.isEmpty()
@@ -349,12 +368,13 @@ public class RecordExtractor {
             for (String foundObjects : listFoundObjects) {
                 System.out.println(foundObjects);
             }
-            System.out.println("Hinweis: Objekte können weiterhin verändert werden!"); //Test-Tool wird beendet.
+            System.out.println("Hinweis: Objekte können weiterhin verändert werden!");
         }
     }
 
     /**
-     * Extrahiert die Komponenten des Records in eine ArrayListe, wobei jedes Wort ein einzelnes Element der Liste ist
+     * Extrahiert die Komponenten des Records in eine ArrayListe, wobei jedes entdeckte Wort ein einzelnes
+     * Element der Liste ist
      *
      * @param componentsAsString Komponenten des Records als String
      * @return ArrayListe<String>, wobei jedes Wort ein einzelnes Element der Liste ist
@@ -379,12 +399,15 @@ public class RecordExtractor {
     }
 
     /**
-     * Überprüft, ob der Record eine automatisch generierte Methode oder den kanonischen Konstruktor überschreibt
+     * Überprüft, ob der Record eine automatisch generierte Methode oder den kanonischen Konstruktor überschreibt.
+     * Außerdem werden Informationen über die überschrieben Methoden und Konstruktoren sowie alle weiteren
+     * explizit deklarierten Methoden gesammelt
      *
      * @return true, wenn Konstruktor/Methode überschrieben wurde
      */
     private boolean recordUeberschreibtMethodenOderKonstruktor(RecordToTest recordToTest) {
-        //Liste mit regulären Ausdrücken zum Durchsuchen des Records nach überschriebenen automatisch generierten Methoden
+        //Liste mit regulären Ausdrücken zum Durchsuchen des Records nach überschriebenen automatisch
+        // generierten Methoden
         List<Pattern> ueberschriebeneMethodenPatterns = erstellePatternListeUeberschriebeneMethoden(recordToTest);
 
         //Liste mit regulären Ausdrücken zum Durchsuchen des Records nach allen anderen deklarierten Methoden
@@ -479,6 +502,11 @@ public class RecordExtractor {
         }
     }
 
+    /**
+     * Erstellt eine Liste mit Pattern, um alle sonstigen Methoden im Record erkennen zu können
+     *
+     * @return List<Pattern>
+     */
     private List<Pattern> erstellePatternListeSonstigeMethoden() {
         List<Pattern> sonstigeMethodenPatterns = new ArrayList<>();
 
@@ -488,13 +516,22 @@ public class RecordExtractor {
         String otherProtectedRegex = "(protected ((?!record)\\w)+ (\\w)+(\\s)*\\()";
         String otherPackagePrivateRegex = "( {2}((?!record)\\w)+ (\\w)+(\\s)*\\()";
 
-        //Füge alle regulären Ausdrücke zum Durchsuchen des Records nach allen anderen deklarierten Methoden zur Liste hinzu
-        Collections.addAll(sonstigeMethodenPatterns, Pattern.compile(otherPublicRegex), Pattern.compile(otherPrivateRegex),
-                Pattern.compile(otherProtectedRegex), Pattern.compile(otherPackagePrivateRegex));
+        //Füge alle regulären Ausdrücke zum Durchsuchen des Records nach allen anderen deklarierten Methoden
+        // zur Liste hinzu
+        Collections.addAll(sonstigeMethodenPatterns, Pattern.compile(otherPublicRegex),
+                Pattern.compile(otherPrivateRegex), Pattern.compile(otherProtectedRegex),
+                Pattern.compile(otherPackagePrivateRegex));
 
         return sonstigeMethodenPatterns;
     }
 
+    /**
+     * Erstellt eine Liste mit Pattern, um die überschriebenen automatisch generierten Methoden und Konstruktoren
+     * erkennen zu können
+     *
+     * @param recordToTest RecordToTest
+     * @return List<Pattern>
+     */
     private List<Pattern> erstellePatternListeUeberschriebeneMethoden(RecordToTest recordToTest) {
         List<Pattern> ueberschriebeneMethodenPatterns = new ArrayList<>();
 
@@ -504,9 +541,10 @@ public class RecordExtractor {
         String toStringRegex = "(public String toString(\\s)*\\()";
         String hashCodeRegex = "(public int hashCode(\\s)*\\()";
 
-        //Füge alle regulären Ausdrücke zum Durchsuchen des Records nach überschriebenen automatisch generierten Methoden zur Liste hinzu
-        Collections.addAll(ueberschriebeneMethodenPatterns, Pattern.compile(constructorRegex), Pattern.compile(equalsRegex),
-                Pattern.compile(toStringRegex), Pattern.compile(hashCodeRegex));
+        //Füge alle regulären Ausdrücke zum Durchsuchen des Records nach überschriebenen automatisch generierten
+        // Methoden zur Liste hinzu
+        Collections.addAll(ueberschriebeneMethodenPatterns, Pattern.compile(constructorRegex),
+                Pattern.compile(equalsRegex), Pattern.compile(toStringRegex), Pattern.compile(hashCodeRegex));
 
         //Füge alle regulären Ausdrücke für überschriebene Akzessoren zur Liste hinzu
         for (Object key : recordToTest.getComponentMap().keySet()) {
@@ -518,15 +556,22 @@ public class RecordExtractor {
     }
 
     /**
-     * Speichert die Bezeichner der überschriebenen Methoden und Konstruktoren in RecordInfo ab.
-     * Die Liste an gefundenen Methoden und Konstruktoren muss vorher konvertiert werden, damit
-     * auch nur immer das letzte Wort (d.h. Bezeichner) gespeichert wird
+     * Speichert die Bezeichner der überschriebenen Methoden und Konstruktoren in RecordToTest
+     * als ListOverriddenMethods ab. Die Liste an gefundenen Methoden und Konstruktoren muss vorher
+     * konvertiert werden, damit auch nur immer das letzte Wort (d.h. Bezeichner) gespeichert wird
      *
      * @param results Liste von gefundenen Methoden und Konstruktoren
      */
     private void speichereUeberschriebeneMethoden(ArrayList<String> results, RecordToTest recordToTest) {
         ArrayList<String> overriddenMethods = new ArrayList<>();
         for (String result : results) {
+
+            //Wenn letzte Character eine Leerstelle ist, lösche diese
+            if (result.charAt(result.length() - 1) == ' ') {
+                result = result.substring(0, result.length() - 1);
+            }
+
+            //Extrahiere letztes Wort aus String result
             String lastWord = result.substring(result.lastIndexOf(" ") + 1);
             overriddenMethods.add(lastWord);
         }

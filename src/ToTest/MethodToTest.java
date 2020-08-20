@@ -2,11 +2,22 @@ package ToTest;
 
 import java.util.Objects;
 
+/**
+ * Klasse, die eine Methode innerhalb eines Records repräsentiert. Hier werden Name der Methode, sowie die Indizes
+ * der Methode innerhalb des Records sowie die komplette Methode als String gespeichert
+ */
 public class MethodToTest {
 
+    //Name der Methode
     private String name;
+
+    //StartIndex der Methode innerhalb des Records
     private int startIndex;
+
+    //EndIndex der Methode innerhalb des Records
     private int endIndex;
+
+    //Komplette Methode als String
     private String fullMethod;
 
     public String getName() {

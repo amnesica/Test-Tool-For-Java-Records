@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Einstiegspunkt des Test-Tools
+ * Einstiegspunkt des Test-Tools für Records in Java
  * <p>
  * Kompilieren:     javac --enable-preview -source 14 *.java
  * Aufruf:          java --enable-preview Main <PfadZurDatei>
@@ -30,7 +30,8 @@ public class Main {
             starteTestTool(args[0]);
 
         } else {
-            System.out.println("Error: Bitte geben sie eine gültige Java-Datei als Argument an\nTest-Tool wird beendet.");
+            System.out.println("Error: Bitte geben sie eine gültige Java-Datei als Argument an" +
+                    "\nTest-Tool wird beendet.");
         }
     }
 
@@ -40,7 +41,6 @@ public class Main {
      * @param path Pfad der Datei mit den zu testenden Records
      */
     private static void starteTestTool(String path) {
-
         //Setze Infos zu Datei mit Records, die als Argument mitgegeben wurde
         FileToTest fileToTest = new FileToTest();
         fileToTest.setPath(Paths.get(path));
@@ -54,10 +54,11 @@ public class Main {
             String fileContent = new String(Files.readAllBytes(fileToTest.getPath()));
             fileToTest.setFileContent(fileContent);
 
-            //prüfe, ob Test durchgeführt werden soll und starte Generierung der Testfälle
+            //prüfe, ob Tests durchgeführt werden soll und starte Generierung und Durchführung der Tests
             if (new RecordExtractor().pruefeObTestfaelleGeneriertWerdenSollen(fileToTest)) {
 
-                //generiere Testfaelle für mehrere Records
+                //generiere Testfaelle und führe Tests auf Leistungseffizienz und Wartbarkeit
+                // für jeden gefundenen Record durch, wenn dieser getestet werden soll
                 for (RecordToTest recordToTest : fileToTest.getListRecords()) {
                     if (recordToTest.isRecordShouldBeTested()) {
                         TestGenerator testGenerator = new TestGenerator();
@@ -73,7 +74,8 @@ public class Main {
                     }
                 }
             }
-        } catch (IOException | InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+        } catch (IOException | InvocationTargetException | NoSuchMethodException | IllegalAccessException |
+                InstantiationException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

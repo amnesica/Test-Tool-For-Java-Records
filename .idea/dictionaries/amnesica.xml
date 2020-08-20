@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="amnesica">
     <words>
+      <w>abgedeckter</w>
       <w>abschließen</w>
       <w>abzuschließen</w>
       <w>akzessor</w>
@@ -12,12 +13,16 @@
       <w>anderen</w>
       <w>andersherum</w>
       <w>anfang</w>
+      <w>anfangen</w>
       <w>anfangsindex</w>
+      <w>angefragt</w>
       <w>angegebene</w>
       <w>angegebenen</w>
       <w>anscheinend</w>
       <w>anzahl</w>
       <w>auch</w>
+      <w>aufgerufen</w>
+      <w>aufgetreten</w>
       <w>aufruf</w>
       <w>ausdruck</w>
       <w>ausdrücke</w>
@@ -29,6 +34,7 @@
       <w>ausgewählten</w>
       <w>ausreichend</w>
       <w>automatisch</w>
+      <w>außerdem</w>
       <w>baue</w>
       <w>beende</w>
       <w>beendet</w>
@@ -39,6 +45,7 @@
       <w>benutzerdefinierte</w>
       <w>benutzerdefinierten</w>
       <w>berechne</w>
+      <w>bereite</w>
       <w>bereits</w>
       <w>beruhend</w>
       <w>bestandteile</w>
@@ -51,6 +58,9 @@
       <w>breche</w>
       <w>daher</w>
       <w>damit</w>
+      <w>danach</w>
+      <w>darstellt</w>
+      <w>darüber</w>
       <w>dass</w>
       <w>datei</w>
       <w>dateiinhalt</w>
@@ -69,8 +79,11 @@
       <w>doppelungen</w>
       <w>drinn</w>
       <w>dritten</w>
+      <w>drücken</w>
       <w>durch</w>
       <w>durchfuehrt</w>
+      <w>durchführt</w>
+      <w>durchführung</w>
       <w>durchgefuehrt</w>
       <w>durchgeführt</w>
       <w>durchsuche</w>
@@ -85,18 +98,25 @@
       <w>einen</w>
       <w>einer</w>
       <w>eines</w>
+      <w>eingabedatei</w>
       <w>eingestuft</w>
       <w>einmal</w>
+      <w>einsatz</w>
       <w>einstiegspunkt</w>
       <w>eintrag</w>
       <w>einzelne</w>
+      <w>einzelnen</w>
       <w>einzelnes</w>
       <w>einzufügen</w>
+      <w>einzufügenden</w>
+      <w>einzufügender</w>
       <w>ende</w>
       <w>endes</w>
       <w>endgültiger</w>
       <w>endindex</w>
       <w>endung</w>
+      <w>entdeckt</w>
+      <w>entdeckte</w>
       <w>entferne</w>
       <w>enthaelt</w>
       <w>enthalten</w>
@@ -126,6 +146,7 @@
       <w>etwas</w>
       <w>existiert</w>
       <w>exklusive</w>
+      <w>explizit</w>
       <w>extrahiere</w>
       <w>extrahieren</w>
       <w>extrahiert</w>
@@ -136,6 +157,7 @@
       <w>fehlt</w>
       <w>feld</w>
       <w>felder</w>
+      <w>feldern</w>
       <w>fertig</w>
       <w>festgelegten</w>
       <w>feststeht</w>
@@ -170,7 +192,9 @@
       <w>generierte</w>
       <w>generierten</w>
       <w>generierung</w>
+      <w>genutzter</w>
       <w>geprüft</w>
+      <w>gesammelt</w>
       <w>gesammelte</w>
       <w>gesamt</w>
       <w>gespeichert</w>
@@ -202,6 +226,9 @@
       <w>hinzugefügten</w>
       <w>hänge</w>
       <w>immer</w>
+      <w>importen</w>
+      <w>indem</w>
+      <w>indizes</w>
       <w>ineffizient</w>
       <w>informationen</w>
       <w>inhalt</w>
@@ -210,13 +237,17 @@
       <w>initialisiere</w>
       <w>initialisiert</w>
       <w>initialisierten</w>
+      <w>initialisierter</w>
       <w>initialisierung</w>
       <w>inklusive</w>
+      <w>inkrementiere</w>
       <w>innerhalb</w>
       <w>instantiieren</w>
       <w>instantiierung</w>
       <w>instanz</w>
+      <w>jeden</w>
       <w>jedes</w>
+      <w>jeweiligen</w>
       <w>kann</w>
       <w>kanonischen</w>
       <w>kein</w>
@@ -227,8 +258,12 @@
       <w>klassen</w>
       <w>klassennamen</w>
       <w>kommandozeile</w>
+      <w>kommentar</w>
+      <w>kommentiert</w>
+      <w>kommt</w>
       <w>kompiliere</w>
       <w>kompilieren</w>
+      <w>komplette</w>
       <w>kompletten</w>
       <w>kompletter</w>
       <w>komponente</w>
@@ -238,19 +273,24 @@
       <w>konstruktor</w>
       <w>konstruktoren</w>
       <w>konvertiert</w>
+      <w>kopie</w>
       <w>kopien</w>
       <w>kopier</w>
       <w>können</w>
       <w>könnte</w>
       <w>lange</w>
+      <w>lasse</w>
       <w>laufzeit</w>
+      <w>leerstelle</w>
       <w>leistung</w>
       <w>leistungseffizienz</w>
       <w>leistungseffizienztest</w>
       <w>lese</w>
       <w>letzte</w>
       <w>letzter</w>
+      <w>letztes</w>
       <w>liste</w>
+      <w>lösche</w>
       <w>manipuliere</w>
       <w>manipulierenden</w>
       <w>manipuliert</w>
@@ -268,6 +308,7 @@
       <w>mitkommt</w>
       <w>mittels</w>
       <w>möglich</w>
+      <w>möglichen</w>
       <w>möglichkeit</w>
       <w>nach</w>
       <w>namen</w>
@@ -281,11 +322,14 @@
       <w>nicht</w>
       <w>noch</w>
       <w>nochmal</w>
+      <w>nochmals</w>
+      <w>nächsten</w>
       <w>objekt</w>
       <w>objekte</w>
       <w>ordner</w>
       <w>originalen</w>
       <w>parameterliste</w>
+      <w>parametern</w>
       <w>pfad</w>
       <w>pfade</w>
       <w>positiv</w>
@@ -296,14 +340,17 @@
       <w>projektverzeichnis</w>
       <w>pruefe</w>
       <w>prüfe</w>
+      <w>prüfen</w>
       <w>prüft</w>
       <w>qualitätskriterium</w>
       <w>rangehängt</w>
       <w>reguläre</w>
       <w>regulären</w>
       <w>regulärer</w>
+      <w>repräsentiert</w>
       <w>rueckgabe</w>
       <w>rückgabewert</w>
+      <w>rückmeldung</w>
       <w>schaue</w>
       <w>schiefgegangen</w>
       <w>schleife</w>
@@ -322,18 +369,21 @@
       <w>sollen</w>
       <w>sonst</w>
       <w>sonstige</w>
+      <w>sonstigen</w>
       <w>sortiere</w>
       <w>sowie</w>
       <w>speichere</w>
       <w>speichern</w>
       <w>speichert</w>
       <w>spezifiziere</w>
+      <w>später</w>
       <w>starte</w>
       <w>starten</w>
       <w>startet</w>
       <w>stelle</w>
       <w>struktur</w>
       <w>suche</w>
+      <w>sucht</w>
       <w>temporaere</w>
       <w>temporäre</w>
       <w>temporären</w>
@@ -345,9 +395,11 @@
       <w>testenden</w>
       <w>testender</w>
       <w>testfaelle</w>
+      <w>testfaellen</w>
       <w>testfall</w>
       <w>testfälle</w>
       <w>testklasse</w>
+      <w>testprogramms</w>
       <w>testrecords</w>
       <w>testwerten</w>
       <w>ueberschreibe</w>
@@ -367,27 +419,33 @@
       <w>verändert</w>
       <w>viele</w>
       <w>voller</w>
+      <w>vorgesehen</w>
       <w>vorhanden</w>
       <w>vorhandene</w>
       <w>vorhandenen</w>
       <w>vorher</w>
       <w>vorherige</w>
       <w>vorliegenden</w>
+      <w>vorne</w>
       <w>warnung</w>
       <w>wartbarkeit</w>
+      <w>wartbarkeitstest</w>
       <w>weitere</w>
+      <w>weiteren</w>
       <w>weiterhin</w>
       <w>weitermachen</w>
       <w>weißt</w>
       <w>welche</w>
       <w>welcher</w>
       <w>welches</w>
+      <w>weniger</w>
       <w>wenn</w>
       <w>werden</w>
       <w>wert</w>
       <w>werte</w>
       <w>werten</w>
       <w>wieder</w>
+      <w>wiederholen</w>
       <w>willkürlich</w>
       <w>wird</w>
       <w>wobei</w>
@@ -411,6 +469,7 @@
       <w>ändern</w>
       <w>über</w>
       <w>überprüft</w>
+      <w>überschreiben</w>
       <w>überschreibenden</w>
       <w>überschreibt</w>
       <w>überschrieben</w>

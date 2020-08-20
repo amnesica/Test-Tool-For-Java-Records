@@ -17,6 +17,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Klasse, die die Testfälle für Funktionalität generiert und die Tests auf Leistungseffizienz und Wartbarkeit
+ * durchführt
+ */
 public class TestGenerator {
 
     //Der zu testende Record
@@ -38,7 +42,9 @@ public class TestGenerator {
     private URLClassLoader urlClassLoader;
 
     /**
-     * Generiert die Testfaelle für den vorliegenden Record in recordInfo
+     * Generiert die Testfaelle für Funktionalität für den vorliegenden Record in RecordToTest
+     *
+     * @param recordToTest RecordToTest
      */
     void generierefunktionaleTestfaelle(RecordToTest recordToTest) {
 
@@ -48,7 +54,8 @@ public class TestGenerator {
         //Spezifiziere Pfade für JUnit-Testklasse und Name der Datei
         Path pathForNewTestDirectory = Paths.get(System.getProperty("user.dir") + "/generated/");
         String nameTestKlasse = recordToTest.getName() + "Test";
-        Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + "/generated/" + nameTestKlasse + ".java");
+        Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + "/generated/" +
+                nameTestKlasse + ".java");
 
         try {
             erstelleNeueTestDatei(pathForNewTestDirectory, pathForNewTestFile);
@@ -59,18 +66,21 @@ public class TestGenerator {
 
             erstelleTestfaelleFunktionalitaet(pathForNewTestFile);
 
+            System.out.println("--------------------------------------------------------");
             System.out.println("Test auf Funktionalität (" + recordToTest.getName() + "):");
-            System.out.println("Testdatei für " + recordToTest.getName() + " wurde erfolgreich erstellt und kann ausgeführt werden.");
+            System.out.println("Testdatei für " + recordToTest.getName() +
+                    " wurde erfolgreich erstellt und kann ausgeführt werden.");
             System.out.println("Pfad der generierten Datei: " + pathForNewTestFile);
             System.out.println("--------------------------------------------------------");
         } catch (IOException e) {
-            System.out.println("Error: Beim Erstellen der Testdatei gab es einen Fehler.\nTest-Tool wird beendet.");
+            System.out.println("Error: Beim Erstellen der Testdatei gab es einen Fehler.");
             e.printStackTrace();
         }
     }
 
     /**
-     * Erstellt die Testrecords mit den Testdaten und fügt diese in der Testdatei ein.
+     * Erstellt die Testrecords mit den festgelegten Testdaten (Integer-Werte) sowie möglichen benutzerdefinierten
+     * Grenzwerten, welche per Kommandozeile angefragt werden
      */
     private void erstelleTestRecords() {
         //Initialisiere Listen
@@ -79,69 +89,117 @@ public class TestGenerator {
 
         //generiere Liste mit Testwerten für Testrecords
         ArrayList<Integer> listTestWerte = new ArrayList<>();
-        Collections.addAll(listTestWerte, 1, Integer.MAX_VALUE, Integer.MIN_VALUE, -1, 0, Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1);
+        Collections.addAll(listTestWerte, 1, Integer.MAX_VALUE, Integer.MIN_VALUE, -1, 0,
+                Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1);
 
-        //Möglichkeit einbauen, benutzerdefinierte Grenzwerte einzufügen (und diese der Liste listTestWerte hinzufügen)
+        //Möglichkeit, benutzerdefinierte Grenzwerte einzufügen (und diese der Liste listTestWerte hinzufügen)
         ArrayList<Integer> listCustomValues = getBenutzerdefiniertenGrenzwerte(recordToTest);
-        if(!listCustomValues.isEmpty()){
+        if (!listCustomValues.isEmpty()) {
             listTestWerte.addAll(listCustomValues);
         }
 
         //bestimme Anzahl zu erstellender Testrecords
-        int anzahlZuErstellenderTestrecords = listTestWerte.size() / recordToTest.getAmountComponents();
-        int fehlendeKomponenten = listTestWerte.size() % recordToTest.getAmountComponents();
-        if (fehlendeKomponenten != 0) {
-            do {
-                anzahlZuErstellenderTestrecords += 1;
-                fehlendeKomponenten -= 1;
-            } while (fehlendeKomponenten != 0);
-        }
+        int anzahlKomponenten = recordToTest.getAmountComponents();
+        int anzahlZuTestendeWerte = listTestWerte.size();
 
-        //Erstelle Testrecords und verteile zu testende Werte
-        int indexListTestWerte = 0;
-        for (int i = 0; i < anzahlZuErstellenderTestrecords; i++) {
+        int anzahlAbgedeckterTestWerte = 0;
+
+        //mehr Komponenten als zu testende Werte -> Werte wiederholen lassen! -> ein TestRecord
+        int i = 0;
+        if (anzahlKomponenten >= anzahlZuTestendeWerte) {
             TestRecord testRecord = new TestRecord();
 
             String testRecordName = recordToTest.getName() + i;
             testRecord.setName(testRecordName);
             listTestRecordNames.add(testRecordName);
 
-            String initializedTestRecord = recordToTest.getName() + " " + testRecordName + " = new " + recordToTest.getName() + "(";
+            String initializedTestRecord = recordToTest.getName() + " " + testRecordName + " = new " +
+                    recordToTest.getName() + "(";
 
-            for (int j = 0; j < recordToTest.getAmountComponents(); j++) {
-                if (indexListTestWerte >= listTestWerte.size()) {
-                    indexListTestWerte = 0;
+            while (anzahlAbgedeckterTestWerte != anzahlKomponenten) {
+                //lasse i von vorne anfangen
+                if (i >= listTestWerte.size()) {
+                    i = 0;
                 }
-                initializedTestRecord = initializedTestRecord.concat(String.valueOf(listTestWerte.get(indexListTestWerte)));
-                indexListTestWerte += 1;
+                initializedTestRecord = initializedTestRecord.concat(String.valueOf(listTestWerte.get(i)));
 
                 //hänge ein "," oder ein ");" an, um Record abzuschließen
-                if (j == recordToTest.getAmountComponents() - 1) {
+                if (anzahlAbgedeckterTestWerte + 1 == anzahlKomponenten) {
                     initializedTestRecord = initializedTestRecord.concat(");");
                 } else {
                     initializedTestRecord = initializedTestRecord.concat(",");
                 }
-            }
-            testRecord.setInitializedRecord(initializedTestRecord);
 
+                //inkrementiere Werte
+                anzahlAbgedeckterTestWerte += 1;
+                i += 1;
+            }
+
+            testRecord.setInitializedRecord(initializedTestRecord);
             listTestRecordsPositiv.add(testRecord);
+
+        } else {
+            //mehr zu testende Werte als Komponenten -> mehrere TestRecords erstellen
+            // (anzahlZuTestendeWerte > anzahlKomponenten)
+            int anzahlErstellteTestRecords = 0;
+            int anzahlGenutzterTestWerte = 0;
+
+            while (anzahlGenutzterTestWerte < anzahlZuTestendeWerte) {
+                TestRecord testRecord = new TestRecord();
+
+                String testRecordName = recordToTest.getName() + anzahlErstellteTestRecords;
+                testRecord.setName(testRecordName);
+                listTestRecordNames.add(testRecordName);
+
+                String initializedTestRecord = recordToTest.getName() + " " + testRecordName + " = new " +
+                        recordToTest.getName() + "(";
+
+                while (anzahlAbgedeckterTestWerte != anzahlKomponenten) {
+                    //lasse i von vorne anfangen
+                    if (i >= listTestWerte.size()) {
+                        i = 0;
+                    }
+                    initializedTestRecord = initializedTestRecord.concat(String.valueOf(listTestWerte.get(i)));
+
+                    //hänge ein "," oder ein ");" an, um Record abzuschließen
+                    if (anzahlAbgedeckterTestWerte + 1 == anzahlKomponenten) {
+                        initializedTestRecord = initializedTestRecord.concat(");");
+                    } else {
+                        initializedTestRecord = initializedTestRecord.concat(",");
+                    }
+
+                    //inkrementiere Werte
+                    anzahlAbgedeckterTestWerte += 1;
+                    i += 1;
+                    anzahlGenutzterTestWerte += 1;
+                }
+
+                //reset anzahlAbgedeckterTestWerte für den nächsten TestRecord
+                anzahlAbgedeckterTestWerte = 0;
+                testRecord.setInitializedRecord(initializedTestRecord);
+                listTestRecordsPositiv.add(testRecord);
+                anzahlErstellteTestRecords += 1;
+            }
         }
     }
 
+
     /**
-     * Fragt auf der Kommandozeile nach benutzerdefinierten Werten und fügt diese der zu testenden Liste hinzu.
+     * Fragt auf der Kommandozeile nach benutzerdefinierten Werten und fügt diese der Liste mit den zu testenden
+     * Werten hinzu
+     *
      * @param recordToTest RecordToTest
      * @return ArrayList<Integer> mit den hinzugefügten Werten
      */
     private ArrayList<Integer> getBenutzerdefiniertenGrenzwerte(RecordToTest recordToTest) {
         ArrayList<Integer> listCustomValues = new ArrayList<>();
-        Scanner scanner = new Scanner (System.in);
+        Scanner scanner = new Scanner(System.in);
 
         String decision = null;
         boolean repeat = true;
-        while(repeat)
-        {
-            System.out.println("Wollen Sie für den Record " + recordToTest.getName() + " benutzerdefinierte Grenzwerte hinzufügen? (j/n)");
+        while (repeat) {
+            System.out.println("Wollen Sie für den Record " + recordToTest.getName() +
+                    " benutzerdefinierte Grenzwerte hinzufügen? (j/n)");
             decision = scanner.nextLine();
 
             switch (decision) {
@@ -150,21 +208,22 @@ public class TestGenerator {
             }
         }
 
-        if(decision.equals("j")){
-            System.out.println("Geben Sie benutzerdefinierte Grenzwerte ein mit einem \"Enter\" getrennt ein. Wenn sie fertig sind schreiben Sie \"fertig\"!");
+        if (decision.equals("j")) {
+            System.out.println("Geben Sie benutzerdefinierte Grenzwerte ein mit einem \"Enter\" getrennt ein. " +
+                    "Wenn sie fertig sind drücken Sie nochmals \"Enter\"!");
 
             boolean repeat2 = true;
-            while(repeat2){
+            while (repeat2) {
                 String stringCustomValue = scanner.nextLine();
-                if(!stringCustomValue.equals("fertig")){
-                    try{
+                if (!stringCustomValue.equals("")) {
+                    try {
                         //füge Wert der Liste hinzu
                         int intCustomValue = Integer.parseInt(stringCustomValue);
                         listCustomValues.add(intCustomValue);
-                    }catch(NumberFormatException e){
+                    } catch (NumberFormatException e) {
                         System.out.println("Bitte geben Sie nur Integer-Werte ein! Versuchen Sie es nochmal:");
                     }
-                }else{
+                } else {
                     repeat2 = false;
                 }
             }
@@ -174,9 +233,10 @@ public class TestGenerator {
     }
 
     /**
-     * Fügt den zu testenden Record in die Testdatei ein.
+     * Fügt den zu testenden Record in die generierte Testdatei ein
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @param recordToTest       RecordToTest
      * @throws IOException IOException
      */
     private void fuegeZuTestendenRecordEin(Path pathForNewTestFile, RecordToTest recordToTest) throws IOException {
@@ -194,6 +254,9 @@ public class TestGenerator {
     /**
      * Erstellt die Testfaelle für das Qualitätskriterium "Funktionelle Eignung".
      * Es wird ein Positiv- und ein Negativtest erstellt. Zuvor werden die Testrecords erstellt
+     *
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @throws IOException IOException
      */
     private void erstelleTestfaelleFunktionalitaet(Path pathForNewTestFile) throws IOException {
         //Erstelle TestRecords und speichere diese in Liste testRecordsPositiv
@@ -213,6 +276,12 @@ public class TestGenerator {
         erstelleTestfallToStringPositivtest(pathForNewTestFile);
     }
 
+    /**
+     * Erstellt den Positivtest für "toString"
+     *
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @throws IOException IOException
+     */
     private void erstelleTestfallToStringPositivtest(Path pathForNewTestFile) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -236,6 +305,12 @@ public class TestGenerator {
         schreibeInDatei(pathForNewTestFile, sb.toString(), "//Testfall ToString - Positivtest");
     }
 
+    /**
+     * Erstellt den Positivtest für "hashCode"
+     *
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @throws IOException IOException
+     */
     private void erstelleTestfallHashCodePositivtest(Path pathForNewTestFile) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -256,6 +331,15 @@ public class TestGenerator {
         schreibeInDatei(pathForNewTestFile, sb.toString(), "//Testfall HashCode - Positivtest");
     }
 
+    /**
+     * Schreibt einen String content in eine Datei mit dem Pfad pathForNewTestFile und fügt darüber einen
+     * Kommentar comment ein
+     *
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @param content            Einzufügender Inhalt als String
+     * @param comment            Kommentar, welcher den einzufügenden Inhalt kommentiert
+     * @throws IOException IOException
+     */
     private void schreibeInDatei(Path pathForNewTestFile, String content, String comment) throws IOException {
         FileWriter fw = new FileWriter(pathForNewTestFile.toString(), true);
         BufferedWriter bw = new BufferedWriter(fw);
@@ -268,6 +352,13 @@ public class TestGenerator {
         bw.close();
     }
 
+    /**
+     * Fügt die TestRecords in listTestRecordsPositiv sowie listTestRecordsPositivCopies an den Header headerMethod
+     * an und erstellt danach die Assertions mit Equals und jeweiligen TestRecord und seiner Kopie
+     *
+     * @param sb           StringBuilder
+     * @param headerMethod headerMethod als String
+     */
     private void fuegeTestRecordsMitEqualsAnHeader(StringBuilder sb, String headerMethod) {
         sb.append(headerMethod);
 
@@ -286,6 +377,12 @@ public class TestGenerator {
         sb.append("\n");
     }
 
+    /**
+     * Erstellt den Negativtest für "equals"
+     *
+     * @param pathForNewTestFile Pfad zur generierten Testdatei
+     * @throws IOException IOException
+     */
     private void erstelleTestfallEqualsNegativtest(Path pathForNewTestFile) throws IOException {
         ArrayList<String> testRecordsNegativ = new ArrayList<>();
         ArrayList<String> testRecordsNegativCopies = new ArrayList<>();
@@ -331,7 +428,7 @@ public class TestGenerator {
      * Erstellt einen Record für den Negativtest bei der Funktionalität. Hierbei wird bewusst ein nicht
      * überschriebener Akzessor des originalen Records überschrieben. Wenn bereits alle Akzessoren
      * überschrieben wurden, wird bei dem Akzessor der ersten Komponente ein "+ 1" beim "return" rangehängt,
-     * um den gewünschten Effekt zu erzielen.
+     * um den gewünschten Effekt zu erzielen
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @throws IOException IOException
@@ -354,11 +451,14 @@ public class TestGenerator {
         }
         erstelleNegativTestRecord(testRecordNegativ);
 
-        schreibeInDatei(pathForNewTestFile, testRecordNegativ.getRecordNegativTestFull(), "//zu testender Record für Negativtest");
+        schreibeInDatei(pathForNewTestFile, testRecordNegativ.getRecordNegativTestFull(),
+                "//zu testender Record für Negativtest");
     }
 
     /**
-     * Erstellt einen NegativTestRecord für den Negativtest
+     * Erstellt einen NegativTestRecord für den Negativtest bei der Funktionalität
+     *
+     * @param testRecordNegativ TestRecord
      */
     private void erstelleNegativTestRecord(TestRecord testRecordNegativ) {
         String accessorToOverride = testRecordNegativ.getAccessorToOverride();
@@ -385,9 +485,10 @@ public class TestGenerator {
 
     /**
      * Erstellt einen manipulierten Akzessor, welcher noch nicht im TestRecord überschrieben wurde.
-     * Dient der Erstellung eines NegativTestRecords.
+     * Dient der Erstellung eines NegativTestRecords
      *
-     * @param methodToOverrideBadly Name der Methode, welche manipuliert werden soll
+     * @param methodToOverrideBadly Name der Methode, welche manipuliert erstellt werden soll
+     * @param testRecordNegativ     TestRecord
      */
     private void erstelleNeuenManipuliertenAkzessor(String methodToOverrideBadly, TestRecord testRecordNegativ) {
         String newAccessor = "public int " + methodToOverrideBadly + "(){\nreturn " + methodToOverrideBadly + "+ 5;\n}";
@@ -395,10 +496,11 @@ public class TestGenerator {
     }
 
     /**
-     * Manipuliert einen vorhandenen Akzessor und speichert die manipulierte Methode
-     * im recordInfo ab
+     * Manipuliert einen vorhandenen Akzessor im TestRecord und speichert die manipulierte Methode
+     * im TestRecord ab
      *
      * @param methodToOverrideBadly Name der Methode, welche manipuliert werden soll
+     * @param testRecordNegativ     TestRecord
      */
     private void manipuliereVorhandenenAkzessor(String methodToOverrideBadly, TestRecord testRecordNegativ) {
         String beginOfAccessorRegex = "(public int " + methodToOverrideBadly + "(\\s)*\\()";
@@ -428,7 +530,8 @@ public class TestGenerator {
                             indexEndMethod = i + 1;
 
                             //extrahiere Methode des Records (inklusive Header)
-                            String method = testRecordNegativ.getRecordNegativTestFull().substring(startIndex, indexEndMethod);
+                            String method = testRecordNegativ.getRecordNegativTestFull()
+                                    .substring(startIndex, indexEndMethod);
 
                             //Setze zu manipulierenden Akzessor
                             testRecordNegativ.setAccessorToOverride(method);
@@ -444,7 +547,9 @@ public class TestGenerator {
     }
 
     /**
-     * Überschreibt alle alten Bezeichner damit Negativtest-Record <name>NegativTest heißt.
+     * Überschreibt alle alten Bezeichner damit Negativtest-Record <name>NegativTest heißt
+     *
+     * @param testRecordNegativ TestRecord
      */
     private void ueberschreibeAlleBezeichnerFuerNegativTest(TestRecord testRecordNegativ) {
         String nameNegativTestRecord = recordToTest.getName() + "NegativTest";
@@ -457,6 +562,8 @@ public class TestGenerator {
     /**
      * Verändert den Rückgabewert der ausgewählten Akzessormethode zum Erstellen des
      * Negativtest-Records. Der Rückgabewert wird um 5 erhöht. (TODO willkürlich)
+     *
+     * @param testRecordNegativ TestRecord
      */
     private void veraendereRueckgabeWertDerMethode(TestRecord testRecordNegativ) {
         String regexReturn = "(return(\\s)*([\\d\\w\\s,.\\[\\]{}()<>*+\\-=!?^$|%])*;)";
@@ -483,7 +590,7 @@ public class TestGenerator {
     /**
      * Bestimmt einen nicht überschriebene Akzessor des zu testenden Records.
      * Wenn alle Akzessoren überschrieben wurden, wird die erste Komponente
-     * in der HashMap ausgewählt.
+     * in der HashMap ausgewählt
      *
      * @return Name der zu überschreibenden Methode
      */
@@ -494,7 +601,7 @@ public class TestGenerator {
             }
         }
 
-        //Wenn alle Akzessoren überschrieben wurden, wähle einen aus
+        //Wenn alle Akzessoren überschrieben wurden, wähle erste Komponente des Records aus
         Map.Entry<Object, Object> entry = recordToTest.getComponentMap().entrySet().iterator().next();
         return (String) entry.getKey();
     }
@@ -521,6 +628,9 @@ public class TestGenerator {
         schreibeInDatei(pathForNewTestFile, sb.toString(), "//Testfall Equals - Positivtest");
     }
 
+    /**
+     * Erstellt eine Liste an Kopien der TestRecords in den einzelnen Testfaellen
+     */
     private void erstelleTestRecordCopies() {
         //Initialisiere Liste
         listTestRecordsPositivCopies = new ArrayList<>();
@@ -547,20 +657,22 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt die grundlegende Struktur der Testdatei mit imports für JUnit.
+     * Erstellt die grundlegende Struktur der Testdatei mit Importen für JUnit und dem Package,
+     * in das die Datei erstellt wird
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @param nameTestKlasse     Name der generierten Testdatei
      */
-    private void erstelleGrundlegendeTestStrukturJUnitInDatei(Path pathForNewTestFile, String nameTestKlasse) throws IOException {
-        //TODO package generated; wieder herausnehmen, wenn endgültiger Export-Path feststeht
+    private void erstelleGrundlegendeTestStrukturJUnitInDatei(Path pathForNewTestFile, String nameTestKlasse)
+            throws IOException {
         String headerTestClass = "package generated;\n" +
                 "import static org.junit.jupiter.api.Assertions.*;\n" +
                 "\n" +
                 "import org.junit.jupiter.api.Test;\n" +
                 "\n" +
                 "/**\n" +
-                " * Automatisch generierte Testklasse mit JUnit-Tests für den Record \"" + recordToTest.getName() + "\"\n" +
+                " * Automatisch generierte Testklasse mit JUnit-Tests für den Record \"" + recordToTest.getName() +
+                "\"\n" +
                 " */" + "\n" +
                 "public class " + nameTestKlasse + "{";
 
@@ -590,9 +702,8 @@ public class TestGenerator {
     }
 
     /**
-     * Führt den Leistungseffizienztest mit dem recordToTest durch. Test wird nicht
-     * durchgeführt, wenn Record mehr als 10 Komponenten enthält
-     * HINWEIS: "-Djava.system.class.loader=DynamicClassLoader" als VM Options in Edit Configuration setzen! (TODO oder anscheinend auch nicht?!)
+     * Führt den Leistungseffizienztest mit dem angegebenen recordToTest durch. Test wird nicht durchgeführt,
+     * wenn Record mehr als 10 Komponenten enthält
      *
      * @param recordToTest recordToTest
      */
@@ -600,30 +711,16 @@ public class TestGenerator {
             IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         System.out.println("Test auf Leistungseffizienz (" + recordToTest.getName() + "):");
 
+        //Bereite Leistungseffizienztest und Wartbarkeitstest vor, indem Record-Klasse dynamisch erstellt werden
+        String className = recordToTest.getName() + "PerformanceTest";
+        erstelleDynamischKlasseMitTestRecord(className);
+
+        //Führe Leistungseffizienztest durch, wenn es nicht mehr als 10 Komponenten im Record gibt
         if (recordToTest.getAmountComponents() <= 10) {
 
             //Initialisiere Map mit Grenzwerten
             HashMap<Integer, Integer> mapGrenzwerte = new HashMap<>();
             initialisiereMapGrenzwerte(mapGrenzwerte);
-
-            //Spezifiziere Klassennamen für temporären Record und erstelle Record als String innerhalb Testklasse
-            String className = recordToTest.getName() + "PerformanceTest";
-            String sourceCode = erstelleKlasseMitTestRecordAlString(className);
-
-            //Schreibe String mit Record in temporäre Datei
-            File parent = new File(System.getProperty("user.dir"));
-            File sourceFile = new File(parent, className + ".java");
-            FileWriter writer = new FileWriter(sourceFile);
-            writer.write(sourceCode);
-            writer.close();
-
-            //Kompiliere mit 'enable-preview'
-            JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-            File parentDir = sourceFile.getParentFile();
-            javaCompiler.run(null, null, null, "--enable-preview", "--release", "14", sourceFile.toString());
-
-            //Füge Klassen dynamisch zu Custom Classloader hinzu
-            urlClassLoader = URLClassLoader.newInstance(new URL[]{parentDir.toURI().toURL()});
 
             //Initialisiere Zeitmessung
             long startTime = 0;
@@ -633,58 +730,70 @@ public class TestGenerator {
             switch (recordToTest.getAmountComponents()) {
                 case 1 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class).newInstance(10);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class)
+                            .newInstance(10);
                     endTime = System.nanoTime();
                 }
                 case 2 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class).newInstance(10, 9);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName())
+                            .getConstructor(int.class, int.class).newInstance(10, 9);
                     endTime = System.nanoTime();
                 }
                 case 3 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class).newInstance(10, 9, 8);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName())
+                            .getConstructor(int.class, int.class, int.class).newInstance(10, 9, 8);
                     endTime = System.nanoTime();
                 }
                 case 4 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class).newInstance(10, 9, 8, 7);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName())
+                            .getConstructor(int.class, int.class, int.class, int.class)
+                            .newInstance(10, 9, 8, 7);
                     endTime = System.nanoTime();
                 }
                 case 5 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
-                            int.class).newInstance(10, 9, 8, 7, 6);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName())
+                            .getConstructor(int.class, int.class, int.class, int.class, int.class)
+                            .newInstance(10, 9, 8, 7, 6);
                     endTime = System.nanoTime();
                 }
                 case 6 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
-                            int.class, int.class).newInstance(10, 9, 8, 7, 6, 5);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName())
+                            .getConstructor(int.class, int.class, int.class, int.class, int.class, int.class)
+                            .newInstance(10, 9, 8, 7, 6, 5);
                     endTime = System.nanoTime();
                 }
                 case 7 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
-                            int.class, int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName())
+                            .getConstructor(int.class, int.class, int.class, int.class, int.class, int.class, int.class)
+                            .newInstance(10, 9, 8, 7, 6, 5, 4);
                     endTime = System.nanoTime();
                 }
                 case 8 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
-                            int.class, int.class, int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4, 3);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName())
+                            .getConstructor(int.class, int.class, int.class, int.class, int.class, int.class, int.class,
+                                    int.class).newInstance(10, 9, 8, 7, 6, 5, 4, 3);
                     endTime = System.nanoTime();
                 }
                 case 9 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
-                            int.class, int.class, int.class, int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4, 3, 2);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName())
+                            .getConstructor(int.class, int.class, int.class, int.class, int.class, int.class, int.class,
+                                    int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4, 3, 2);
                     endTime = System.nanoTime();
                 }
                 case 10 -> {
                     startTime = System.nanoTime();
-                    urlClassLoader.loadClass(className + "$" + recordToTest.getName()).getConstructor(int.class, int.class, int.class, int.class,
-                            int.class, int.class, int.class, int.class, int.class, int.class).newInstance(10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
+                    urlClassLoader.loadClass(className + "$" + recordToTest.getName())
+                            .getConstructor(int.class, int.class, int.class, int.class, int.class, int.class, int.class,
+                                    int.class, int.class, int.class)
+                            .newInstance(10, 9, 8, 7, 6, 5, 4, 3, 2, 1);
                     endTime = System.nanoTime();
                 }
                 default -> System.out.println("Leistungseffizienztest: Hier ist etwas schiefgegangen!");
@@ -693,29 +802,61 @@ public class TestGenerator {
             //berechne Zeit
             long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
             long durationInMilliseconds = duration / 1000000;
-            System.out.println("Eine Instantiierung des Records " + recordToTest.getName() + " hat " + duration + " Nanosekunden gedauert (" + durationInMilliseconds + " Millisekunden)");
+            System.out.println("Eine Instantiierung des Records " + recordToTest.getName() + " hat " + duration +
+                    " Nanosekunden gedauert (" + durationInMilliseconds + " Millisekunden)");
 
-            //TODO > oder >=
             if (duration > mapGrenzwerte.get(recordToTest.getAmountComponents())) {
-                System.out.println("Ergebnis: Der Record " + recordToTest.getName() + " ist über dem festgelegten Grenzwert von "
-                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " Nanosekunden und wurde als ineffizient eingestuft.");
+                System.out.println("Ergebnis: Der Record " + recordToTest.getName() +
+                        " ist über dem festgelegten Grenzwert von "
+                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) +
+                        " Nanosekunden und wurde als ineffizient eingestuft.");
             } else {
-                System.out.println("Ergebnis: Der Record " + recordToTest.getName() + " ist nicht über dem festgelegten Grenzwert von "
-                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) + " Nanosekunden und wurde als effizient eingestuft.");
+                System.out.println("Ergebnis: Der Record " + recordToTest.getName() +
+                        " ist nicht über dem festgelegten Grenzwert von "
+                        + mapGrenzwerte.get(recordToTest.getAmountComponents()) +
+                        " Nanosekunden und wurde als effizient eingestuft.");
             }
-
-            System.out.println("--------------------------------------------------------");
         } else {
             //Zuviele Komponenten
-            System.out.println("Error: Der Leistungseffizienztest wird nur bis zu 10 Komponenten unterstützt.\n" +
-                    "Der Record " + recordToTest.getName() + " weißt " + recordToTest.getAmountComponents() + " Komponenten auf.");
+            System.out.println("Error: Der Leistungseffizienztest wird nur bis zu 10 Komponenten unterstützt. " +
+                    "Der Record " + recordToTest.getName() + " weißt " + recordToTest.getAmountComponents() +
+                    " Komponenten auf.");
         }
+        System.out.println("--------------------------------------------------------");
     }
 
     /**
-     * Initialisiert die Hashmap mit den festgelegten Grenzwerten für den Leistungseffizienztest.
+     * Erstellt dynamisch zur Laufzeit Klasse className mit kompletten Record als String.
+     * Dynamisch erstellte Klasse kann danach mit loadClass am urlClassLoader aufgerufen werden
      *
-     * @param mapGrenzwerte mapGrenzwerte
+     * @param className Name der Klasse, die erstellt werden soll
+     * @throws IOException IOException
+     */
+    private void erstelleDynamischKlasseMitTestRecord(String className) throws IOException {
+        //Spezifiziere Klassennamen für Record und erstelle Record als String innerhalb Testklasse
+        String sourceCode = erstelleKlasseMitTestRecordAlString(className);
+
+        //Schreibe String mit Record in Datei
+        File parent = new File(System.getProperty("user.dir"));
+        File sourceFile = new File(parent, className + ".java");
+        FileWriter writer = new FileWriter(sourceFile);
+        writer.write(sourceCode);
+        writer.close();
+
+        //Kompiliere mit 'enable-preview'
+        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+        File parentDir = sourceFile.getParentFile();
+        javaCompiler.run(null, null, null, "--enable-preview", "--release", "14",
+                sourceFile.toString());
+
+        //Füge Klassen dynamisch zu Custom Classloader hinzu
+        urlClassLoader = URLClassLoader.newInstance(new URL[]{parentDir.toURI().toURL()});
+    }
+
+    /**
+     * Initialisiert die Hashmap mit den festgelegten Grenzwerten für den Leistungseffizienztest
+     *
+     * @param mapGrenzwerte HashMap<Integer, Integer> mit key=ParameterAnzahl, value=GrenzwertInNanosekunden
      */
     private void initialisiereMapGrenzwerte(HashMap<Integer, Integer> mapGrenzwerte) {
         mapGrenzwerte.put(1, 10000000);
@@ -731,7 +872,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt die Klasse mit dem Testrecords als String und gibt diesen zurück
+     * Erstellt die Klasse mit dem Testrecords als String und gibt diesen String zurück
      *
      * @param nameTestKlasse Name der generierten Testdatei
      */
@@ -740,7 +881,8 @@ public class TestGenerator {
 
         String headerTestClass =
                 "/**\n" +
-                        " * Automatisch generierte Testklasse mit dem Record \"" + recordToTest.getName() + "\" für den Leistungseffizienztest.\n" +
+                        " * Automatisch generierte Testklasse mit dem Record \"" + recordToTest.getName() +
+                        "\" für den Leistungseffizienztest.\n" +
                         " */" + "\n" + "public class " + nameTestKlasse + "{\n";
 
         String recordFull = "public " + recordToTest.getRecordFull();
@@ -749,88 +891,120 @@ public class TestGenerator {
     }
 
     /**
-     * Führt den Test auf Wartbarkeit beim recordToTest durch.
+     * Führt den Test auf Wartbarkeit beim recordToTest durch
      *
-     * @param recordToTest ToTest.RecordToTest
+     * @param recordToTest RecordToTest
      */
     void fuehreTestAufWartbarkeitDurch(RecordToTest recordToTest) throws ClassNotFoundException {
         System.out.println("Test auf Wartbarkeit (" + recordToTest.getName() + "):");
 
+        boolean longFunction;
+        boolean largeClass;
+        boolean longParameterList;
+
         //Long Function
-        pruefeAufLongFunction(recordToTest);
+        longFunction = pruefeAufLongFunction(recordToTest);
 
         //Large Class
-        pruefeAufLargeClass(recordToTest);
+        largeClass = pruefeAufLargeClass(recordToTest);
 
         //Long Parameter List
-        pruefeAufLongParameterList(recordToTest);
+        longParameterList = pruefeAufLongParameterList(recordToTest);
 
+        if (!longFunction && !largeClass && !longParameterList) {
+            System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
+                    " wurde keine \"Long Function\", \"Large Class\" oder \"Long Parameter List\" erkannt, " +
+                    "welche die Wartbarkeit verschlechtern könnte.");
+        }
         System.out.println("--------------------------------------------------------");
     }
 
     /**
-     * Prüft, ob der Record recordToTest eine zu große Klasse ist
+     * Prüft, ob der Record recordToTest eine zu große Klasse ist (Large Class).
+     * Wenn ja, wird das Ergebnis auf der Konsole ausgegeben
      *
      * @param recordToTest RecordToTest
      * @throws ClassNotFoundException ClassNotFoundException
      */
-    private void pruefeAufLargeClass(RecordToTest recordToTest) throws ClassNotFoundException {
+    private boolean pruefeAufLargeClass(RecordToTest recordToTest) throws ClassNotFoundException {
+        boolean zuvieleMethoden = false;
+        boolean zuvieleFelder = false;
+        boolean zuvieleLOCDerKlasse = false;
+
         //Prüfe Anzahl der Methoden
         if (recordToTest.getListAllDeclaredMethods().size() > 10) {
             System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                    " wurden sehr viele Methoden erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+                    " wurden mehr als 10 Methoden erkannt (Large Class), " +
+                    "welches die Wartbarkeit verschlechtern könnte.");
+            zuvieleMethoden = true;
         }
 
         //Prüfe Anzahl der Felder
-        if (getAnzahlDeklarierterFelder(recordToTest.getName() + "PerformanceTest" + "$" + recordToTest.getName()) > 10) {
+        if (getAnzahlDeklarierterFelder(recordToTest.getName() + "PerformanceTest" + "$" +
+                recordToTest.getName()) > 10) {
             System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                    " wurden sehr viele Felder erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+                    " wurden mehr als 10 Felder erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+            zuvieleFelder = true;
         }
 
         //Prüfe LOC des Records gesamt
         if (recordToTest.getRecordFull().lines().count() > 160) {
             System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                    " wurden sehr viele LOC erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+                    " wurden mehr als 160 LOC erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+            zuvieleLOCDerKlasse = true;
         }
+
+        return zuvieleMethoden || zuvieleFelder || zuvieleLOCDerKlasse;
     }
 
     /**
-     * Prüft, ob der Record recordToTest eine zu lange Methode enthält
+     * Prüft, ob der Record recordToTest eine zu lange Methode enthält (Long Function).
+     * Wenn ja, wird das Ergebnis auf der Konsole ausgegeben
      *
      * @param recordToTest RecordToTest
      */
-    private void pruefeAufLongFunction(RecordToTest recordToTest) {
+    private boolean pruefeAufLongFunction(RecordToTest recordToTest) {
         for (MethodToTest methodToTest : recordToTest.getListAllDeclaredMethods()) {
             if (methodToTest.getFullMethod().lines().count() > 15) {
                 System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                        " wurde eine zu lange Methode (Long Function) \"" + methodToTest.getName() + "\" gefunden, welche die Wartbarkeit verschlechtern könnte.");
+                        " wurde eine zu lange Methode (Long Function) \"" + methodToTest.getName() + "\" mit mehr " +
+                        "als 15 LOC gefunden, welche die Wartbarkeit verschlechtern könnte.");
+                return true;
             }
         }
+        return false;
     }
 
     /**
      * Gibt die Anzahl der Felder der Klasse exklusive der Felder, welche durch die Komponenten zur Laufzeit
-     * erzeugt werden mit dem angegebenen className zurück.
-     * Aufruf: getAmountOfDeclaredFields(recordToTest.getName() + "PerformanceTest" + "$" + recordToTest.getName())
+     * erzeugt werden mit dem angegebenen className zurück
      *
      * @param className className
-     * @return amount of declared fields as int
+     * @return Anzahl der deklarierten Felder als int
      * @throws ClassNotFoundException ClassNotFoundException
      */
     private int getAnzahlDeklarierterFelder(String className) throws ClassNotFoundException {
-        return urlClassLoader.loadClass(className).getDeclaredFields().length - recordToTest.getAmountComponents();
+        if (urlClassLoader != null && new File(System.getProperty("user.dir") + "/" + recordToTest.getName() +
+                "PerformanceTest.java").exists()) {
+            return urlClassLoader.loadClass(className).getDeclaredFields().length - recordToTest.getAmountComponents();
+        }
+        System.out.println("Error: Beim Durchsuchen des Records nach deklarierten Feldern ist ein Fehler aufgetreten.");
+        return -1;
     }
 
     /**
-     * Prüft, ob der Record recordToTest eine Long Parameter List enthält.
-     * Wenn ja, wird das Ergebnis auf der Konsole ausgegeben.
+     * Prüft, ob der Record recordToTest eine lange Parameterliste enthält (Long Parameter List).
+     * Wenn ja, wird das Ergebnis auf der Konsole ausgegeben
      *
      * @param recordToTest ToTest.RecordToTest
      */
-    private void pruefeAufLongParameterList(RecordToTest recordToTest) {
+    private boolean pruefeAufLongParameterList(RecordToTest recordToTest) {
         if (recordToTest.getAmountComponents() > 5) {
             System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                    " wurde eine zu lange Parameterliste (Long Parameter List) gefunden, welche die Wartbarkeit verschlechtern könnte.");
+                    " wurde eine lange Parameterliste mit mehr als 5 Parametern (Long Parameter List) gefunden, welche " +
+                    "die Wartbarkeit verschlechtern könnte.");
+            return true;
         }
+        return false;
     }
 }

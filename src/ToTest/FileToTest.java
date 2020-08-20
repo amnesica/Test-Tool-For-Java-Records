@@ -3,6 +3,10 @@ package ToTest;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+/**
+ * Klasse, die die Eingabedatei des Testprogramms darstellt. Hier wird der Pfad zur Datei, der Name der Datei,
+ * der Inhalt sowie eine Liste mit den gefundenen Records in der Datei gespeichert
+ */
 public class FileToTest {
 
     //Pfad zur Datei
@@ -41,6 +45,12 @@ public class FileToTest {
         this.fileContent = fileContent;
     }
 
+    /**
+     * Fügt einen RecordToTest der Liste an zu testenden Records hinzu.
+     * Initialisiert die Liste beim ersten Record
+     *
+     * @param recordToTest RecordToTest
+     */
     public void fuegeRecordZuListeDerZuTestendenRecordsHinzu(RecordToTest recordToTest) {
         if (listRecords == null) {
             listRecords = new ArrayList<>();

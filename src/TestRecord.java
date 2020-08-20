@@ -1,10 +1,24 @@
+/**
+ * Klasse, welche einen TestRecord in der generierten Testdatei für den Test auf Funktionalität zum Einsatz kommt
+ */
 public class TestRecord {
+
+    //Name des TestRecord
     private String name;
+
+    //Initialisierter Record als String
     private String initializedRecord;
 
+    //Boolean, ob TestRecord für den Negativtest vorgesehen ist
     private boolean isForNegativTest;
+
+    //Kompletter Record für den NegativTest
     private String recordNegativTestFull;
+
+    //Komplette Akzessor-Methode zum Überschreiben
     private String accessorToOverride;
+
+    //Komplette Akzessor-Methode, der überschrieben wurde
     private String accessorOverridden;
 
     public String getName() {
