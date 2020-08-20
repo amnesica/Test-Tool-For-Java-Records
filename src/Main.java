@@ -60,17 +60,22 @@ public class Main {
                 //generiere Testfaelle und führe Tests auf Leistungseffizienz und Wartbarkeit
                 // für jeden gefundenen Record durch, wenn dieser getestet werden soll
                 for (RecordToTest recordToTest : fileToTest.getListRecords()) {
+
                     if (recordToTest.isRecordShouldBeTested()) {
+                        //Instantiiere TestGenerator für funktionale Testfälle
                         TestGenerator testGenerator = new TestGenerator();
+
+                        //Instantiiere TestExecutor für nicht-funktionale Testfälle
+                        TestExecutor testExecutor = new TestExecutor();
 
                         //Generiere funktionale Testfaelle
                         testGenerator.generierefunktionaleTestfaelle(recordToTest);
 
                         //Führe Test auf Leistungseffizienz durch
-                        testGenerator.fuehreLeistungseffizienztestDurch(recordToTest);
+                        testExecutor.fuehreLeistungseffizienztestDurch(recordToTest);
 
                         //Führe Test auf Wartbarkeit durch
-                        testGenerator.fuehreTestAufWartbarkeitDurch(recordToTest);
+                        testExecutor.fuehreTestAufWartbarkeitDurch(recordToTest);
                     }
                 }
             }
