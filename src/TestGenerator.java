@@ -52,10 +52,11 @@ public class TestGenerator {
         this.recordToTest = recordToTest;
 
         //Spezifiziere Pfade für JUnit-Testklasse und Name der Datei
-        Path pathForNewTestDirectory = Paths.get(System.getProperty("user.dir") + "/generated/");
+        Path pathForNewTestDirectory = Paths.get(System.getProperty("user.dir") + File.separator + "generated" +
+                File.separator);
         String nameTestKlasse = recordToTest.getName() + "Test";
-        Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + "/generated/" +
-                nameTestKlasse + ".java");
+        Path pathForNewTestFile = Paths.get(System.getProperty("user.dir") + File.separator + "generated" +
+                File.separator + nameTestKlasse + ".java");
 
         try {
             erstelleNeueTestDatei(pathForNewTestDirectory, pathForNewTestFile);
