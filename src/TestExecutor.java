@@ -32,6 +32,8 @@ public class TestExecutor {
             IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         System.out.println("Test auf Leistungseffizienz (" + recordToTest.getName() + "):");
 
+        this.recordToTest = recordToTest;
+
         //Bereite Leistungseffizienztest und Wartbarkeitstest vor, indem Record-Klasse dynamisch erstellt werden
         String className = recordToTest.getName() + "PerformanceTest";
         erstelleDynamischKlasseMitTestRecord(className);

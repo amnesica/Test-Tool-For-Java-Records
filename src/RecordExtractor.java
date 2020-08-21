@@ -41,7 +41,7 @@ public class RecordExtractor {
                 recordToTest.setIndexEntryPointRecordBeforeMatch(m.start());
                 recordToTest.setIndexEntryPointRecordAfterMatch(m.end());
 
-                //speichere Komponenten in ToTest.RecordToTest
+                //speichere Komponenten in RecordToTest
                 speichereKomponenten(recordToTest);
             }
 
@@ -359,7 +359,7 @@ public class RecordExtractor {
                 System.out.println("Hinweis: Objekte können weiterhin verändert werden!");
             }
 
-        } else if (!listFoundDataTypes.isEmpty()) { //old: && !listFoundObjects.isEmpty()
+        } else if (!listFoundDataTypes.isEmpty()) {
             //Warnung, wenn Komponente ein Objekt ist -> Objekte können weiterhin verändert werden
             System.out.println("Warnung: Komponente(n) mit Nicht-Integer-Wert(en) gefunden: ");
             for (String foundTypes : listFoundDataTypes) {

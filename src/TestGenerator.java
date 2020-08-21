@@ -203,7 +203,7 @@ public class TestGenerator {
         }
 
         if (decision.equals("j")) {
-            System.out.println("Geben Sie benutzerdefinierte Grenzwerte ein mit einem \"Enter\" getrennt ein. " +
+            System.out.println("Geben Sie benutzerdefinierte Grenzwerte mit einem \"Enter\" getrennt ein. " +
                     "Wenn sie fertig sind drücken Sie nochmals \"Enter\"!");
 
             boolean repeat2 = true;
