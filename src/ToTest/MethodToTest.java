@@ -1,5 +1,6 @@
 package ToTest;
 
+import java.util.LinkedHashMap;
 import java.util.Objects;
 
 /**
@@ -19,6 +20,15 @@ public class MethodToTest {
 
     //Komplette Methode als String
     private String fullMethod;
+
+    //Header der Methode als String
+    private String methodHeader;
+
+    //Anzahl Parameter der Methode
+    private int amountParameters;
+
+    //HashMap mit Parametern der Methode
+    private LinkedHashMap<Object, Object> parameterMap;
 
     public String getName() {
         return name;
@@ -52,14 +62,28 @@ public class MethodToTest {
         this.fullMethod = fullMethod;
     }
 
-    @Override
-    public String toString() {
-        return "MethodToTest{" +
-                "name='" + name + '\'' +
-                ", startIndex=" + startIndex +
-                ", endIndex=" + endIndex +
-                ", content='" + fullMethod + '\'' +
-                '}';
+    public int getAmountParameters() {
+        return amountParameters;
+    }
+
+    public void setAmountParameters(int amountParameters) {
+        this.amountParameters = amountParameters;
+    }
+
+    public String getMethodHeader() {
+        return methodHeader;
+    }
+
+    public void setMethodHeader(String methodHeader) {
+        this.methodHeader = methodHeader;
+    }
+
+    public LinkedHashMap<Object, Object> getParameterMap() {
+        return parameterMap;
+    }
+
+    public void setParameterMap(LinkedHashMap<Object, Object> parameterMap) {
+        this.parameterMap = parameterMap;
     }
 
     @Override
@@ -69,12 +93,28 @@ public class MethodToTest {
         MethodToTest that = (MethodToTest) o;
         return startIndex == that.startIndex &&
                 endIndex == that.endIndex &&
+                amountParameters == that.amountParameters &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(fullMethod, that.fullMethod);
+                Objects.equals(fullMethod, that.fullMethod) &&
+                Objects.equals(methodHeader, that.methodHeader) &&
+                Objects.equals(parameterMap, that.parameterMap);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, startIndex, endIndex, fullMethod);
+        return Objects.hash(name, startIndex, endIndex, fullMethod, methodHeader, amountParameters, parameterMap);
+    }
+
+    @Override
+    public String toString() {
+        return "MethodToTest{" +
+                "name='" + name + '\'' +
+                ", startIndex=" + startIndex +
+                ", endIndex=" + endIndex +
+                ", fullMethod='" + fullMethod + '\'' +
+                ", methodHeader='" + methodHeader + '\'' +
+                ", amountParameters=" + amountParameters +
+                ", parameterMap=" + parameterMap +
+                '}';
     }
 }

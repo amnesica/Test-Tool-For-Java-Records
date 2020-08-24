@@ -238,6 +238,12 @@ public class TestExecutor {
             System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
                     " wurde keine \"Long Function\", \"Large Class\" oder \"Long Parameter List\" erkannt, " +
                     "welche die Wartbarkeit verschlechtern könnte.");
+        } else {
+            //Hinweis auf bewusst geringe Funktionalität von Records
+            System.out.println("Hinweis: Eine Long Function, Large Class oder Long Parameter List kann ein Indiz " +
+                    "dafür sein, dass der Record " + recordToTest.getName() + " zuviel Funktionalität enthält und " +
+                    "eine normale Klasse hier eventuell besser geeignet ist. Bei Records soll bewusst auf zuviel " +
+                    "Funktionalität verzichtet werden.");
         }
         System.out.println("--------------------------------------------------------");
     }
@@ -254,26 +260,33 @@ public class TestExecutor {
         boolean zuvieleFelder = false;
         boolean zuvieleLOCDerKlasse = false;
 
+        int amountMethodsThreshold = 10;
+        int amountFieldsThreshold = 10;
+        int amountLOCsThreshold = 160;
+
         //Prüfe Anzahl der Methoden
-        if (recordToTest.getListAllDeclaredMethods().size() > 10) {
-            System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                    " wurden mehr als 10 Methoden erkannt (Large Class), " +
-                    "welches die Wartbarkeit verschlechtern könnte.");
-            zuvieleMethoden = true;
+        if (recordToTest.getListAllDeclaredMethods() != null && !recordToTest.getListAllDeclaredMethods().isEmpty()) {
+            if (recordToTest.getListAllDeclaredMethods().size() > amountMethodsThreshold) {
+                System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
+                        " wurden mehr als 10 Methoden erkannt (" + recordToTest.getListAllDeclaredMethods().size() + " Methoden) (Large Class), " +
+                        "welches die Wartbarkeit verschlechtern könnte.");
+                zuvieleMethoden = true;
+            }
         }
 
         //Prüfe Anzahl der Felder
-        if (getAnzahlDeklarierterFelder(recordToTest.getName() + "PerformanceTest" + "$" +
-                recordToTest.getName()) > 10) {
+        int amountFields = getAnzahlDeklarierterFelder(recordToTest.getName() + "PerformanceTest" + "$" +
+                recordToTest.getName());
+        if (amountFields > amountFieldsThreshold) {
             System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                    " wurden mehr als 10 Felder erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+                    " wurden mehr als 10 Felder erkannt (" + amountFields + " Felder) (Large Class), welches die Wartbarkeit verschlechtern könnte.");
             zuvieleFelder = true;
         }
 
         //Prüfe LOC des Records gesamt
-        if (recordToTest.getRecordFull().lines().count() > 160) {
+        if (recordToTest.getRecordFull().lines().count() > amountLOCsThreshold) {
             System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                    " wurden mehr als 160 LOC erkannt (Large Class), welches die Wartbarkeit verschlechtern könnte.");
+                    " wurden mehr als 160 LOC erkannt (" + recordToTest.getRecordFull().lines().count() + " LOC) (Large Class), welches die Wartbarkeit verschlechtern könnte.");
             zuvieleLOCDerKlasse = true;
         }
 
@@ -287,15 +300,25 @@ public class TestExecutor {
      * @param recordToTest RecordToTest
      */
     private boolean pruefeAufLongFunction(RecordToTest recordToTest) {
-        for (MethodToTest methodToTest : recordToTest.getListAllDeclaredMethods()) {
-            if (methodToTest.getFullMethod().lines().count() > 15) {
-                System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                        " wurde eine zu lange Methode (Long Function) \"" + methodToTest.getName() + "\" mit mehr " +
-                        "als 15 LOC gefunden, welche die Wartbarkeit verschlechtern könnte.");
-                return true;
+        StringBuilder sb = new StringBuilder();
+        int longFunctionThreshold = 15;
+
+        if (recordToTest.getListAllDeclaredMethods() != null && !recordToTest.getListAllDeclaredMethods().isEmpty()) {
+            for (MethodToTest methodToTest : recordToTest.getListAllDeclaredMethods()) {
+                if (methodToTest.getFullMethod().lines().count() > longFunctionThreshold) {
+                    sb.append("Ergebnis: Beim Record " + recordToTest.getName() +
+                            " wurde eine zu lange Methode (" + methodToTest.getName() + ") (Long Function) \"" + methodToTest.getName() + "\" mit mehr " +
+                            "als 15 LOC (" + methodToTest.getFullMethod().lines().count() + " LOC) gefunden, welche die Wartbarkeit verschlechtern könnte.");
+                }
             }
         }
-        return false;
+
+        if (!sb.toString().isEmpty()) {
+            System.out.println(sb.toString());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -310,6 +333,7 @@ public class TestExecutor {
         if (urlClassLoader != null && new File(System.getProperty("user.dir") + "/" + recordToTest.getName() +
                 "PerformanceTest.java").exists()) {
             return urlClassLoader.loadClass(className).getDeclaredFields().length - recordToTest.getAmountComponents();
+
         }
         System.out.println("Error: Beim Durchsuchen des Records nach deklarierten Feldern ist ein Fehler aufgetreten.");
         return -1;
@@ -322,12 +346,33 @@ public class TestExecutor {
      * @param recordToTest ToTest.RecordToTest
      */
     private boolean pruefeAufLongParameterList(RecordToTest recordToTest) {
-        if (recordToTest.getAmountComponents() > 5) {
-            System.out.println("Ergebnis: Beim Record " + recordToTest.getName() +
-                    " wurde eine lange Parameterliste mit mehr als 5 Parametern (Long Parameter List) gefunden, welche " +
-                    "die Wartbarkeit verschlechtern könnte.");
-            return true;
+        StringBuilder sb = new StringBuilder();
+        int threshold = 5;
+
+        //Untersuche Anzahl Komponenten des Records
+        if (recordToTest.getAmountComponents() > threshold) {
+            sb.append("Ergebnis: Beim Record " + recordToTest.getName() +
+                    " wurden mehr als 5 Komponenten (" + recordToTest.getAmountComponents() + " Komponenten)(Long Parameter List) gefunden, welche " +
+                    "die Wartbarkeit verschlechtern könnte.\n");
         }
-        return false;
+
+        //Alle Methoden auf Long Parameter List prüfen
+        if (recordToTest.getListAllDeclaredMethods() != null && !recordToTest.getListAllDeclaredMethods().isEmpty()) {
+            for (MethodToTest methodToTest : recordToTest.getListAllDeclaredMethods()) {
+                if (methodToTest.getAmountParameters() > threshold) {
+                    sb.append("Ergebnis: Beim Record " + recordToTest.getName() +
+                            " wurden in der Methode \"" + methodToTest.getName() + "\" mehr als 5 Parameter (" + methodToTest.getAmountParameters() + " Parameter) (Long Parameter List) gefunden, welches " +
+                            "die Wartbarkeit verschlechtern könnte.\n");
+                }
+            }
+        }
+
+        if (!sb.toString().isEmpty()) {
+            //Lösche letzten Umbruch ("\n")
+            System.out.println(sb.toString().substring(0, sb.toString().length() - 2));
+            return true;
+        } else {
+            return false;
+        }
     }
 }

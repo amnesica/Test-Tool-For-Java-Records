@@ -55,12 +55,14 @@ public class RecordExtractor {
 
                         //prüfe, ob automatisch generierte Methoden oder Konstruktor im Record überschrieben wurden
                         if (recordUeberschreibtMethodenOderKonstruktor(recordToTest)) {
-                            //extrahiere Methoden des Records
-                            speichereMethoden(recordToTest);
-
-                            //Setze Record soll getestet werden
-                            recordToTest.setRecordShouldBeTested(true);
+                            //Setze Record soll getestet werden (funktional und nicht-funktional)
+                            recordToTest.setGenerateTestcasesForRecord(true);
                         }
+
+                        recordToTest.setExecuteTestcasesForRecord(true);
+
+                        //extrahiere Methoden des Records
+                        speichereMethoden(recordToTest);
                     }
                 }
             }
@@ -74,12 +76,13 @@ public class RecordExtractor {
         //Gibt Rückmeldung über die gefundenen Records auf der Konsole
         if (fileToTest.getListRecords() != null && !fileToTest.getListRecords().isEmpty()) {
             for (RecordToTest recordToTest : fileToTest.getListRecords()) {
-                if (!recordToTest.isRecordShouldBeTested()) {
+                if (!recordToTest.isGenerateTestcasesForRecord()) {
                     if (recordToTest.getListFoundObjects().isEmpty() &&
                             recordToTest.getListFoundDataTypes().isEmpty()) {
                         System.out.println("Hinweis: Der Record " + recordToTest.getName() +
-                                " überschreibt keine automatisch generierten Methoden und muss " +
-                                "daher nicht getestet werden.");
+                                " überschreibt keine automatisch generierte Methode und muss " +
+                                "daher funktional nicht getestet werden.");
+                        System.out.println("--------------------------------------------------------");
                     } else {
                         gebeFehlermeldungWennRecordNichtNurIntegerEnthaelt(recordToTest);
                     }
@@ -105,8 +108,62 @@ public class RecordExtractor {
             for (MethodToTest methodToTest : recordToTest.getListAllDeclaredMethods()) {
                 String fullMethod = leseBodyAus(recordToTest.getRecordFull(), methodToTest.getStartIndex());
                 methodToTest.setFullMethod(fullMethod);
+
+                //Speichere Parameter und Parameteranzahl der Methode
+                String methodHeader = leseMethodHeaderAus(methodToTest.getFullMethod());
+                methodToTest.setMethodHeader(methodHeader);
+
+                if (!methodHeader.equals("")) {
+                    //extrahiere Parameter aus Header in Liste von Wörtern
+                    ArrayList<String> listWords = extrahiereKomponentenInArrayList(methodHeader);
+                    if (!listWords.isEmpty()) {
+
+                        //Speichere Parameter in HashMap
+                        LinkedHashMap<Object, Object> parameterMap = speichereKomponentenInMap(listWords);
+
+                        //Speichere hashMap und Anzahl Parameter an methodToTest
+                        methodToTest.setParameterMap(parameterMap);
+                        methodToTest.setAmountParameters(parameterMap.keySet().size());
+                    }
+                } else {
+                    //Es wurde nur "()" gefunden -> keine Parameter
+                    methodToTest.setAmountParameters(0);
+                }
             }
         }
+    }
+
+    /**
+     * Gibt den Header einer Methode als String zurück
+     *
+     * @param fullMethod Komplette Methode als String
+     * @return String
+     */
+    private String leseMethodHeaderAus(String fullMethod) {
+        String header = null;
+        int startIndex = 0;
+        int endIndex = 0;
+        for (int i = 0; i < fullMethod.length(); i++) {
+            if (fullMethod.charAt(i) == '(') {
+                // + 1, um "("-Klammer weg zu bekommen
+                startIndex = i + 1;
+                break;
+            }
+        }
+        for (int j = startIndex; j < fullMethod.length(); j++) {
+            if (fullMethod.charAt(j) == ')') {
+                // - 1, um ")"-Klammer weg zu bekommen
+                endIndex = j;
+                break;
+            }
+        }
+
+        if (startIndex != endIndex) {
+            header = fullMethod.substring(startIndex, endIndex);
+        } else {
+            header = "";
+        }
+        return header;
     }
 
     /**
@@ -232,16 +289,12 @@ public class RecordExtractor {
                 ArrayList<String> listWords = extrahiereKomponentenInArrayList(componentsAsString);
 
                 //speichere einzelne Komponenten in Hashmap
-                LinkedHashMap<Object, Object> componentMap = new LinkedHashMap<>();
+                LinkedHashMap<Object, Object> componentMap;
                 if (!listWords.isEmpty()) {
-                    for (int j = 0; j < listWords.size(); j++) {
-                        if (j % 2 == 0) {
-                            //key=name, value=type
-                            //hier andersherum, da sonst der vorherige Eintrag immer ersetzt wird,
-                            //da Key gleich wäre (int)
-                            componentMap.put(listWords.get(j + 1), listWords.get(j));
-                        }
-                    }
+                    //fülle Map mit Komponenten
+                    componentMap = speichereKomponentenInMap(listWords);
+
+                    //Setze Map in recordToTest und Anzahl Komponenten
                     recordToTest.setComponentMap(componentMap);
                     recordToTest.setAmountComponents(componentMap.keySet().size());
 
@@ -251,6 +304,27 @@ public class RecordExtractor {
             }
         }
     }
+
+    /**
+     * Speichert die Komponenten oder Parameter aus einer Liste an Wörtern in einer LinkedHashMap<Object, Object>
+     * wobei der key=name und value=type ist
+     *
+     * @param listWords ArrayList<String>
+     * @return LinkedHashMap<Object, Object> mit key=name und value=type
+     */
+    private LinkedHashMap<Object, Object> speichereKomponentenInMap(ArrayList<String> listWords) {
+        LinkedHashMap<Object, Object> componentMap = new LinkedHashMap<>();
+        for (int j = 0; j < listWords.size(); j++) {
+            if (j % 2 == 0) {
+                //key=name, value=type
+                //hier andersherum, da sonst der vorherige Eintrag immer ersetzt wird,
+                //da Key gleich wäre (int)
+                componentMap.put(listWords.get(j + 1), listWords.get(j));
+            }
+        }
+        return componentMap;
+    }
+
 
     /**
      * Extrahiert den Namen eines Records aus dem Dateiinhalt der Datei, welche als
@@ -370,6 +444,7 @@ public class RecordExtractor {
             }
             System.out.println("Hinweis: Objekte können weiterhin verändert werden!");
         }
+        System.out.println("--------------------------------------------------------");
     }
 
     /**
@@ -492,14 +567,13 @@ public class RecordExtractor {
         if (!results.isEmpty()) {
             //Speichere überschriebene Methoden und Konstruktoren in recordInfo ab
             speichereUeberschriebeneMethoden(results, recordToTest);
-
+        }
+        if (!listAllDeclaredMethods.isEmpty()) {
             //Speichere alle gefundenen Methoden in listAllDeclaredMethods im Record ab
             recordToTest.setListAllDeclaredMethods(listAllDeclaredMethods);
-
-            return true;
-        } else {
-            return false;
         }
+
+        return !results.isEmpty();
     }
 
     /**

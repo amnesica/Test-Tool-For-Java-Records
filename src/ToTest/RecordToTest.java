@@ -28,8 +28,11 @@ public class RecordToTest {
     //Index des Endes der Komponenten-Liste
     private int indexEndOfComponentList = 0;
 
-    //Boolean, ob Record getestet werden soll
-    private boolean recordShouldBeTested;
+    //Boolean, ob Record funktional getestet werden soll
+    private boolean generateTestcasesForRecord;
+
+    //Boolean, ob Record nicht-funktional getestet werden soll
+    private boolean executeTestcasesForRecord;
 
     //Komponenten des Records
     private LinkedHashMap<Object, Object> componentMap;
@@ -117,12 +120,12 @@ public class RecordToTest {
         this.listFoundDataTypes = listFoundDataTypes;
     }
 
-    public boolean isRecordShouldBeTested() {
-        return recordShouldBeTested;
+    public boolean isGenerateTestcasesForRecord() {
+        return generateTestcasesForRecord;
     }
 
-    public void setRecordShouldBeTested(boolean recordShouldBeTested) {
-        this.recordShouldBeTested = recordShouldBeTested;
+    public void setGenerateTestcasesForRecord(boolean generateTestcasesForRecord) {
+        this.generateTestcasesForRecord = generateTestcasesForRecord;
     }
 
     public int getIndexEntryPointRecordBeforeMatch() {
@@ -155,5 +158,13 @@ public class RecordToTest {
 
     public void setListAllDeclaredMethods(ArrayList<MethodToTest> listAllDeclaredMethods) {
         this.listAllDeclaredMethods = listAllDeclaredMethods;
+    }
+
+    public boolean isExecuteTestcasesForRecord() {
+        return executeTestcasesForRecord;
+    }
+
+    public void setExecuteTestcasesForRecord(boolean executeTestcasesForRecord) {
+        this.executeTestcasesForRecord = executeTestcasesForRecord;
     }
 }

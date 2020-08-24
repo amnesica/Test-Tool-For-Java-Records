@@ -61,15 +61,19 @@ public class Main {
                 // für jeden gefundenen Record durch, wenn dieser getestet werden soll
                 for (RecordToTest recordToTest : fileToTest.getListRecords()) {
 
-                    if (recordToTest.isRecordShouldBeTested()) {
+                    //funktionale Testfälle
+                    if (recordToTest.isGenerateTestcasesForRecord()) {
                         //Instantiiere TestGenerator für funktionale Testfälle
                         TestGenerator testGenerator = new TestGenerator();
 
-                        //Instantiiere TestExecutor für nicht-funktionale Testfälle
-                        TestExecutor testExecutor = new TestExecutor();
-
                         //Generiere funktionale Testfaelle
                         testGenerator.generierefunktionaleTestfaelle(recordToTest);
+                    }
+
+                    //nicht funktionale Testfälle
+                    if (recordToTest.isExecuteTestcasesForRecord()) {
+                        //Instantiiere TestExecutor für nicht-funktionale Testfälle
+                        TestExecutor testExecutor = new TestExecutor();
 
                         //Führe Test auf Leistungseffizienz durch
                         testExecutor.fuehreLeistungseffizienztestDurch(recordToTest);
