@@ -27,7 +27,7 @@ public class TestRecords {
     record test5(String s) {
     }
 
-    //keine Ausführung
+    //keine Ausführung -> Warnung Object - check
     record test55(Object o) {
         public Object o() {
             return o;
@@ -157,6 +157,19 @@ public class TestRecords {
 
 
                 //langer Umbruch
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
             }
@@ -309,6 +322,14 @@ public class TestRecords {
                 //langer Umbruch
 
 
+
+
+
+
+
+
+
+
             }
         }
 
@@ -405,6 +426,15 @@ public class TestRecords {
 
 
             //long method
+
+
+
+
+
+
+
+
+
 
 
         }
