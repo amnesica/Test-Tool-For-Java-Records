@@ -48,6 +48,11 @@ public class RecordToTest {
     //Liste mit allen Methoden im Body des zu testenden Records
     private ArrayList<MethodToTest> listAllDeclaredMethods;
 
+    //Boolean, ob Body leer ist
+    private boolean bodyIstLeer = false;
+
+    private String neededImportsAsString;
+
     public String getName() {
         return name;
     }
@@ -166,5 +171,21 @@ public class RecordToTest {
 
     public void setExecuteTestcasesForRecord(boolean executeTestcasesForRecord) {
         this.executeTestcasesForRecord = executeTestcasesForRecord;
+    }
+
+    public boolean isBodyIstLeer() {
+        return bodyIstLeer;
+    }
+
+    public void setBodyIstLeer(boolean bodyIstLeer) {
+        this.bodyIstLeer = bodyIstLeer;
+    }
+
+    public String getNeededImportsAsString() {
+        return neededImportsAsString;
+    }
+
+    public void setNeededImportsAsString(String neededImportsAsString) {
+        this.neededImportsAsString = neededImportsAsString;
     }
 }

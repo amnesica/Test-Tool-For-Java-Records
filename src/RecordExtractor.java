@@ -25,8 +25,11 @@ public class RecordExtractor {
         if (!fileToTest.getFileContent().isEmpty() && fileToTest.getFileContent().contains("public class") &&
                 fileToTest.getFileContent().contains("record")) {
 
-            //Speichere ToTest.FileToTest als Feld
+            //Speichere FileToTest als Feld
             this.fileToTest = fileToTest;
+
+            //Speichere Imports aus FileToTest
+            String imports = extrahiereImportsAusFile(fileToTest);
 
             //Regulärer Ausdruck um Beginn des Records zu ermitteln (record\s\w+\()
             String beginOfRecordRegex = "(record\\s\\w+\\()";
@@ -40,6 +43,9 @@ public class RecordExtractor {
 
                 recordToTest.setIndexEntryPointRecordBeforeMatch(m.start());
                 recordToTest.setIndexEntryPointRecordAfterMatch(m.end());
+
+                //speichere benötigte Imports in RecordToTest
+                recordToTest.setNeededImportsAsString(imports);
 
                 //speichere Komponenten in RecordToTest
                 speichereKomponenten(recordToTest);
@@ -55,11 +61,14 @@ public class RecordExtractor {
 
                         //prüfe, ob automatisch generierte Methoden oder Konstruktor im Record überschrieben wurden
                         if (recordUeberschreibtMethodenOderKonstruktor(recordToTest)) {
-                            //Setze Record soll getestet werden (funktional und nicht-funktional)
+                            //Setze Record soll getestet werden (funktional)
                             recordToTest.setGenerateTestcasesForRecord(true);
                         }
 
-                        recordToTest.setExecuteTestcasesForRecord(true);
+                        if (!recordToTest.isBodyIstLeer()) {
+                            //Setze Record soll getestet werden (nicht-funktional) wenn Body nicht leer ist
+                            recordToTest.setExecuteTestcasesForRecord(true);
+                        }
 
                         //extrahiere Methoden des Records
                         speichereMethoden(recordToTest);
@@ -76,26 +85,70 @@ public class RecordExtractor {
         //Gibt Rückmeldung über die gefundenen Records auf der Konsole
         if (fileToTest.getListRecords() != null && !fileToTest.getListRecords().isEmpty()) {
             for (RecordToTest recordToTest : fileToTest.getListRecords()) {
+
+                //funktionaler Test
                 if (!recordToTest.isGenerateTestcasesForRecord()) {
-                    if (recordToTest.getListFoundObjects().isEmpty() &&
+                    if (recordToTest.getListFoundObjects() != null &&
+                            recordToTest.getListFoundDataTypes() != null &&
+                            recordToTest.getListFoundObjects().isEmpty() &&
                             recordToTest.getListFoundDataTypes().isEmpty()) {
+
                         System.out.println("Hinweis: Der Record " + recordToTest.getName() +
                                 " überschreibt keine automatisch generierte Methode und muss " +
                                 "daher funktional nicht getestet werden.");
-                        System.out.println("--------------------------------------------------------");
                     } else {
-                        gebeFehlermeldungWennRecordNichtNurIntegerEnthaelt(recordToTest);
+
+                        //Record enthält nicht nur Integer als Komponenten
+                        if (recordToTest.getListFoundObjects() != null &&
+                                recordToTest.getListFoundDataTypes() != null) {
+                            gebeFehlermeldungWennRecordNichtNurIntegerEnthaelt(recordToTest);
+                        } else {
+                            //Record enthält gar keine Komponenten
+                            System.out.println("Hinweis: Der Record " + recordToTest.getName() +
+                                    " enthält keine Komponenten und muss " +
+                                    "daher funktional nicht getestet werden.");
+                        }
                     }
+
                 } else {
                     gebeRecordInformationenAufKonsole(recordToTest);
                 }
+
+                //nicht-funktionaler Test
+                if (!recordToTest.isExecuteTestcasesForRecord()) {
+                    //Record enthält gar keinen Body
+                    System.out.println("Hinweis: Für den Record " + recordToTest.getName() +
+                            " werden keine nicht-funktionalen Tests durchgeführt.");
+                }
+                System.out.println("--------------------------------------------------------");
             }
             return true;
         } else {
             System.out.println("Error: Es wurde kein Record in der angegebenen Datei gefunden." +
                     "\nTest-Tool wird beendet.");
+            System.out.println("--------------------------------------------------------");
             return false;
         }
+
+    }
+
+    /**
+     * Extrahiert die Imports aus der FileToTest und gibt sie als String zurück
+     * @param fileToTest FileToTest
+     * @return String
+     */
+    private String extrahiereImportsAusFile(FileToTest fileToTest) {
+        StringBuilder sb = new StringBuilder();
+        String beginOfImport = "(import[\\s]*(.)*(;))";
+        Pattern r = Pattern.compile(beginOfImport);
+        Matcher m = r.matcher(fileToTest.getFileContent());
+
+        //Suche nach allen Records in Datei
+        while (m.find()) {
+            sb.append(fileToTest.getFileContent(), m.start(), m.end()).append("\n");
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -116,14 +169,25 @@ public class RecordExtractor {
                 if (!methodHeader.equals("")) {
                     //extrahiere Parameter aus Header in Liste von Wörtern
                     ArrayList<String> listWords = extrahiereKomponentenInArrayList(methodHeader);
+
                     if (!listWords.isEmpty()) {
 
-                        //Speichere Parameter in HashMap
-                        LinkedHashMap<Object, Object> parameterMap = speichereKomponentenInMap(listWords);
+                        //Sicherstellen, dass listWords kein Validierungs-Konstruktor ist
+                        if (!listWords.contains("<") && !listWords.contains(">") && !listWords.contains("<=") &&
+                                !listWords.contains(">=") && !listWords.contains("==") && !listWords.contains("!=") &&
+                                !listWords.contains("&&") && !listWords.contains("||") && !listWords.contains("(") &&
+                                !listWords.contains(")")) {
 
-                        //Speichere hashMap und Anzahl Parameter an methodToTest
-                        methodToTest.setParameterMap(parameterMap);
-                        methodToTest.setAmountParameters(parameterMap.keySet().size());
+                            //Speichere Parameter in HashMap
+                            LinkedHashMap<Object, Object> parameterMap = speichereKomponentenInMap(listWords);
+
+                            //Speichere hashMap und Anzahl Parameter an methodToTest
+                            methodToTest.setParameterMap(parameterMap);
+                            methodToTest.setAmountParameters(parameterMap.keySet().size());
+                        } else {
+                            //bei Validierungs-Konstruktor
+                            methodToTest.setAmountParameters(0);
+                        }
                     }
                 } else {
                     //Es wurde nur "()" gefunden -> keine Parameter
@@ -140,7 +204,7 @@ public class RecordExtractor {
      * @return String
      */
     private String leseMethodHeaderAus(String fullMethod) {
-        String header = null;
+        String header;
         int startIndex = 0;
         int endIndex = 0;
         for (int i = 0; i < fullMethod.length(); i++) {
@@ -187,8 +251,16 @@ public class RecordExtractor {
         int indexStartBody = recordToTest.getIndexEndOfComponentList() + 1;
 
         String body = leseBodyAus(fileToTest.getFileContent(), indexStartBody);
+
         if (body != null) {
+            //Wenn body leer ist
+            if (body.matches("([{][\\s]*[}])")) {
+                recordToTest.setBodyIstLeer(true);
+            }
+
+            //Speichere body ab
             recordToTest.setRecordBody(body);
+
         }
     }
 
@@ -261,7 +333,6 @@ public class RecordExtractor {
                 }
             }
         }
-        System.out.println("--------------------------------------------------------");
     }
 
     /**
@@ -288,19 +359,38 @@ public class RecordExtractor {
                                 recordToTest.getIndexEndOfComponentList());
                 ArrayList<String> listWords = extrahiereKomponentenInArrayList(componentsAsString);
 
+                //mache Reformat Code-Modifikation bei listWords rückgängig
+                //wenn "ArrayList<String> listString" (2 Elemente) zu "ArrayList<String>listString" (1 Element) wurde
+                for(int k = 0; k < listWords.size(); k++){
+                    if(listWords.get(k).contains(">")){
+                        int indexToSplit = listWords.get(k).indexOf(">");
+                        String value = listWords.get(k).substring(0, indexToSplit + 1);
+                        String key =  listWords.get(k).substring(indexToSplit + 1);
+
+                        //entferne alten Wert
+                        listWords.remove(k);
+
+                        //füge neue Werte in Liste an derselben Stelle ein
+                        listWords.add(k, value);
+                        listWords.add(k + 1, key);
+                    }
+                }
+
                 //speichere einzelne Komponenten in Hashmap
                 LinkedHashMap<Object, Object> componentMap;
                 if (!listWords.isEmpty()) {
+
                     //fülle Map mit Komponenten
                     componentMap = speichereKomponentenInMap(listWords);
 
                     //Setze Map in recordToTest und Anzahl Komponenten
                     recordToTest.setComponentMap(componentMap);
                     recordToTest.setAmountComponents(componentMap.keySet().size());
-
-                    //beende Schleife nach Extrahieren
-                    break;
+                } else {
+                    //keine Komponenten
+                    recordToTest.setAmountComponents(0);
                 }
+                break;
             }
         }
     }
@@ -424,13 +514,15 @@ public class RecordExtractor {
         } else if (!listFoundObjects.isEmpty() && listFoundDataTypes.isEmpty()) {
             if (listFoundObjects.size() == 1) {
                 System.out.println("Warnung: Komponente mit Objekt gefunden:\n" + listFoundObjects.get(0) +
-                        "\nHinweis: Objekte können weiterhin verändert werden!");
+                        "\nHinweis: Objekte können weiterhin verändert werden! Dies könnte die gewünschte " +
+                        "Funktionalität des Record beeinträchtigen!");
             } else {
                 System.out.println("Warnung: Komponente mit Objekt gefunden: ");
                 for (String foundObjects : listFoundObjects) {
                     System.out.println(foundObjects);
                 }
-                System.out.println("Hinweis: Objekte können weiterhin verändert werden!");
+                System.out.println("Hinweis: Objekte können weiterhin verändert werden! Dies könnte die gewünschte " +
+                        "Funktionalität des Record beeinträchtigen!");
             }
 
         } else if (!listFoundDataTypes.isEmpty()) {
@@ -442,9 +534,9 @@ public class RecordExtractor {
             for (String foundObjects : listFoundObjects) {
                 System.out.println(foundObjects);
             }
-            System.out.println("Hinweis: Objekte können weiterhin verändert werden!");
+            System.out.println("Hinweis: Objekte können weiterhin verändert werden! Dies könnte die gewünschte " +
+                    "Funktionalität des Record beeinträchtigen!");
         }
-        System.out.println("--------------------------------------------------------");
     }
 
     /**

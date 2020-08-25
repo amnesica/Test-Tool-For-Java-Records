@@ -23,10 +23,10 @@ public class Main {
      */
     public static void main(String[] args) {
         System.out.println("-----------------Test-Tool Java-Records-----------------");
-        //get Dateiname von *.java-Datei, die Records enthält
+        //prüfe Datei mit *.java-Endung, die als Argument mitgegeben wurde
         if (args != null && args.length > 0 && !args[0].isEmpty() && args[0].contains(".java")) {
 
-            //starte Test-Tool
+            //starte Test-Tool mit Pfad der Datei
             starteTestTool(args[0]);
 
         } else {

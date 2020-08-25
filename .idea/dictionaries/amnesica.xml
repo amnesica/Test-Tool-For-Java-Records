@@ -10,6 +10,7 @@
       <w>alle</w>
       <w>aller</w>
       <w>alten</w>
+      <w>andere</w>
       <w>anderen</w>
       <w>andersherum</w>
       <w>anfang</w>
@@ -19,6 +20,7 @@
       <w>angegebene</w>
       <w>angegebenen</w>
       <w>anscheinend</w>
+      <w>ansonsten</w>
       <w>anzahl</w>
       <w>auch</w>
       <w>aufgerufen</w>
@@ -27,6 +29,7 @@
       <w>ausdruck</w>
       <w>ausdrücke</w>
       <w>ausdrücken</w>
+      <w>ausführung</w>
       <w>ausgabe</w>
       <w>ausgeführt</w>
       <w>ausgegeben</w>
@@ -36,6 +39,7 @@
       <w>automatisch</w>
       <w>außerdem</w>
       <w>baue</w>
+      <w>beeinträchtigen</w>
       <w>beende</w>
       <w>beendet</w>
       <w>beginn</w>
@@ -45,6 +49,7 @@
       <w>bekommen</w>
       <w>benutzerdefinierte</w>
       <w>benutzerdefinierten</w>
+      <w>benötigte</w>
       <w>berechne</w>
       <w>bereite</w>
       <w>bereits</w>
@@ -66,12 +71,14 @@
       <w>darüber</w>
       <w>dass</w>
       <w>datei</w>
+      <w>dateien</w>
       <w>dateiinhalt</w>
       <w>dateiname</w>
       <w>dateinamen</w>
       <w>datentypen</w>
       <w>deklarierten</w>
       <w>deklarierter</w>
+      <w>derselben</w>
       <w>dient</w>
       <w>diese</w>
       <w>diesen</w>
@@ -113,6 +120,7 @@
       <w>einzufügen</w>
       <w>einzufügenden</w>
       <w>einzufügender</w>
+      <w>elemente</w>
       <w>ende</w>
       <w>endes</w>
       <w>endgültiger</w>
@@ -155,6 +163,7 @@
       <w>extrahieren</w>
       <w>extrahiert</w>
       <w>extrahierten</w>
+      <w>fehl</w>
       <w>fehlende</w>
       <w>fehler</w>
       <w>fehlermeldung</w>
@@ -175,6 +184,8 @@
       <w>funktion</w>
       <w>funktional</w>
       <w>funktionale</w>
+      <w>funktionalen</w>
+      <w>funktionaler</w>
       <w>funktionalitaet</w>
       <w>funktionalität</w>
       <w>funktionelle</w>
@@ -209,6 +220,7 @@
       <w>gesucht</w>
       <w>getestet</w>
       <w>getrennt</w>
+      <w>gewünschte</w>
       <w>gewünschten</w>
       <w>geändert</w>
       <w>gibt</w>
@@ -263,6 +275,7 @@
       <w>kanonischen</w>
       <w>kein</w>
       <w>keine</w>
+      <w>keinen</w>
       <w>klammer</w>
       <w>klammern</w>
       <w>klasse</w>
@@ -290,7 +303,9 @@
       <w>können</w>
       <w>könnte</w>
       <w>lange</w>
+      <w>langer</w>
       <w>lasse</w>
+      <w>laufen</w>
       <w>laufzeit</w>
       <w>leerstelle</w>
       <w>leistung</w>
@@ -303,6 +318,7 @@
       <w>letztes</w>
       <w>liste</w>
       <w>lösche</w>
+      <w>mache</w>
       <w>manipuliere</w>
       <w>manipulierenden</w>
       <w>manipuliert</w>
@@ -319,6 +335,7 @@
       <w>mitgenommen</w>
       <w>mitkommt</w>
       <w>mittels</w>
+      <w>modifikation</w>
       <w>möglich</w>
       <w>möglichen</w>
       <w>möglichkeit</w>
@@ -350,6 +367,7 @@
       <w>positivtest</w>
       <w>printe</w>
       <w>programm</w>
+      <w>programmlauf</w>
       <w>programms</w>
       <w>projektverzeichnis</w>
       <w>pruefe</w>
@@ -364,9 +382,11 @@
       <w>repräsentiert</w>
       <w>rueckgabe</w>
       <w>rückgabewert</w>
+      <w>rückgängig</w>
       <w>rückmeldung</w>
       <w>schaue</w>
       <w>schiefgegangen</w>
+      <w>schlagen</w>
       <w>schleife</w>
       <w>schließe</w>
       <w>schreibe</w>
@@ -378,6 +398,7 @@
       <w>setze</w>
       <w>setzen</w>
       <w>sich</w>
+      <w>sicherstellen</w>
       <w>sind</w>
       <w>soll</w>
       <w>sollen</w>
@@ -426,6 +447,8 @@
       <w>unterstützt</w>
       <w>untersuche</w>
       <w>valide</w>
+      <w>validierung</w>
+      <w>validierungs</w>
       <w>veraendere</w>
       <w>verhindere</w>
       <w>verschlechtern</w>
@@ -443,11 +466,13 @@
       <w>vorhandenen</w>
       <w>vorher</w>
       <w>vorherige</w>
+      <w>vorherigen</w>
       <w>vorliegenden</w>
       <w>vorne</w>
       <w>warnung</w>
       <w>wartbarkeit</w>
       <w>wartbarkeitstest</w>
+      <w>weder</w>
       <w>weitere</w>
       <w>weiteren</w>
       <w>weiterhin</w>
