@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Einstiegspunkt des Test-Tools für Records in Java
+ * Einstiegspunkt des Test-Tools fuer Records in Java
  * <p>
  * Kompilieren:     javac --enable-preview -source 14 *.java
  * Aufruf:          java --enable-preview Main <PfadZurDatei>
@@ -19,18 +19,18 @@ public class Main {
     /**
      * Einstiegspunkt des Programms
      *
-     * @param args Voller Dateiname der Java-Datei, welche Records zum Testen enthält
+     * @param args Voller Dateiname der Java-Datei, welche Records zum Testen enthaelt
      */
     public static void main(String[] args) {
         System.out.println("-----------------Test-Tool Java-Records-----------------");
-        //prüfe Datei mit *.java-Endung, die als Argument mitgegeben wurde
+        //pruefe Datei mit *.java-Endung, die als Argument mitgegeben wurde
         if (args != null && args.length > 0 && !args[0].isEmpty() && args[0].contains(".java")) {
 
             //starte Test-Tool mit Pfad der Datei
             starteTestTool(args[0]);
 
         } else {
-            System.out.println("Error: Bitte geben sie eine gültige Java-Datei als Argument an" +
+            System.out.println("Error: Bitte geben sie eine gueltige Java-Datei als Argument an" +
                     "\nTest-Tool wird beendet.");
         }
     }
@@ -54,34 +54,32 @@ public class Main {
             String fileContent = new String(Files.readAllBytes(fileToTest.getPath()));
             fileToTest.setFileContent(fileContent);
 
-            //prüfe, ob Tests durchgeführt werden soll und starte Generierung und Durchführung der Tests
+            //pruefe, ob Tests durchgefuehrt werden soll und starte Generierung und Durchfuehrung der Tests
             if (new RecordExtractor().pruefeObTestfaelleGeneriertWerdenSollen(fileToTest)) {
 
-                //generiere Testfaelle und führe Tests auf Leistungseffizienz und Wartbarkeit
-                // für jeden gefundenen Record durch, wenn dieser getestet werden soll
+                //generiere Testfaelle und fuehre Tests auf Leistungseffizienz und Wartbarkeit
+                // fuer jeden gefundenen Record durch, wenn dieser getestet werden soll
                 for (RecordToTest recordToTest : fileToTest.getListRecords()) {
 
-                    //funktionale Testfälle
-                    if (recordToTest.isGenerateTestcasesForRecord()) {
-                        //Instantiiere TestGenerator für funktionale Testfälle
+                    //funktionale Testfaelle
+                    if (recordToTest.isGenerateFunctionalTestcases()) {
+                        //Instantiiere TestGenerator fuer funktionale Testfaelle
                         TestGenerator testGenerator = new TestGenerator();
 
                         //Generiere funktionale Testfaelle
                         testGenerator.generierefunktionaleTestfaelle(recordToTest);
                     }
 
-                    //nicht funktionaler Testfälle
-                    if (recordToTest.isExecutePerformanceTest()) {
-                        //Instantiiere TestExecutor für nicht-funktionale Testfälle
+                    //nicht funktionaler Testfaelle
+                    if (recordToTest.isExecuteNonFunctionalTestcases()) {
+                        //Instantiiere TestExecutor fuer nicht-funktionale Testfaelle
                         TestExecutor testExecutor = new TestExecutor();
 
-                        //Führe Test auf Leistungseffizienz durch
+                        //Fuehre Test auf Leistungseffizienz durch
                         testExecutor.fuehreLeistungseffizienztestDurch(recordToTest);
 
-                        if (recordToTest.isExecuteMaintainabilityTest()) {
-                            //Führe Test auf Wartbarkeit durch
-                            testExecutor.fuehreTestAufWartbarkeitDurch(recordToTest);
-                        }
+                        //Fuehre Test auf Wartbarkeit durch
+                        testExecutor.fuehreTestAufWartbarkeitDurch(recordToTest);
                     }
                 }
             }

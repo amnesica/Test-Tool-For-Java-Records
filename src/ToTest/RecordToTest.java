@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /**
- * Klasse, die einen Record repräsentiert, der vom Programm aus der Eingabedatei herausgelesen wurde und
+ * Klasse, die einen Record repraesentiert, der vom Programm aus der Eingabedatei herausgelesen wurde und
  * getestet werden soll
  */
 public class RecordToTest {
@@ -29,13 +29,11 @@ public class RecordToTest {
     private int indexEndOfComponentList = 0;
 
     //Boolean, ob Record funktional getestet werden soll
-    private boolean generateTestcasesForRecord;
+    private boolean generateFunctionalTestcases;
 
-    //Boolean, ob Record auf Leistungseffizienz überprüft werden soll (nicht-funktional)
-    private boolean executePerformanceTest;
-
-    //Boolean, ob Record auf Wartbarkeit überprüft werden soll (nicht-funktional)
-    private boolean executeMaintainabilityTest;
+    //Boolean, ob Record auf Leistungseffizienz und Wartbarkeit
+    // ueberprueft werden soll (nicht-funktional)
+    private boolean executeNonFunctionalTestcases;
 
     //Komponenten des Records
     private LinkedHashMap<Object, Object> componentMap;
@@ -128,12 +126,12 @@ public class RecordToTest {
         this.listFoundDataTypes = listFoundDataTypes;
     }
 
-    public boolean isGenerateTestcasesForRecord() {
-        return generateTestcasesForRecord;
+    public boolean isGenerateFunctionalTestcases() {
+        return generateFunctionalTestcases;
     }
 
-    public void setGenerateTestcasesForRecord(boolean generateTestcasesForRecord) {
-        this.generateTestcasesForRecord = generateTestcasesForRecord;
+    public void setGenerateFunctionalTestcases(boolean generateFunctionalTestcases) {
+        this.generateFunctionalTestcases = generateFunctionalTestcases;
     }
 
     public int getIndexEntryPointRecordBeforeMatch() {
@@ -184,19 +182,11 @@ public class RecordToTest {
         this.neededImportsAsString = neededImportsAsString;
     }
 
-    public boolean isExecutePerformanceTest() {
-        return executePerformanceTest;
+    public boolean isExecuteNonFunctionalTestcases() {
+        return executeNonFunctionalTestcases;
     }
 
-    public void setExecutePerformanceTest(boolean executePerformanceTest) {
-        this.executePerformanceTest = executePerformanceTest;
-    }
-
-    public boolean isExecuteMaintainabilityTest() {
-        return executeMaintainabilityTest;
-    }
-
-    public void setExecuteMaintainabilityTest(boolean executeMaintainabilityTest) {
-        this.executeMaintainabilityTest = executeMaintainabilityTest;
+    public void setExecuteNonFunctionalTestcases(boolean executeNonFunctionalTestcases) {
+        this.executeNonFunctionalTestcases = executeNonFunctionalTestcases;
     }
 }

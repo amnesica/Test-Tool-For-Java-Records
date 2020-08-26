@@ -5,9 +5,24 @@ public class TestRecords {
     record test1() {
     }
 
-    //keine Ausführung funktional, Wartbarkeit
-    //Ausführung Leistungseffizienz - check
+    //keine Ausführung funktional - check
     record test2(int x) {
+    }
+
+    //keine Ausführung funktional
+    //Wartbarkeit - check
+    record test25(int x, int y, int z, int a, int b, int c, int d, int e, int f, int g, int h, int i) {
+        public static int hello1;
+        public static int hello2;
+        public static int hello3;
+        public static int hello4;
+        public static int hello5;
+        public static int hello6;
+        public static int hello7;
+        public static int hello8;
+        public static int hello9;
+        public static int hello10;
+        public static int hello11;
     }
 
     //Ausführung -> alle JUnit-Tests laufen durch - check
@@ -160,18 +175,6 @@ public class TestRecords {
                 //langer Umbruch
 
 
-
-
-
-
-
-
-
-
-
-
-
-
             }
         }
 
@@ -322,15 +325,6 @@ public class TestRecords {
                 //langer Umbruch
 
 
-
-
-
-
-
-
-
-
-
             }
         }
 
@@ -427,16 +421,6 @@ public class TestRecords {
 
 
             //long method
-
-
-
-
-
-
-
-
-
-
 
 
         }

@@ -21,6 +21,7 @@
       <w>angegebenen</w>
       <w>anscheinend</w>
       <w>ansonsten</w>
+      <w>anwendungsfall</w>
       <w>anzahl</w>
       <w>auch</w>
       <w>aufgerufen</w>
@@ -152,6 +153,7 @@
       <w>erstellung</w>
       <w>erstem</w>
       <w>ersten</w>
+      <w>erster</w>
       <w>erzeugt</w>
       <w>erzielen</w>
       <w>etwas</w>
@@ -188,6 +190,7 @@
       <w>funktionaler</w>
       <w>funktionalitaet</w>
       <w>funktionalität</w>
+      <w>funktionalitätstest</w>
       <w>funktionelle</w>
       <w>füge</w>
       <w>fügt</w>
@@ -230,6 +233,7 @@
       <w>grenzwerten</w>
       <w>große</w>
       <w>grundlegende</w>
+      <w>gueltige</w>
       <w>gültige</w>
       <w>handelt</w>
       <w>heißen</w>
@@ -246,11 +250,13 @@
       <w>hinzugefügten</w>
       <w>hänge</w>
       <w>immer</w>
+      <w>implementierung</w>
       <w>importen</w>
       <w>indem</w>
       <w>indiz</w>
       <w>indizes</w>
       <w>ineffizient</w>
+      <w>ineffiziente</w>
       <w>informationen</w>
       <w>inhalt</w>
       <w>inhalten</w>
@@ -267,6 +273,7 @@
       <w>instantiieren</w>
       <w>instantiierung</w>
       <w>instanz</w>
+      <w>invariante</w>
       <w>jedem</w>
       <w>jeden</w>
       <w>jedes</w>
@@ -376,6 +383,7 @@
       <w>prüft</w>
       <w>qualitätskriterium</w>
       <w>rangehängt</w>
+      <w>referenzobjekt</w>
       <w>reguläre</w>
       <w>regulären</w>
       <w>regulärer</w>
@@ -451,6 +459,7 @@
       <w>validierungs</w>
       <w>veraendere</w>
       <w>verhindere</w>
+      <w>verletzen</w>
       <w>verschlechtern</w>
       <w>versuchen</w>
       <w>verteile</w>
@@ -459,6 +468,8 @@
       <w>verändere</w>
       <w>verändert</w>
       <w>viele</w>
+      <w>vielen</w>
+      <w>vierten</w>
       <w>voller</w>
       <w>vorgesehen</w>
       <w>vorhanden</w>
@@ -473,6 +484,7 @@
       <w>wartbarkeit</w>
       <w>wartbarkeitstest</w>
       <w>weder</w>
+      <w>wegen</w>
       <w>weitere</w>
       <w>weiteren</w>
       <w>weiterhin</w>

@@ -15,14 +15,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Klasse, die die Testfälle für Funktionalität generiert
+ * Klasse, die die Testfaelle fuer Funktionalitaet generiert
  */
 public class TestGenerator {
 
     //Der zu testende Record
     private RecordToTest recordToTest;
 
-    //Liste mit den erstellten Testrecords für Positivtest
+    //Liste mit den erstellten Testrecords fuer Positivtest
     private ArrayList<TestRecord> listTestRecordsPositiv;
 
     //Liste mit Namen der erstellten Testrecords als String
@@ -31,11 +31,11 @@ public class TestGenerator {
     //Liste mit TestRecord Kopien als TestRecord
     private ArrayList<TestRecord> listTestRecordsPositivCopies;
 
-    //Name des TestRecords für den NegativTest
+    //Name des TestRecords fuer den NegativTest
     private String nameNegativTestRecord;
 
     /**
-     * Generiert die Testfaelle für Funktionalität für den vorliegenden Record in RecordToTest
+     * Generiert die Testfaelle fuer Funktionalitaet fuer den vorliegenden Record in RecordToTest
      *
      * @param recordToTest RecordToTest
      */
@@ -44,7 +44,7 @@ public class TestGenerator {
         //Speichere recordToTest als Feld ab
         this.recordToTest = recordToTest;
 
-        //Spezifiziere Pfade für JUnit-Testklasse und Name der Datei
+        //Spezifiziere Pfade fuer JUnit-Testklasse und Name der Datei
         Path pathForNewTestDirectory = Paths.get(System.getProperty("user.dir") + File.separator + "generated" +
                 File.separator);
         String nameTestKlasse = recordToTest.getName() + "Test";
@@ -61,9 +61,9 @@ public class TestGenerator {
             erstelleTestfaelleFunktionalitaet(pathForNewTestFile);
 
             System.out.println("--------------------------------------------------------");
-            System.out.println("Test auf Funktionalität (" + recordToTest.getName() + "):");
-            System.out.println("Testdatei für " + recordToTest.getName() +
-                    " wurde erfolgreich erstellt und kann ausgeführt werden.");
+            System.out.println("Test auf Funktionalitaet (" + recordToTest.getName() + "):");
+            System.out.println("Testdatei fuer " + recordToTest.getName() +
+                    " wurde erfolgreich erstellt und kann ausgefuehrt werden.");
             System.out.println("Pfad der generierten Datei: " + pathForNewTestFile);
             System.out.println("--------------------------------------------------------");
         } catch (IOException e) {
@@ -73,7 +73,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt die Testrecords mit den festgelegten Testdaten (Integer-Werte) sowie möglichen benutzerdefinierten
+     * Erstellt die Testrecords mit den festgelegten Testdaten (Integer-Werte) sowie moeglichen benutzerdefinierten
      * Grenzwerten, welche per Kommandozeile angefragt werden
      */
     private void erstelleTestRecords() {
@@ -81,12 +81,12 @@ public class TestGenerator {
         listTestRecordNames = new ArrayList<>();
         listTestRecordsPositiv = new ArrayList<>();
 
-        //generiere Liste mit Testwerten für Testrecords
+        //generiere Liste mit Testwerten fuer Testrecords
         ArrayList<Integer> listTestWerte = new ArrayList<>();
         Collections.addAll(listTestWerte, 1, Integer.MAX_VALUE, Integer.MIN_VALUE, -1, 0,
                 Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1);
 
-        //Möglichkeit, benutzerdefinierte Grenzwerte einzufügen (und diese der Liste listTestWerte hinzufügen)
+        //Moeglichkeit, benutzerdefinierte Grenzwerte einzufuegen (und diese der Liste listTestWerte hinzufuegen)
         ArrayList<Integer> listCustomValues = getBenutzerdefinierteGrenzwerte(recordToTest);
         if (!listCustomValues.isEmpty()) {
             listTestWerte.addAll(listCustomValues);
@@ -117,7 +117,7 @@ public class TestGenerator {
                 }
                 initializedTestRecord = initializedTestRecord.concat(String.valueOf(listTestWerte.get(i)));
 
-                //hänge ein "," oder ein ");" an, um Record abzuschließen
+                //haenge ein "," oder ein ");" an, um Record abzuschließen
                 if (anzahlAbgedeckterTestWerte + 1 == anzahlKomponenten) {
                     initializedTestRecord = initializedTestRecord.concat(");");
                 } else {
@@ -155,7 +155,7 @@ public class TestGenerator {
                     }
                     initializedTestRecord = initializedTestRecord.concat(String.valueOf(listTestWerte.get(i)));
 
-                    //hänge ein "," oder ein ");" an, um Record abzuschließen
+                    //haenge ein "," oder ein ");" an, um Record abzuschließen
                     if (anzahlAbgedeckterTestWerte + 1 == anzahlKomponenten) {
                         initializedTestRecord = initializedTestRecord.concat(");");
                     } else {
@@ -168,7 +168,7 @@ public class TestGenerator {
                     anzahlGenutzterTestWerte += 1;
                 }
 
-                //reset anzahlAbgedeckterTestWerte für den nächsten TestRecord
+                //reset anzahlAbgedeckterTestWerte fuer den naechsten TestRecord
                 anzahlAbgedeckterTestWerte = 0;
                 testRecord.setInitializedRecord(initializedTestRecord);
                 listTestRecordsPositiv.add(testRecord);
@@ -179,11 +179,11 @@ public class TestGenerator {
 
 
     /**
-     * Fragt auf der Kommandozeile nach benutzerdefinierten Werten und fügt diese der Liste mit den zu testenden
+     * Fragt auf der Kommandozeile nach benutzerdefinierten Werten und fuegt diese der Liste mit den zu testenden
      * Werten hinzu
      *
      * @param recordToTest RecordToTest
-     * @return ArrayList<Integer> mit den hinzugefügten Werten
+     * @return ArrayList<Integer> mit den hinzugefuegten Werten
      */
     private ArrayList<Integer> getBenutzerdefinierteGrenzwerte(RecordToTest recordToTest) {
         ArrayList<Integer> listCustomValues = new ArrayList<>();
@@ -192,8 +192,8 @@ public class TestGenerator {
         String decision = null;
         boolean repeat = true;
         while (repeat) {
-            System.out.println("Wollen Sie für den Record " + recordToTest.getName() +
-                    " benutzerdefinierte Grenzwerte hinzufügen? (j/n)");
+            System.out.println("Wollen Sie fuer den Record " + recordToTest.getName() +
+                    " benutzerdefinierte Grenzwerte hinzufuegen? (j/n)");
             decision = scanner.nextLine();
 
             switch (decision) {
@@ -204,14 +204,14 @@ public class TestGenerator {
 
         if (decision.equals("j")) {
             System.out.println("Geben Sie benutzerdefinierte Grenzwerte mit einem \"Enter\" getrennt ein. " +
-                    "Wenn sie fertig sind drücken Sie nochmals \"Enter\"!");
+                    "Wenn sie fertig sind druecken Sie nochmals \"Enter\"!");
 
             boolean repeat2 = true;
             while (repeat2) {
                 String stringCustomValue = scanner.nextLine();
                 if (!stringCustomValue.equals("")) {
                     try {
-                        //füge Wert der Liste hinzu
+                        //fuege Wert der Liste hinzu
                         int intCustomValue = Integer.parseInt(stringCustomValue);
                         listCustomValues.add(intCustomValue);
                     } catch (NumberFormatException e) {
@@ -227,7 +227,7 @@ public class TestGenerator {
     }
 
     /**
-     * Fügt den zu testenden Record in die generierte Testdatei ein
+     * Fuegt den zu testenden Record in die generierte Testdatei ein
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @param recordToTest       RecordToTest
@@ -246,7 +246,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt die Testfaelle für das Qualitätskriterium "Funktionelle Eignung".
+     * Erstellt die Testfaelle fuer das Qualitaetskriterium "Funktionelle Eignung".
      * Es wird ein Positiv- und ein Negativtest erstellt. Zuvor werden die Testrecords erstellt
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
@@ -256,7 +256,7 @@ public class TestGenerator {
         //Erstelle TestRecords und speichere diese in Liste testRecordsPositiv
         erstelleTestRecords();
 
-        //füge manipulierten zu testenden Record für Negativtests ein
+        //fuege manipulierten zu testenden Record fuer Negativtests ein
         fuegeNegativtestRecordEin(pathForNewTestFile);
 
         //Equals
@@ -271,7 +271,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt den Positivtest für "toString"
+     * Erstellt den Positivtest fuer "toString"
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @throws IOException IOException
@@ -300,7 +300,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt den Positivtest für "hashCode"
+     * Erstellt den Positivtest fuer "hashCode"
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @throws IOException IOException
@@ -326,12 +326,12 @@ public class TestGenerator {
     }
 
     /**
-     * Schreibt einen String content in eine Datei mit dem Pfad pathForNewTestFile und fügt darüber einen
+     * Schreibt einen String content in eine Datei mit dem Pfad pathForNewTestFile und fuegt darueber einen
      * Kommentar comment ein
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
-     * @param content            Einzufügender Inhalt als String
-     * @param comment            Kommentar, welcher den einzufügenden Inhalt kommentiert
+     * @param content            Einzufuegender Inhalt als String
+     * @param comment            Kommentar, welcher den einzufuegenden Inhalt kommentiert
      * @throws IOException IOException
      */
     private void schreibeInDatei(Path pathForNewTestFile, String content, String comment) throws IOException {
@@ -347,7 +347,7 @@ public class TestGenerator {
     }
 
     /**
-     * Fügt die TestRecords in listTestRecordsPositiv sowie listTestRecordsPositivCopies an den Header headerMethod
+     * Fuegt die TestRecords in listTestRecordsPositiv sowie listTestRecordsPositivCopies an den Header headerMethod
      * an und erstellt danach die Assertions mit Equals und jeweiligen TestRecord und seiner Kopie
      *
      * @param sb           StringBuilder
@@ -356,7 +356,7 @@ public class TestGenerator {
     private void fuegeTestRecordsMitEqualsAnHeader(StringBuilder sb, String headerMethod) {
         sb.append(headerMethod);
 
-        //füge TestRecords mit Testdaten sowie Kopien der Testrecords ein
+        //fuege TestRecords mit Testdaten sowie Kopien der Testrecords ein
         for (int i = 0; i < listTestRecordsPositiv.size(); i++) {
             sb.append(listTestRecordsPositiv.get(i).getInitializedRecord()).append("\n");
             sb.append(listTestRecordsPositivCopies.get(i).getInitializedRecord()).append("\n").append("\n");
@@ -372,7 +372,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt den Negativtest für "equals"
+     * Erstellt den Negativtest fuer "equals"
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @throws IOException IOException
@@ -382,14 +382,14 @@ public class TestGenerator {
         ArrayList<String> testRecordsNegativCopies = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
-        //baue bereits erstellte Records für Negativtest um
+        //baue bereits erstellte Records fuer Negativtest um
         for (TestRecord testRecord : listTestRecordsPositiv) {
             String testRecordNegativ = testRecord.getInitializedRecord()
                     .replace(recordToTest.getName(), nameNegativTestRecord);
             testRecordsNegativ.add(testRecordNegativ);
         }
 
-        //baue bereits erstellte Kopier-Records für Negativtest um
+        //baue bereits erstellte Kopier-Records fuer Negativtest um
         for (TestRecord testRecordCopy : listTestRecordsPositivCopies) {
             String testRecordNegativCopy = testRecordCopy.getInitializedRecord()
                     .replace(recordToTest.getName(), nameNegativTestRecord);
@@ -400,7 +400,7 @@ public class TestGenerator {
                 "public void testeFunktionalitaetEqualsNegativtest(){";
         sb.append(headerMethod);
 
-        //füge TestRecords mit Testdaten sowie Kopien der Testrecords ein
+        //fuege TestRecords mit Testdaten sowie Kopien der Testrecords ein
         for (int i = 0; i < testRecordsNegativ.size(); i++) {
             sb.append(testRecordsNegativ.get(i)).append("\n");
             sb.append(testRecordsNegativCopies.get(i)).append("\n").append("\n");
@@ -419,10 +419,10 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt einen Record für den Negativtest bei der Funktionalität. Hierbei wird bewusst ein nicht
-     * überschriebener Akzessor des originalen Records überschrieben. Wenn bereits alle Akzessoren
-     * überschrieben wurden, wird bei dem Akzessor der ersten Komponente ein "+ 1" beim "return" rangehängt,
-     * um den gewünschten Effekt zu erzielen
+     * Erstellt einen Record fuer den Negativtest bei der Funktionalitaet. Hierbei wird bewusst ein nicht
+     * ueberschriebener Akzessor des originalen Records ueberschrieben. Wenn bereits alle Akzessoren
+     * ueberschrieben wurden, wird bei dem Akzessor der ersten Komponente ein "+ 1" beim "return" rangehaengt,
+     * um den gewuenschten Effekt zu erzielen
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @throws IOException IOException
@@ -437,20 +437,20 @@ public class TestGenerator {
         testRecordNegativ.setRecordNegativTestFull(recordToTest.getRecordFull());
 
         if (recordToTest.getListOverriddenMethods().contains(methodToOverrideBadly)) {
-            //Akzessor wurde bereits überschrieben -> verändere Rückgabewert
+            //Akzessor wurde bereits ueberschrieben -> veraendere Rueckgabewert
             manipuliereVorhandenenAkzessor(methodToOverrideBadly, testRecordNegativ);
         } else {
-            //füge Akzessor am Ende des Records an
+            //fuege Akzessor am Ende des Records an
             erstelleNeuenManipuliertenAkzessor(methodToOverrideBadly, testRecordNegativ);
         }
         erstelleNegativTestRecord(testRecordNegativ);
 
         schreibeInDatei(pathForNewTestFile, testRecordNegativ.getRecordNegativTestFull(),
-                "//zu testender Record für Negativtest");
+                "//zu testender Record fuer Negativtest");
     }
 
     /**
-     * Erstellt einen NegativTestRecord für den Negativtest bei der Funktionalität
+     * Erstellt einen NegativTestRecord fuer den Negativtest bei der Funktionalitaet
      *
      * @param testRecordNegativ TestRecord
      */
@@ -463,7 +463,7 @@ public class TestGenerator {
             testRecordNegativ.setRecordNegativTestFull(testRecordNegativ.getRecordNegativTestFull()
                     .replace(accessorToOverride, accessorOverridden));
 
-        } else { //füge Methode am Ende des Records an
+        } else { //fuege Methode am Ende des Records an
             if (testRecordNegativ.getRecordNegativTestFull().endsWith("}")) {
                 String oldNegativTestRecord = testRecordNegativ.getRecordNegativTestFull()
                         .substring(0, testRecordNegativ.getRecordNegativTestFull().length() - 1);
@@ -473,12 +473,12 @@ public class TestGenerator {
             }
         }
 
-        //Record für NegativTest soll <name>NegativTest heißen
+        //Record fuer NegativTest soll <name>NegativTest heißen
         ueberschreibeAlleBezeichnerFuerNegativTest(testRecordNegativ);
     }
 
     /**
-     * Erstellt einen manipulierten Akzessor, welcher noch nicht im TestRecord überschrieben wurde.
+     * Erstellt einen manipulierten Akzessor, welcher noch nicht im TestRecord ueberschrieben wurde.
      * Dient der Erstellung eines NegativTestRecords
      *
      * @param methodToOverrideBadly Name der Methode, welche manipuliert erstellt werden soll
@@ -506,7 +506,7 @@ public class TestGenerator {
             int startIndex = m.start();
             int indexEndMethod;
 
-            //Set um die Klammern zu zählen, wenn keine Klammer mehr drinn ist, ist Record zuende
+            //Set um die Klammern zu zaehlen, wenn keine Klammer mehr drinn ist, ist Record zuende
             ArrayList<Character> brackets = new ArrayList<>();
 
             for (int i = startIndex; i < testRecordNegativ.getRecordNegativTestFull().length(); i++) {
@@ -541,7 +541,7 @@ public class TestGenerator {
     }
 
     /**
-     * Überschreibt alle alten Bezeichner damit Negativtest-Record <name>NegativTest heißt
+     * ueberschreibt alle alten Bezeichner damit Negativtest-Record <name>NegativTest heißt
      *
      * @param testRecordNegativ TestRecord
      */
@@ -554,8 +554,8 @@ public class TestGenerator {
     }
 
     /**
-     * Verändert den Rückgabewert der ausgewählten Akzessormethode zum Erstellen des
-     * Negativtest-Records. Der Rückgabewert wird um 5 erhöht. (TODO willkürlich)
+     * Veraendert den Rueckgabewert der ausgewaehlten Akzessormethode zum Erstellen des
+     * Negativtest-Records. Der Rueckgabewert wird um 5 erhoeht. (TODO willkuerlich)
      *
      * @param testRecordNegativ TestRecord
      */
@@ -567,11 +567,11 @@ public class TestGenerator {
         String manipulatedAccessor = testRecordNegativ.getAccessorToOverride();
         String overriddenManipulatedAccessor;
 
-        //manipuliere Akzessor für jedes Match (da mehrere "returns" möglich)
+        //manipuliere Akzessor fuer jedes Match (da mehrere "returns" moeglich)
         while (m.find()) {
             int indexEndOfReturn = m.end() - 1;
 
-            //fügt "+ 5" an letzter Stelle vor dem ";" ein
+            //fuegt "+ 5" an letzter Stelle vor dem ";" ein
             overriddenManipulatedAccessor = manipulatedAccessor.substring(0, indexEndOfReturn)
                     + "+ 5"
                     + manipulatedAccessor.substring(indexEndOfReturn);
@@ -582,11 +582,11 @@ public class TestGenerator {
     }
 
     /**
-     * Bestimmt einen nicht überschriebene Akzessor des zu testenden Records.
-     * Wenn alle Akzessoren überschrieben wurden, wird die erste Komponente
-     * in der HashMap ausgewählt
+     * Bestimmt einen nicht ueberschriebene Akzessor des zu testenden Records.
+     * Wenn alle Akzessoren ueberschrieben wurden, wird die erste Komponente
+     * in der HashMap ausgewaehlt
      *
-     * @return Name der zu überschreibenden Methode
+     * @return Name der zu ueberschreibenden Methode
      */
     private String bestimmeZuUeberschreibendeMethodeFuerNegativTest() {
         for (Object key : recordToTest.getComponentMap().keySet()) {
@@ -595,13 +595,13 @@ public class TestGenerator {
             }
         }
 
-        //Wenn alle Akzessoren überschrieben wurden, wähle erste Komponente des Records aus
+        //Wenn alle Akzessoren ueberschrieben wurden, waehle erste Komponente des Records aus
         Map.Entry<Object, Object> entry = recordToTest.getComponentMap().entrySet().iterator().next();
         return (String) entry.getKey();
     }
 
     /**
-     * Erstellt den Positivtest für "equals"
+     * Erstellt den Positivtest fuer "equals"
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      */
@@ -651,7 +651,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt die grundlegende Struktur der Testdatei mit Importen für JUnit und dem Package,
+     * Erstellt die grundlegende Struktur der Testdatei mit Importen fuer JUnit und dem Package,
      * in das die Datei erstellt wird
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
@@ -665,7 +665,7 @@ public class TestGenerator {
                 "import org.junit.jupiter.api.Test;\n" +
                 "\n" +
                 "/**\n" +
-                " * Automatisch generierte Testklasse mit JUnit-Tests für den Record \"" + recordToTest.getName() +
+                " * Automatisch generierte Testklasse mit JUnit-Tests fuer den Record \"" + recordToTest.getName() +
                 "\"\n" +
                 " */" + "\n" +
                 "public class " + nameTestKlasse + "{";
@@ -678,7 +678,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt eine neue Datei für die generierten Testfaelle und eine initiale Testdatei
+     * Erstellt eine neue Datei fuer die generierten Testfaelle und eine initiale Testdatei
      * mit .java-Endung in dem neuen Verzeichnis "/generated"
      */
     private void erstelleNeueTestDatei(Path pathForNewTestDirectory, Path pathForNewTestFile) throws IOException {

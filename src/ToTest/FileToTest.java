@@ -46,7 +46,7 @@ public class FileToTest {
     }
 
     /**
-     * Fügt einen RecordToTest der Liste an zu testenden Records hinzu.
+     * Fuegt einen RecordToTest der Liste an zu testenden Records hinzu.
      * Initialisiert die Liste beim ersten Record
      *
      * @param recordToTest RecordToTest
