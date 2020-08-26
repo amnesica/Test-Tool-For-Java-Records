@@ -5,7 +5,8 @@ public class TestRecords {
     record test1() {
     }
 
-    //keine Ausführung - check
+    //keine Ausführung funktional, Wartbarkeit
+    //Ausführung Leistungseffizienz - check
     record test2(int x) {
     }
 
@@ -157,7 +158,6 @@ public class TestRecords {
 
 
                 //langer Umbruch
-
 
 
 
@@ -330,6 +330,7 @@ public class TestRecords {
 
 
 
+
             }
         }
 
@@ -426,6 +427,7 @@ public class TestRecords {
 
 
             //long method
+
 
 
 
