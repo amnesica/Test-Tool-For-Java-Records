@@ -37,7 +37,6 @@ public class RecordToTest {
     //Boolean, ob Record auf Wartbarkeit überprüft werden soll (nicht-funktional)
     private boolean executeMaintainabilityTest;
 
-
     //Komponenten des Records
     private LinkedHashMap<Object, Object> componentMap;
     private ArrayList<String> listFoundObjects;
