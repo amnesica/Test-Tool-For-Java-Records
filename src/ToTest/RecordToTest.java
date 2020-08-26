@@ -31,8 +31,12 @@ public class RecordToTest {
     //Boolean, ob Record funktional getestet werden soll
     private boolean generateTestcasesForRecord;
 
-    //Boolean, ob Record nicht-funktional getestet werden soll
-    private boolean executeTestcasesForRecord;
+    //Boolean, ob Record auf Leistungseffizienz überprüft werden soll (nicht-funktional)
+    private boolean executePerformanceTest;
+
+    //Boolean, ob Record auf Wartbarkeit überprüft werden soll (nicht-funktional)
+    private boolean executeMaintainabilityTest;
+
 
     //Komponenten des Records
     private LinkedHashMap<Object, Object> componentMap;
@@ -165,14 +169,6 @@ public class RecordToTest {
         this.listAllDeclaredMethods = listAllDeclaredMethods;
     }
 
-    public boolean isExecuteTestcasesForRecord() {
-        return executeTestcasesForRecord;
-    }
-
-    public void setExecuteTestcasesForRecord(boolean executeTestcasesForRecord) {
-        this.executeTestcasesForRecord = executeTestcasesForRecord;
-    }
-
     public boolean isBodyIstLeer() {
         return bodyIstLeer;
     }
@@ -187,5 +183,21 @@ public class RecordToTest {
 
     public void setNeededImportsAsString(String neededImportsAsString) {
         this.neededImportsAsString = neededImportsAsString;
+    }
+
+    public boolean isExecutePerformanceTest() {
+        return executePerformanceTest;
+    }
+
+    public void setExecutePerformanceTest(boolean executePerformanceTest) {
+        this.executePerformanceTest = executePerformanceTest;
+    }
+
+    public boolean isExecuteMaintainabilityTest() {
+        return executeMaintainabilityTest;
+    }
+
+    public void setExecuteMaintainabilityTest(boolean executeMaintainabilityTest) {
+        this.executeMaintainabilityTest = executeMaintainabilityTest;
     }
 }

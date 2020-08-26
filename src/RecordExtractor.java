@@ -66,9 +66,14 @@ public class RecordExtractor {
                         }
 
                         if (!recordToTest.isBodyIstLeer()) {
-                            //Setze Record soll getestet werden (nicht-funktional) wenn Body nicht leer ist
-                            recordToTest.setExecuteTestcasesForRecord(true);
+                            //Setze Record soll getestet werden auf Wartbarkeit (nicht-funktional)
+                            // wenn Body nicht leer ist und alle Komponenten Integer-Werte sind
+                            recordToTest.setExecuteMaintainabilityTest(true);
                         }
+
+                        //Setze Record soll getestet werden auf Leistungseffizienz (nicht-funktional)
+                        // da Komponenten alle Integer-Werte sind
+                        recordToTest.setExecutePerformanceTest(true);
 
                         //extrahiere Methoden des Records
                         speichereMethoden(recordToTest);
@@ -114,11 +119,18 @@ public class RecordExtractor {
                     gebeRecordInformationenAufKonsole(recordToTest);
                 }
 
-                //nicht-funktionaler Test
-                if (!recordToTest.isExecuteTestcasesForRecord()) {
+                //nicht-funktionaler Test - Wartbarkeit
+                if (!recordToTest.isExecuteMaintainabilityTest()) {
                     //Record enthält gar keinen Body
                     System.out.println("Hinweis: Für den Record " + recordToTest.getName() +
-                            " werden keine nicht-funktionalen Tests durchgeführt.");
+                            " wird kein Test auf Wartbarkeit (nicht-funktional) durchgeführt.");
+                }
+
+                //nicht-funktionaler Test - Performance
+                if(!recordToTest.isExecutePerformanceTest()){
+                    //Record enthält nicht nur Integer-Komponenten
+                    System.out.println("Hinweis: Für den Record " + recordToTest.getName() +
+                            " wird kein Test auf Leistungseffizienz (nicht-funktional) durchgeführt.");
                 }
                 System.out.println("--------------------------------------------------------");
             }

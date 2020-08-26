@@ -70,16 +70,18 @@ public class Main {
                         testGenerator.generierefunktionaleTestfaelle(recordToTest);
                     }
 
-                    //nicht funktionale Testfälle
-                    if (recordToTest.isExecuteTestcasesForRecord()) {
+                    //nicht funktionaler Testfälle
+                    if (recordToTest.isExecutePerformanceTest()) {
                         //Instantiiere TestExecutor für nicht-funktionale Testfälle
                         TestExecutor testExecutor = new TestExecutor();
 
                         //Führe Test auf Leistungseffizienz durch
                         testExecutor.fuehreLeistungseffizienztestDurch(recordToTest);
 
-                        //Führe Test auf Wartbarkeit durch
-                        testExecutor.fuehreTestAufWartbarkeitDurch(recordToTest);
+                        if (recordToTest.isExecuteMaintainabilityTest()) {
+                            //Führe Test auf Wartbarkeit durch
+                            testExecutor.fuehreTestAufWartbarkeitDurch(recordToTest);
+                        }
                     }
                 }
             }
