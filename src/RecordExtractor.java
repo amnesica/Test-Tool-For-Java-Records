@@ -514,14 +514,14 @@ public class RecordExtractor {
             if (listFoundObjects.size() == 1) {
                 System.out.println("Warnung: Komponente mit Objekt gefunden:\n" + listFoundObjects.get(0) +
                         "\nHinweis: Objekte koennen weiterhin veraendert werden! Dies koennte die gewuenschte " +
-                        "Funktionalitaet des Record beeintraechtigen!");
+                        "Funktionalitaet des Records beeintraechtigen!");
             } else {
                 System.out.println("Warnung: Komponente mit Objekt gefunden: ");
                 for (String foundObjects : listFoundObjects) {
                     System.out.println(foundObjects);
                 }
                 System.out.println("Hinweis: Objekte koennen weiterhin veraendert werden! Dies koennte die gewuenschte " +
-                        "Funktionalitaet des Record beeintraechtigen!");
+                        "Funktionalitaet des Records beeintraechtigen!");
             }
 
         } else if (!listFoundDataTypes.isEmpty()) {
@@ -534,7 +534,7 @@ public class RecordExtractor {
                 System.out.println(foundObjects);
             }
             System.out.println("Hinweis: Objekte koennen weiterhin veraendert werden! Dies koennte die gewuenschte " +
-                    "Funktionalitaet des Record beeintraechtigen!");
+                    "Funktionalitaet des Records beeintraechtigen!");
         }
     }
 

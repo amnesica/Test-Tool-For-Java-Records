@@ -1,7 +1,7 @@
 package anwendungsfaelle;
 
 /**
- * Datei mit Record für dritten Anwendungsfall
+ * Datei mit Record für dritten Durchlauf
  * - nur Integer-Werte
  * - keine ueberschriebenen Konstruktoren/Methoden
  * -> Leistungseffizienztest, Wartbarkeitstest

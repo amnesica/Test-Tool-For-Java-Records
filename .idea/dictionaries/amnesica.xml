@@ -28,18 +28,24 @@
       <w>aufgetreten</w>
       <w>aufruf</w>
       <w>ausdruck</w>
+      <w>ausdruecke</w>
+      <w>ausdruecken</w>
       <w>ausdrücke</w>
       <w>ausdrücken</w>
       <w>ausführung</w>
       <w>ausgabe</w>
+      <w>ausgefuehrt</w>
       <w>ausgeführt</w>
       <w>ausgegeben</w>
+      <w>ausgewaehlt</w>
+      <w>ausgewaehlten</w>
       <w>ausgewählt</w>
       <w>ausgewählten</w>
       <w>ausreichend</w>
       <w>automatisch</w>
       <w>außerdem</w>
       <w>baue</w>
+      <w>beeintraechtigen</w>
       <w>beeinträchtigen</w>
       <w>beende</w>
       <w>beendet</w>
@@ -48,6 +54,7 @@
       <w>beispiel</w>
       <w>beispielaufruf</w>
       <w>bekommen</w>
+      <w>benoetigte</w>
       <w>benutzerdefinierte</w>
       <w>benutzerdefinierten</w>
       <w>benötigte</w>
@@ -64,11 +71,13 @@
       <w>bisher</w>
       <w>bitte</w>
       <w>breche</w>
+      <w>dafuer</w>
       <w>dafür</w>
       <w>daher</w>
       <w>damit</w>
       <w>danach</w>
       <w>darstellt</w>
+      <w>darueber</w>
       <w>darüber</w>
       <w>dass</w>
       <w>datei</w>
@@ -90,9 +99,11 @@
       <w>doppelungen</w>
       <w>drinn</w>
       <w>dritten</w>
+      <w>druecken</w>
       <w>drücken</w>
       <w>durch</w>
       <w>durchfuehrt</w>
+      <w>durchfuehrung</w>
       <w>durchführt</w>
       <w>durchführung</w>
       <w>durchgefuehrt</w>
@@ -118,6 +129,9 @@
       <w>einzelne</w>
       <w>einzelnen</w>
       <w>einzelnes</w>
+      <w>einzufuegen</w>
+      <w>einzufuegenden</w>
+      <w>einzufuegender</w>
       <w>einzufügen</w>
       <w>einzufügenden</w>
       <w>einzufügender</w>
@@ -136,6 +150,7 @@
       <w>erfolgreich</w>
       <w>ergebnis</w>
       <w>ergebnisse</w>
+      <w>erhoeht</w>
       <w>erhöht</w>
       <w>erkannt</w>
       <w>erkennen</w>
@@ -181,7 +196,10 @@
       <w>frage</w>
       <w>fragt</w>
       <w>fuege</w>
+      <w>fuegt</w>
       <w>fuehre</w>
+      <w>fuehrt</w>
+      <w>fuelle</w>
       <w>fuer</w>
       <w>funktion</w>
       <w>funktional</w>
@@ -214,6 +232,7 @@
       <w>generierten</w>
       <w>generierung</w>
       <w>genutzter</w>
+      <w>geprueft</w>
       <w>geprüft</w>
       <w>geringe</w>
       <w>gesammelt</w>
@@ -223,6 +242,8 @@
       <w>gesucht</w>
       <w>getestet</w>
       <w>getrennt</w>
+      <w>gewuenschte</w>
+      <w>gewuenschten</w>
       <w>gewünschte</w>
       <w>gewünschten</w>
       <w>geändert</w>
@@ -235,6 +256,7 @@
       <w>grundlegende</w>
       <w>gueltige</w>
       <w>gültige</w>
+      <w>haenge</w>
       <w>handelt</w>
       <w>heißen</w>
       <w>heißt</w>
@@ -246,7 +268,9 @@
       <w>hierbei</w>
       <w>hinweis</w>
       <w>hinzu</w>
+      <w>hinzufuegen</w>
       <w>hinzufügen</w>
+      <w>hinzugefuegten</w>
       <w>hinzugefügten</w>
       <w>hänge</w>
       <w>immer</w>
@@ -288,6 +312,8 @@
       <w>klasse</w>
       <w>klassen</w>
       <w>klassennamen</w>
+      <w>koennen</w>
+      <w>koennte</w>
       <w>kommandozeile</w>
       <w>kommentar</w>
       <w>kommentiert</w>
@@ -324,6 +350,7 @@
       <w>letzter</w>
       <w>letztes</w>
       <w>liste</w>
+      <w>loesche</w>
       <w>lösche</w>
       <w>mache</w>
       <w>manipuliere</w>
@@ -343,10 +370,14 @@
       <w>mitkommt</w>
       <w>mittels</w>
       <w>modifikation</w>
+      <w>moeglich</w>
+      <w>moeglichen</w>
+      <w>moeglichkeit</w>
       <w>möglich</w>
       <w>möglichen</w>
       <w>möglichkeit</w>
       <w>nach</w>
+      <w>naechsten</w>
       <w>namen</w>
       <w>namens</w>
       <w>nanosekunden</w>
@@ -378,17 +409,28 @@
       <w>programms</w>
       <w>projektverzeichnis</w>
       <w>pruefe</w>
+      <w>pruefen</w>
+      <w>prueft</w>
       <w>prüfe</w>
       <w>prüfen</w>
       <w>prüft</w>
+      <w>qualitaetskriterium</w>
       <w>qualitätskriterium</w>
+      <w>rangehaengt</w>
       <w>rangehängt</w>
       <w>referenzobjekt</w>
+      <w>regulaere</w>
+      <w>regulaeren</w>
+      <w>regulaerer</w>
       <w>reguläre</w>
       <w>regulären</w>
       <w>regulärer</w>
+      <w>repraesentiert</w>
       <w>repräsentiert</w>
       <w>rueckgabe</w>
+      <w>rueckgabewert</w>
+      <w>rueckgaengig</w>
+      <w>rueckmeldung</w>
       <w>rückgabewert</w>
       <w>rückgängig</w>
       <w>rückmeldung</w>
@@ -415,6 +457,7 @@
       <w>sonstigen</w>
       <w>sortiere</w>
       <w>sowie</w>
+      <w>spaeter</w>
       <w>speichere</w>
       <w>speichern</w>
       <w>speichert</w>
@@ -446,18 +489,27 @@
       <w>testprogramms</w>
       <w>testrecords</w>
       <w>testwerten</w>
+      <w>ueber</w>
+      <w>ueberprueft</w>
       <w>ueberschreibe</w>
+      <w>ueberschreiben</w>
       <w>ueberschreibende</w>
+      <w>ueberschreibenden</w>
       <w>ueberschreibt</w>
+      <w>ueberschrieben</w>
       <w>ueberschriebene</w>
+      <w>ueberschriebenen</w>
+      <w>ueberschriebener</w>
       <w>umbruch</w>
       <w>universität</w>
+      <w>unterstuetzt</w>
       <w>unterstützt</w>
       <w>untersuche</w>
       <w>valide</w>
       <w>validierung</w>
       <w>validierungs</w>
       <w>veraendere</w>
+      <w>veraendert</w>
       <w>verhindere</w>
       <w>verletzen</w>
       <w>verschlechtern</w>
@@ -480,6 +532,8 @@
       <w>vorherigen</w>
       <w>vorliegenden</w>
       <w>vorne</w>
+      <w>waehle</w>
+      <w>waere</w>
       <w>warnung</w>
       <w>wartbarkeit</w>
       <w>wartbarkeitstest</w>
@@ -501,16 +555,20 @@
       <w>werten</w>
       <w>wieder</w>
       <w>wiederholen</w>
+      <w>willkuerlich</w>
       <w>willkürlich</w>
       <w>wird</w>
       <w>wobei</w>
+      <w>woertern</w>
       <w>wollen</w>
+      <w>wuerde</w>
       <w>wurde</w>
       <w>wurden</w>
       <w>wähle</w>
       <w>wäre</w>
       <w>wörtern</w>
       <w>würde</w>
+      <w>zaehlen</w>
       <w>zeichen</w>
       <w>zeit</w>
       <w>zeitmessung</w>

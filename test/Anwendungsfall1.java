@@ -1,7 +1,7 @@
 package anwendungsfaelle;
 
 /**
- * Datei mit Record für ersten Anwendungsfall
+ * Datei mit Record für ersten Durchlauf
  * - nur Integer-Werte
  * - automatisch generierte Methode ueberschreiben (Invariante verletzen)
  * -> Funktionalitaetstest, Leistungseffizienztest, Wartbarkeitstest

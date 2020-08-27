@@ -3,7 +3,7 @@ package anwendungsfaelle;
 import java.util.ArrayList;
 
 /**
- * Datei mit Record für vierten Anwendungsfall
+ * Datei mit Record für vierten Durchlauf
  * - nicht nur Integer-Werte (Referenzobjekt)
  * - automatisch generierte Methode ueberschreiben
  * -> keine Tests
