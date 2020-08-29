@@ -9,10 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Klasse, die die Testfaelle fuer Funktionalitaet generiert
@@ -30,9 +27,6 @@ public class TestGenerator {
 
     //Liste mit TestRecord Kopien als TestRecord
     private ArrayList<TestRecord> listTestRecordsPositivCopies;
-
-    //Name des TestRecords fuer den NegativTest
-    private String nameNegativTestRecord;
 
     /**
      * Generiert die Testfaelle fuer Funktionalitaet fuer den vorliegenden Record in RecordToTest
@@ -256,9 +250,6 @@ public class TestGenerator {
         //Erstelle TestRecords und speichere diese in Liste testRecordsPositiv
         erstelleTestRecords();
 
-        //fuege manipulierten zu testenden Record fuer Negativtests ein
-        fuegeNegativtestRecordEin(pathForNewTestFile);
-
         //Equals
         erstelleTestfallEqualsPositivtest(pathForNewTestFile);
         erstelleTestfallEqualsNegativtest(pathForNewTestFile);
@@ -271,7 +262,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt den Positivtest fuer "toString"
+     * Erstellt den Positivtest fuer die Invariante toString()
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @throws IOException IOException
@@ -282,12 +273,17 @@ public class TestGenerator {
         String headerMethod = "@Test" + "\n" +
                 "public void testeFunktionalitaetToStringPositivtest(){";
 
-        fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod);
+        String errorMessageEquals = "ToStringPositivtest: Um die Invariante toString() zu testen, sollte Equals() +" +
+                "true ergeben. Der Test wird nicht weiter ausgeführt.";
+        fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod, errorMessageEquals);
 
         //erstelle Assertions mit toString
+        String errorMessageToString = "ToStringPositivtest: Die Invariante toString() wurde verletzt. Die toString-" +
+                "Rückgabewerte sind unterschiedlich. Die Funktionalität des Records ist beeinträchtigt.";
         for (String listTestRecordName : listTestRecordNames) {
             sb.append("assertEquals(").append(listTestRecordName)
-                    .append(".toString(),").append(listTestRecordName).append("copy.toString());\n");
+                    .append(".toString(),").append(listTestRecordName).append("copy.toString(),")
+                    .append("\"").append(errorMessageToString).append("\"").append(");\n");
         }
 
         //schließe Methode ab
@@ -300,7 +296,7 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt den Positivtest fuer "hashCode"
+     * Erstellt den Positivtest fuer die Invariante hashCode()
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @throws IOException IOException
@@ -311,12 +307,18 @@ public class TestGenerator {
         String headerMethod = "@Test" + "\n" +
                 "public void testeFunktionalitaetHashCodePositivtest(){";
 
-        fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod);
+        String errorMessageEquals = "HashCodePositivtest: Um die Invariante hashCode() zu testen, sollte Equals() " +
+                "true ergeben. Der Test wird nicht weiter ausgeführt.";
+        fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod, errorMessageEquals);
+
 
         //erstelle Assertions mit hashCode
+        String errorMessageHashCode = "HashCodePositivtest: Die Invariante hashCode() wurde verletzt. Die " +
+                "hashCode-Rückgabewerte sind unterschiedlich. Die Funktionalität des Records ist beeinträchtigt.";
         for (String listTestRecordName : listTestRecordNames) {
             sb.append("assertEquals(").append(listTestRecordName)
-                    .append(".hashCode(),").append(listTestRecordName).append("copy.hashCode());\n");
+                    .append(".hashCode(),").append(listTestRecordName).append("copy.hashCode(),")
+                    .append("\"").append(errorMessageHashCode).append("\"").append(");\n");
         }
 
         //schließe Methode ab
@@ -352,8 +354,9 @@ public class TestGenerator {
      *
      * @param sb           StringBuilder
      * @param headerMethod headerMethod als String
+     * @param errorMessage Message, wenn Equals fehlschlägt
      */
-    private void fuegeTestRecordsMitEqualsAnHeader(StringBuilder sb, String headerMethod) {
+    private void fuegeTestRecordsMitEqualsAnHeader(StringBuilder sb, String headerMethod, String errorMessage) {
         sb.append(headerMethod);
 
         //fuege TestRecords mit Testdaten sowie Kopien der Testrecords ein
@@ -365,52 +368,43 @@ public class TestGenerator {
         //erstelle Assertions mit equals
         for (String listTestRecordName : listTestRecordNames) {
             sb.append("assertTrue(").append(listTestRecordName)
-                    .append(".equals(").append(listTestRecordName).append("copy));\n");
+                    .append(".equals(").append(listTestRecordName).append("copy), ")
+                    .append("\"").append(errorMessage).append("\"").append(");\n");
         }
 
         sb.append("\n");
     }
 
     /**
-     * Erstellt den Negativtest fuer "equals"
+     * Erstellt den Negativtest fuer die Invariante equals()
      *
      * @param pathForNewTestFile Pfad zur generierten Testdatei
      * @throws IOException IOException
      */
     private void erstelleTestfallEqualsNegativtest(Path pathForNewTestFile) throws IOException {
-        ArrayList<String> testRecordsNegativ = new ArrayList<>();
-        ArrayList<String> testRecordsNegativCopies = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
-        //baue bereits erstellte Records fuer Negativtest um
-        for (TestRecord testRecord : listTestRecordsPositiv) {
-            String testRecordNegativ = testRecord.getInitializedRecord()
-                    .replace(recordToTest.getName(), nameNegativTestRecord);
-            testRecordsNegativ.add(testRecordNegativ);
-        }
+        //erstelle originalen und Kopie des originalen TestRecords
+        TestRecord testRecordOriginal = erstelleTestRecordFuerNegativTest(0, false);
+        TestRecord testRecordKopie = erstelleTestRecordFuerNegativTest(5, true);
 
-        //baue bereits erstellte Kopier-Records fuer Negativtest um
-        for (TestRecord testRecordCopy : listTestRecordsPositivCopies) {
-            String testRecordNegativCopy = testRecordCopy.getInitializedRecord()
-                    .replace(recordToTest.getName(), nameNegativTestRecord);
-            testRecordsNegativCopies.add(testRecordNegativCopy);
-        }
+        //erstelle TestRecord Copies
+        String ueberpruefungNegativtest = erstelleUeberpruefungNegativTest(testRecordOriginal, testRecordKopie);
 
         String headerMethod = "@Test" + "\n" +
                 "public void testeFunktionalitaetEqualsNegativtest(){";
         sb.append(headerMethod);
+        sb.append("\n");
 
-        //fuege TestRecords mit Testdaten sowie Kopien der Testrecords ein
-        for (int i = 0; i < testRecordsNegativ.size(); i++) {
-            sb.append(testRecordsNegativ.get(i)).append("\n");
-            sb.append(testRecordsNegativCopies.get(i)).append("\n").append("\n");
-        }
+        //fuege initialisierten originalen TestRecord und Kopie an StringBuilder an
+        sb.append(testRecordOriginal.getInitializedRecord());
+        sb.append("\n");
+        sb.append(testRecordKopie.getInitializedRecord());
+        sb.append("\n");
 
-        //erstelle Assertions
-        for (int i = 0; i < listTestRecordNames.size(); i++) {
-            sb.append("assertFalse(").append(nameNegativTestRecord).append(i)
-                    .append(".equals(").append(nameNegativTestRecord).append(i).append("copy));\n");
-        }
+        //fuege ueberpruefungNegativtest an StringBuilder an
+        sb.append(ueberpruefungNegativtest);
+        sb.append("\n");
 
         //schließe Methode ab
         sb.append("}\n");
@@ -419,185 +413,77 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt einen Record fuer den Negativtest bei der Funktionalitaet. Hierbei wird bewusst ein nicht
-     * ueberschriebener Akzessor des originalen Records ueberschrieben. Wenn bereits alle Akzessoren
-     * ueberschrieben wurden, wird bei dem Akzessor der ersten Komponente ein "+ 1" beim "return" rangehaengt,
-     * um den gewuenschten Effekt zu erzielen
+     * Erstellt den Inhalt des Negativtests und die Überprüfung, ob die equals()-Methode falsch, d.h. mit "return true"
+     * überschrieben wurde
      *
-     * @param pathForNewTestFile Pfad zur generierten Testdatei
-     * @throws IOException IOException
+     * @param testRecordOriginal TestRecord Original
+     * @param testRecordKopie    TestRecord Kopie des Originals
+     * @return Inhalt der Negativtest Überprüfung als String
      */
-    private void fuegeNegativtestRecordEin(Path pathForNewTestFile) throws IOException {
-        String methodToOverrideBadly = bestimmeZuUeberschreibendeMethodeFuerNegativTest();
+    private String erstelleUeberpruefungNegativTest(TestRecord testRecordOriginal, TestRecord testRecordKopie) {
+        StringBuilder sb = new StringBuilder();
 
-        TestRecord testRecordNegativ = new TestRecord();
-        testRecordNegativ.setForNegativTest(true);
+        String equalsOriginalUndKopie = " if(" + testRecordOriginal.getName() + ".equals(" +
+                testRecordKopie.getName() + ") && ";
+        sb.append(equalsOriginalUndKopie);
 
-        //Setze Negativtest-Record erst einmal auf zu testenden Record
-        testRecordNegativ.setRecordNegativTestFull(recordToTest.getRecordFull());
-
-        if (recordToTest.getListOverriddenMethods().contains(methodToOverrideBadly)) {
-            //Akzessor wurde bereits ueberschrieben -> veraendere Rueckgabewert
-            manipuliereVorhandenenAkzessor(methodToOverrideBadly, testRecordNegativ);
-        } else {
-            //fuege Akzessor am Ende des Records an
-            erstelleNeuenManipuliertenAkzessor(methodToOverrideBadly, testRecordNegativ);
-        }
-        erstelleNegativTestRecord(testRecordNegativ);
-
-        schreibeInDatei(pathForNewTestFile, testRecordNegativ.getRecordNegativTestFull(),
-                "//zu testender Record fuer Negativtest");
-    }
-
-    /**
-     * Erstellt einen NegativTestRecord fuer den Negativtest bei der Funktionalitaet
-     *
-     * @param testRecordNegativ TestRecord
-     */
-    private void erstelleNegativTestRecord(TestRecord testRecordNegativ) {
-        String accessorToOverride = testRecordNegativ.getAccessorToOverride();
-        String accessorOverridden = testRecordNegativ.getAccessorOverridden();
-
-        //Ersetze vorhandene Methode in RecordNegativTestFull
-        if (accessorToOverride != null && accessorOverridden != null) {
-            testRecordNegativ.setRecordNegativTestFull(testRecordNegativ.getRecordNegativTestFull()
-                    .replace(accessorToOverride, accessorOverridden));
-
-        } else { //fuege Methode am Ende des Records an
-            if (testRecordNegativ.getRecordNegativTestFull().endsWith("}")) {
-                String oldNegativTestRecord = testRecordNegativ.getRecordNegativTestFull()
-                        .substring(0, testRecordNegativ.getRecordNegativTestFull().length() - 1);
-
-                //Ersetze alten RecordNegativTest mit "}" am Ende, um Record abzuschließen
-                testRecordNegativ.setRecordNegativTestFull(oldNegativTestRecord.concat(accessorOverridden + "\n}"));
-            }
-        }
-
-        //Record fuer NegativTest soll <name>NegativTest heißen
-        ueberschreibeAlleBezeichnerFuerNegativTest(testRecordNegativ);
-    }
-
-    /**
-     * Erstellt einen manipulierten Akzessor, welcher noch nicht im TestRecord ueberschrieben wurde.
-     * Dient der Erstellung eines NegativTestRecords
-     *
-     * @param methodToOverrideBadly Name der Methode, welche manipuliert erstellt werden soll
-     * @param testRecordNegativ     TestRecord
-     */
-    private void erstelleNeuenManipuliertenAkzessor(String methodToOverrideBadly, TestRecord testRecordNegativ) {
-        String newAccessor = "public int " + methodToOverrideBadly + "(){\nreturn " + methodToOverrideBadly + "+ 5;\n}";
-        testRecordNegativ.setAccessorOverridden(newAccessor);
-    }
-
-    /**
-     * Manipuliert einen vorhandenen Akzessor im TestRecord und speichert die manipulierte Methode
-     * im TestRecord ab
-     *
-     * @param methodToOverrideBadly Name der Methode, welche manipuliert werden soll
-     * @param testRecordNegativ     TestRecord
-     */
-    private void manipuliereVorhandenenAkzessor(String methodToOverrideBadly, TestRecord testRecordNegativ) {
-        String beginOfAccessorRegex = "(public int " + methodToOverrideBadly + "(\\s)*\\()";
-        Pattern r = Pattern.compile(beginOfAccessorRegex);
-        Matcher m = r.matcher(testRecordNegativ.getRecordNegativTestFull());
-
-        //Suche nach Akzessor im Body des Records
-        if (m.find()) {
-            int startIndex = m.start();
-            int indexEndMethod;
-
-            //Set um die Klammern zu zaehlen, wenn keine Klammer mehr drinn ist, ist Record zuende
-            ArrayList<Character> brackets = new ArrayList<>();
-
-            for (int i = startIndex; i < testRecordNegativ.getRecordNegativTestFull().length(); i++) {
-                if (testRecordNegativ.getRecordNegativTestFull().charAt(i) == '{') {
-                    //speichere Klammer in Liste
-                    brackets.add(testRecordNegativ.getRecordNegativTestFull().charAt(i));
-                }
-                if (testRecordNegativ.getRecordNegativTestFull().charAt(i) == '}') {
-                    if (!brackets.isEmpty()) {
-                        //wenn noch mehrere Klammern vorhanden sind -> entferne diese aus Liste
-                        if (brackets.size() != 1) {
-                            brackets.remove(0);
-                        } else {
-                            //letzte '}'-Klammer wurde gelesen (i+1 da sonst letzte '}'-Klammer fehlt)
-                            indexEndMethod = i + 1;
-
-                            //extrahiere Methode des Records (inklusive Header)
-                            String method = testRecordNegativ.getRecordNegativTestFull()
-                                    .substring(startIndex, indexEndMethod);
-
-                            //Setze zu manipulierenden Akzessor
-                            testRecordNegativ.setAccessorToOverride(method);
-
-                            veraendereRueckgabeWertDerMethode(testRecordNegativ);
-
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * ueberschreibt alle alten Bezeichner damit Negativtest-Record <name>NegativTest heißt
-     *
-     * @param testRecordNegativ TestRecord
-     */
-    private void ueberschreibeAlleBezeichnerFuerNegativTest(TestRecord testRecordNegativ) {
-        String nameNegativTestRecord = recordToTest.getName() + "NegativTest";
-        this.nameNegativTestRecord = nameNegativTestRecord;
-
-        testRecordNegativ.setRecordNegativTestFull(testRecordNegativ.getRecordNegativTestFull()
-                .replace(recordToTest.getName(), nameNegativTestRecord));
-    }
-
-    /**
-     * Veraendert den Rueckgabewert der ausgewaehlten Akzessormethode zum Erstellen des
-     * Negativtest-Records. Der Rueckgabewert wird um 5 erhoeht. (TODO willkuerlich)
-     *
-     * @param testRecordNegativ TestRecord
-     */
-    private void veraendereRueckgabeWertDerMethode(TestRecord testRecordNegativ) {
-        String regexReturn = "(return(\\s)*([\\d\\w\\s,.\\[\\]{}()<>*+\\-=!?^$|%])*;)";
-        Pattern r = Pattern.compile(regexReturn);
-        Matcher m = r.matcher(testRecordNegativ.getAccessorToOverride());
-
-        String manipulatedAccessor = testRecordNegativ.getAccessorToOverride();
-        String overriddenManipulatedAccessor;
-
-        //manipuliere Akzessor fuer jedes Match (da mehrere "returns" moeglich)
-        while (m.find()) {
-            int indexEndOfReturn = m.end() - 1;
-
-            //fuegt "+ 5" an letzter Stelle vor dem ";" ein
-            overriddenManipulatedAccessor = manipulatedAccessor.substring(0, indexEndOfReturn)
-                    + "+ 5"
-                    + manipulatedAccessor.substring(indexEndOfReturn);
-
-            //Ersetze extrahierten Akzessor mit manipulierter Methode
-            testRecordNegativ.setAccessorOverridden(overriddenManipulatedAccessor);
-        }
-    }
-
-    /**
-     * Bestimmt einen nicht ueberschriebene Akzessor des zu testenden Records.
-     * Wenn alle Akzessoren ueberschrieben wurden, wird die erste Komponente
-     * in der HashMap ausgewaehlt
-     *
-     * @return Name der zu ueberschreibenden Methode
-     */
-    private String bestimmeZuUeberschreibendeMethodeFuerNegativTest() {
+        int index = 0;
         for (Object key : recordToTest.getComponentMap().keySet()) {
-            if (!recordToTest.getListOverriddenMethods().contains(key.toString())) {
-                return key.toString();
+            String nameKomponente = key.toString();
+            sb.append(testRecordOriginal.getName()).append(".").append(nameKomponente)
+                    .append(" != ")
+                    .append(testRecordKopie.getName()).append(".").append(nameKomponente)
+                    .append(" ");
+            if (index != recordToTest.getComponentMap().keySet().size() - 1) {
+                sb.append("&& ");
+            }
+            index += 1;
+        }
+
+        //error message
+        String errorMessage = "EqualsNegativtest: Die Methode Equals() wurde so überschrieben, dass die " +
+                "Funktionalität des Records beeinträchtigt ist.";
+        sb.append("){\n" + "            fail(\"").append(errorMessage).append("\");\n").append("        }");
+
+        return sb.toString();
+    }
+
+    /**
+     * Erstellt einen Testrecord mit dem Integer-Wert valueForComponent für jede Komponente. Erstellt einen
+     * originalen oder eine Kopie, je nach boolean recordShouldBeCopy
+     *
+     * @param valueForComponent  Integer-Wert für jede Komponente
+     * @param recordShouldBeCopy Boolean, ob TestRecord eine Kopie sein soll
+     * @return TestRecord
+     */
+    private TestRecord erstelleTestRecordFuerNegativTest(int valueForComponent, boolean recordShouldBeCopy) {
+        StringBuilder sb = new StringBuilder();
+
+        TestRecord testRecord = new TestRecord();
+        String testRecordName;
+        if (recordShouldBeCopy) {
+            testRecordName = recordToTest.getName() + "copy";
+        } else {
+            testRecordName = recordToTest.getName();
+        }
+        testRecord.setName(testRecordName);
+
+        String initializedTestRecord = recordToTest.getName() + " " + testRecordName + " = new " +
+                recordToTest.getName() + "(";
+        sb.append(initializedTestRecord);
+
+        for (int i = 0; i < recordToTest.getAmountComponents(); i++) {
+            //Wert für jede Komponente setzen
+            sb.append(valueForComponent);
+            if (i != recordToTest.getAmountComponents() - 1) {
+                sb.append(",");
+            } else {
+                sb.append(");");
             }
         }
 
-        //Wenn alle Akzessoren ueberschrieben wurden, waehle erste Komponente des Records aus
-        Map.Entry<Object, Object> entry = recordToTest.getComponentMap().entrySet().iterator().next();
-        return (String) entry.getKey();
+        testRecord.setInitializedRecord(sb.toString());
+        return testRecord;
     }
 
     /**
@@ -614,7 +500,9 @@ public class TestGenerator {
         String headerMethod = "@Test" + "\n" +
                 "public void testeFunktionalitaetEqualsPositivtest(){";
 
-        fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod);
+        String errorMessage = "EqualsPositivtest: Die Invariante equals() wurde verletzt. Die beiden erstellten " +
+                "Records sind nach equals nicht gleich. Die Funktionalität des Records ist beeinträchtigt.";
+        fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod, errorMessage);
 
         //schließe Methode ab
         sb.append("}\n");

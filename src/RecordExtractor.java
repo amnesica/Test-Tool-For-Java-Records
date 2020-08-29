@@ -253,11 +253,6 @@ public class RecordExtractor {
         String body = leseBodyAus(fileToTest.getFileContent(), indexStartBody);
 
         if (body != null) {
-            //Wenn body leer ist
-            if (body.matches("([\\s]*[{][\\s]*[}])")) {
-                recordToTest.setBodyIstLeer(true);
-            }
-
             //Speichere body ab
             recordToTest.setRecordBody(body);
         }

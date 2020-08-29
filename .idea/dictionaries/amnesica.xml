@@ -47,9 +47,11 @@
       <w>baue</w>
       <w>beeintraechtigen</w>
       <w>beeinträchtigen</w>
+      <w>beeinträchtigt</w>
       <w>beende</w>
       <w>beendet</w>
       <w>beginn</w>
+      <w>beiden</w>
       <w>beim</w>
       <w>beispiel</w>
       <w>beispielaufruf</w>
@@ -144,10 +146,12 @@
       <w>entdeckt</w>
       <w>entdeckte</w>
       <w>entferne</w>
+      <w>entfernen</w>
       <w>enthaelt</w>
       <w>enthalten</w>
       <w>enthält</w>
       <w>erfolgreich</w>
+      <w>ergeben</w>
       <w>ergebnis</w>
       <w>ergebnisse</w>
       <w>erhoeht</w>
@@ -180,10 +184,12 @@
       <w>extrahieren</w>
       <w>extrahiert</w>
       <w>extrahierten</w>
+      <w>falsch</w>
       <w>fehl</w>
       <w>fehlende</w>
       <w>fehler</w>
       <w>fehlermeldung</w>
+      <w>fehlschlägt</w>
       <w>fehlt</w>
       <w>feld</w>
       <w>felder</w>
@@ -298,6 +304,7 @@
       <w>instantiierung</w>
       <w>instanz</w>
       <w>invariante</w>
+      <w>jede</w>
       <w>jedem</w>
       <w>jeden</w>
       <w>jedes</w>
@@ -396,6 +403,7 @@
       <w>objekte</w>
       <w>ordner</w>
       <w>originalen</w>
+      <w>originaler</w>
       <w>parameteranzahl</w>
       <w>parameterliste</w>
       <w>parametern</w>
@@ -432,6 +440,7 @@
       <w>rueckgaengig</w>
       <w>rueckmeldung</w>
       <w>rückgabewert</w>
+      <w>rückgabewerte</w>
       <w>rückgängig</w>
       <w>rückmeldung</w>
       <w>schaue</w>
@@ -452,6 +461,7 @@
       <w>sind</w>
       <w>soll</w>
       <w>sollen</w>
+      <w>sollte</w>
       <w>sonst</w>
       <w>sonstige</w>
       <w>sonstigen</w>
@@ -487,10 +497,12 @@
       <w>testfälle</w>
       <w>testklasse</w>
       <w>testprogramms</w>
+      <w>testrecord</w>
       <w>testrecords</w>
       <w>testwerten</w>
       <w>ueber</w>
       <w>ueberprueft</w>
+      <w>ueberpruefung</w>
       <w>ueberschreibe</w>
       <w>ueberschreiben</w>
       <w>ueberschreibende</w>
@@ -502,6 +514,7 @@
       <w>ueberschriebener</w>
       <w>umbruch</w>
       <w>universität</w>
+      <w>unterschiedlich</w>
       <w>unterstuetzt</w>
       <w>unterstützt</w>
       <w>untersuche</w>
@@ -512,6 +525,7 @@
       <w>veraendert</w>
       <w>verhindere</w>
       <w>verletzen</w>
+      <w>verletzt</w>
       <w>verschlechtern</w>
       <w>versuchen</w>
       <w>verteile</w>
@@ -539,6 +553,7 @@
       <w>wartbarkeitstest</w>
       <w>weder</w>
       <w>wegen</w>
+      <w>weiter</w>
       <w>weitere</w>
       <w>weiteren</w>
       <w>weiterhin</w>
@@ -584,6 +599,7 @@
       <w>ändern</w>
       <w>über</w>
       <w>überprüft</w>
+      <w>überprüfung</w>
       <w>überschreiben</w>
       <w>überschreibenden</w>
       <w>überschreibt</w>

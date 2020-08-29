@@ -372,20 +372,14 @@ public class TestExecutor {
 
         //Untersuche Anzahl Komponenten des Records
         if (recordToTest.getAmountComponents() > threshold) {
-            sb.append("Ergebnis: Beim Record " + recordToTest.getName() +
-                    " wurden mehr als 5 Komponenten (" + recordToTest.getAmountComponents() + " Komponenten)" +
-                    "(Long Parameter List) gefunden, welche " +
-                    "die Wartbarkeit verschlechtern koennte.\n");
+            sb.append("Ergebnis: Beim Record ").append(recordToTest.getName()).append(" wurden mehr als 5 Komponenten (").append(recordToTest.getAmountComponents()).append(" Komponenten)").append("(Long Parameter List) gefunden, welche ").append("die Wartbarkeit verschlechtern koennte.\n");
         }
 
         //Alle Methoden auf Long Parameter List pruefen
         if (recordToTest.getListAllDeclaredMethods() != null && !recordToTest.getListAllDeclaredMethods().isEmpty()) {
             for (MethodToTest methodToTest : recordToTest.getListAllDeclaredMethods()) {
                 if (methodToTest.getAmountParameters() > threshold) {
-                    sb.append("Ergebnis: Beim Record " + recordToTest.getName() +
-                            " wurden in der Methode \"" + methodToTest.getName() + "\" mehr als 5 Parameter (" +
-                            methodToTest.getAmountParameters() + " Parameter) (Long Parameter List) gefunden, " +
-                            "welches die Wartbarkeit verschlechtern koennte.\n");
+                    sb.append("Ergebnis: Beim Record ").append(recordToTest.getName()).append(" wurden in der Methode \"").append(methodToTest.getName()).append("\" mehr als 5 Parameter (").append(methodToTest.getAmountParameters()).append(" Parameter) (Long Parameter List) gefunden, ").append("welches die Wartbarkeit verschlechtern koennte.\n");
                 }
             }
         }

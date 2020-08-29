@@ -12,5 +12,10 @@ public class Anwendungsfall1 {
         public int x() {
             return x + 1;
         }
+
+        //Überschriebene equals-Methode zum Testen des Negativtests
+        public boolean equals(Object o){
+            return true;
+        }
     }
 }
