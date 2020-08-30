@@ -1,16 +1,19 @@
 import java.util.ArrayList;
 
-public class TestRecords {
+public class DebugRecords {
     //keine Ausführung - check
     record test1() {
     }
 
     //keine Ausführung funktional - check
+    //Leistungseffizienz -> effizient - check
+    //Wartbarkeit -> keine Smells - check
     record test2(int x) {
     }
 
-    //keine Ausführung funktional
-    //Wartbarkeit - check
+    //keine Ausführung funktional - check
+    //Leistungseffizienz -> kein Test, da mehr als 10 Komponenten! - check
+    //Wartbarkeit -> mehr als 10 Felder (Large Class), mehr als 5 Komponenten (Long Parameter List) - check
     record test25(int x, int y, int z, int a, int b, int c, int d, int e, int f, int g, int h, int i) {
         public static int hello1;
         public static int hello2;
@@ -25,7 +28,9 @@ public class TestRecords {
         public static int hello11;
     }
 
-    //Ausführung -> alle JUnit-Tests laufen durch - check
+    //Ausführung -> alle JUnit-Tests laufen durch (mit benutzerdef. Grenzwerten) - check
+    //Leistungseffizienz -> effizient - check
+    //Wartbarkeit -> keine Smells - check
     record test3(int x) {
         public int x() {
             return x;
@@ -33,6 +38,8 @@ public class TestRecords {
     }
 
     //Ausführung -> JUnit-Tests schlagen fehl - check
+    //Leistungseffizienz -> effizient - check
+    //Wartbarkeit -> keine Smells - check
     record test4(int x) {
         public int x() {
             return x + 1;
@@ -54,8 +61,8 @@ public class TestRecords {
     record test6(String s, int x) {
     }
 
-    //Ausführung -> Fehlermeldung String
-    record test7(String s, int x) { -check
+    //Ausführung -> Fehlermeldung String - check
+    record test7(String s, int x) {
 
         public int x() {
             return x + 1;
@@ -70,9 +77,9 @@ public class TestRecords {
         }
     }
 
-    //Ausführung - check
-    // -> Fehlermeldung Objekte -> keine JUnit-Tests
-    // -> String -> kein nicht-funktionaler Test
+    //Ausführung -
+    // -> Fehlermeldung Objekte -> keine JUnit-Tests - check
+    // Kein Test auf Wartbarkeit und Leistungseffizienz - check
     record test9(String s, int x, int y) {
         public static int a = 2;
         public static String s = "t";
@@ -170,11 +177,6 @@ public class TestRecords {
             int result2 = 0;
             for (int i = 0; i < 100; i++) {
                 result2 += i;
-
-
-                //langer Umbruch
-
-
             }
         }
 
@@ -182,8 +184,6 @@ public class TestRecords {
         private void doSomethingElse7(String a) {
             int result2 = 0;
             for (int i = 0; i < 100; i++) {
-
-
                 result2 += i;
             }
         }
@@ -221,12 +221,12 @@ public class TestRecords {
         }
     }
 
-    //Ausführung - check
-    // -> JUnit-Tests schlagen fehl
-    // -> Long Parameter List (12 Parameter Methode, 6 Parameter Klasse)
-    // -> Large Class (179 LOC, 11 Felder)
-    // -> Long Function (somethingElse6, somethingElse7, Konstruktor)
-    // -> Leistungseffizienz: ineffizient
+    //Ausführung
+    // -> JUnit-Tests schlagen fehl - check
+    // -> Long Parameter List (12 Parameter Methode, 6 Parameter Klasse) - check
+    // -> Large Class (180 LOC, 11 Felder, 16 Methoden) - check
+    // -> Long Function (somethingElse6, Konstruktor) - check
+    // -> Leistungseffizienz: ineffizient - check?
     record test10(int s, int x, int y) {
         public static int a = 2;
         public static String u = "t";
@@ -248,12 +248,30 @@ public class TestRecords {
                 g = 2f;
             }
 
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+
             int r = 0;
 
             //lange Ausführung
             for (int i = 0; i < Integer.MAX_VALUE / 2; i++) {
                 r = i + 1 - 1;
             }
+        }
+
+        //Keine überschriebene Methode
+        public boolean equals() {
+            return true;
         }
 
         //Überschriebener Akzessor
@@ -321,10 +339,30 @@ public class TestRecords {
             for (int i = 0; i < 100; i++) {
                 result2 += i;
 
-
-                //langer Umbruch
-
-
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
+                //Ein langer Kommentar
             }
         }
 
@@ -371,10 +409,11 @@ public class TestRecords {
         }
     }
 
-    //Ausführung - check
-    // -> JUnit-Tests schlagen fehl
-    // -> Long Parameter List (doSomething2, doSomething3)
-    // -> Large Class (12 Felder)
+    //Ausführung
+    // -> JUnit-Tests schlagen fehl - check
+    // -> Long Parameter List (doSomething2, doSomething3) - check
+    // -> Large Class (12 Felder) - check
+    //Leistungseffizienz -> effizient - check
     record Point(int x, int y, int z) {
 
         private static int a;
@@ -411,18 +450,38 @@ public class TestRecords {
         }
     }
 
-    //Ausführung - check
-    // -> Kein funktionaler Test
-    // -> Long Function (doSomething1)
+    //Ausführung
+    // -> Kein funktionaler Test - check
+    // -> Long Function (doSomething1) - check
+    //Leistungseffizienz -> effizient - check
     record Point2(int x, int y, int z) {
 
         public void doSomething1() {
             //do something
-
-
-            //long method
-
-
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
+            //Ein langer Kommentar
         }
 
         public void doSomething2() {
