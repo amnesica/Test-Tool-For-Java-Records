@@ -25,7 +25,7 @@ public class TestGenerator {
     //Liste mit Namen der erstellten Testrecords als String
     private ArrayList<String> listTestRecordNames;
 
-    //Liste mit TestRecord Kopien als TestRecord
+    //Liste mit TestRecord Kopien als TestRecord fuer Positivtest
     private ArrayList<TestRecord> listTestRecordsPositivCopies;
 
     /**
@@ -67,8 +67,8 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt die Testrecords mit den festgelegten Testdaten (Integer-Werte) sowie moeglichen benutzerdefinierten
-     * Grenzwerten, welche per Kommandozeile angefragt werden
+     * Erstellt die Testrecords mit den festgelegten Testdaten (Integer-Werte) sowie weiteren moeglichen
+     * benutzerdefinierten Grenzwerten, welche per Kommandozeile angefragt werden
      */
     private void erstelleTestRecords() {
         //Initialisiere Listen
@@ -250,14 +250,14 @@ public class TestGenerator {
         //Erstelle TestRecords und speichere diese in Liste testRecordsPositiv
         erstelleTestRecords();
 
-        //Equals
+        //equals-Invariante
         erstelleTestfallEqualsPositivtest(pathForNewTestFile);
         erstelleTestfallEqualsNegativtest(pathForNewTestFile);
 
-        //hashCode
+        //hashCode-Invariante
         erstelleTestfallHashCodePositivtest(pathForNewTestFile);
 
-        //toString
+        //toString-Invariante
         erstelleTestfallToStringPositivtest(pathForNewTestFile);
     }
 
@@ -273,7 +273,7 @@ public class TestGenerator {
         String headerMethod = "@Test" + "\n" +
                 "public void testeFunktionalitaetToStringPositivtest(){";
 
-        String errorMessageEquals = "ToStringPositivtest: Um die Invariante toString() zu testen, sollte Equals() +" +
+        String errorMessageEquals = "ToStringPositivtest: Um die Invariante toString() zu testen, sollte equals() " +
                 "true ergeben. Der Test wird nicht weiter ausgeführt.";
         fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod, errorMessageEquals);
 
@@ -307,7 +307,7 @@ public class TestGenerator {
         String headerMethod = "@Test" + "\n" +
                 "public void testeFunktionalitaetHashCodePositivtest(){";
 
-        String errorMessageEquals = "HashCodePositivtest: Um die Invariante hashCode() zu testen, sollte Equals() " +
+        String errorMessageEquals = "HashCodePositivtest: Um die Invariante hashCode() zu testen, sollte equals() " +
                 "true ergeben. Der Test wird nicht weiter ausgeführt.";
         fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod, errorMessageEquals);
 
@@ -350,11 +350,11 @@ public class TestGenerator {
 
     /**
      * Fuegt die TestRecords in listTestRecordsPositiv sowie listTestRecordsPositivCopies an den Header headerMethod
-     * an und erstellt danach die Assertions mit Equals und jeweiligen TestRecord und seiner Kopie
+     * an und erstellt danach die Assertions mit equals und jeweiligen TestRecord und seiner Kopie
      *
      * @param sb           StringBuilder
      * @param headerMethod headerMethod als String
-     * @param errorMessage Message, wenn Equals fehlschlägt
+     * @param errorMessage Message, wenn equals fehlschlägt
      */
     private void fuegeTestRecordsMitEqualsAnHeader(StringBuilder sb, String headerMethod, String errorMessage) {
         sb.append(headerMethod);
@@ -441,7 +441,7 @@ public class TestGenerator {
         }
 
         //error message
-        String errorMessage = "EqualsNegativtest: Die Methode Equals() wurde so überschrieben, dass die " +
+        String errorMessage = "EqualsNegativtest: Die Methode equals() wurde so überschrieben, dass die " +
                 "Funktionalität des Records beeinträchtigt ist.";
         sb.append("){\n" + "            fail(\"").append(errorMessage).append("\");\n").append("        }");
 

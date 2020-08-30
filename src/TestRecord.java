@@ -1,5 +1,6 @@
 /**
- * Klasse, welche einen TestRecord in der generierten Testdatei fuer den Test auf Funktionalitaet zum Einsatz kommt
+ * Klasse, welche einen TestRecord in der generierten Testdatei repraesentiert, der fuer den Test
+ * auf Funktionalitaet zum Einsatz kommt
  */
 public class TestRecord {
 

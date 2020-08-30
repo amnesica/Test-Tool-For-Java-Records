@@ -36,6 +36,7 @@ public class RecordToTest {
     private boolean executeNonFunctionalTestcases;
 
     //Komponenten des Records
+    private String componentsAsString;
     private LinkedHashMap<Object, Object> componentMap;
     private ArrayList<String> listFoundObjects;
     private ArrayList<String> listFoundDataTypes;
@@ -49,6 +50,7 @@ public class RecordToTest {
     //Liste mit allen Methoden im Body des zu testenden Records
     private ArrayList<MethodToTest> listAllDeclaredMethods;
 
+    //Liste mit Importen, die fuer den Record benoetigt werden
     private String neededImportsAsString;
 
     public String getName() {
@@ -177,5 +179,13 @@ public class RecordToTest {
 
     public void setExecuteNonFunctionalTestcases(boolean executeNonFunctionalTestcases) {
         this.executeNonFunctionalTestcases = executeNonFunctionalTestcases;
+    }
+
+    public String getComponentsAsString() {
+        return componentsAsString;
+    }
+
+    public void setComponentsAsString(String componentsAsString) {
+        this.componentsAsString = componentsAsString;
     }
 }

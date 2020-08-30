@@ -186,7 +186,7 @@ public class TestExecutor {
         javaCompiler.run(null, null, null, "--enable-preview", "--release", "14",
                 sourceFile.toString());
 
-        //Fuege Klassen dynamisch zu Custom Classloader hinzu
+        //Fuege dynamisch erstellte Klassen zur Laufzeit zum Classloader hinzu
         urlClassLoader = URLClassLoader.newInstance(new URL[]{parentDir.toURI().toURL()});
     }
 
@@ -372,21 +372,21 @@ public class TestExecutor {
 
         //Untersuche Anzahl Komponenten des Records
         if (recordToTest.getAmountComponents() > threshold) {
-            sb.append("Ergebnis: Beim Record ").append(recordToTest.getName()).append(" wurden mehr als 5 Komponenten (").append(recordToTest.getAmountComponents()).append(" Komponenten)").append("(Long Parameter List) gefunden, welche ").append("die Wartbarkeit verschlechtern koennte.\n");
+            sb.append("Ergebnis: Beim Record ").append(recordToTest.getName()).append(" wurden mehr als 5 Komponenten (").append(recordToTest.getAmountComponents()).append(" Komponenten)").append(" (Long Parameter List) gefunden, welches ").append("die Wartbarkeit verschlechtern koennte.\n");
         }
 
         //Alle Methoden auf Long Parameter List pruefen
         if (recordToTest.getListAllDeclaredMethods() != null && !recordToTest.getListAllDeclaredMethods().isEmpty()) {
             for (MethodToTest methodToTest : recordToTest.getListAllDeclaredMethods()) {
                 if (methodToTest.getAmountParameters() > threshold) {
-                    sb.append("Ergebnis: Beim Record ").append(recordToTest.getName()).append(" wurden in der Methode \"").append(methodToTest.getName()).append("\" mehr als 5 Parameter (").append(methodToTest.getAmountParameters()).append(" Parameter) (Long Parameter List) gefunden, ").append("welches die Wartbarkeit verschlechtern koennte.\n");
+                    sb.append("Ergebnis: Beim Record ").append(recordToTest.getName()).append(" wurden in der Methode \"").append(methodToTest.getName()).append("\" mehr als 5 Parameter (").append(methodToTest.getAmountParameters()).append(" Parameter)").append(" (Long Parameter List) gefunden, ").append("welches die Wartbarkeit verschlechtern koennte.\n");
                 }
             }
         }
 
         if (!sb.toString().isEmpty()) {
             //Loesche letzten Umbruch ("\n")
-            System.out.println(sb.toString().substring(0, sb.toString().length() - 2));
+            System.out.println(sb.toString().substring(0, sb.toString().lastIndexOf("\n")));
             return true;
         } else {
             return false;
