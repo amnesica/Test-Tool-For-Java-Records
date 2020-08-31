@@ -499,11 +499,11 @@ public class RecordExtractor {
         //Gebe Error oder Warnung heraus
         if (!listFoundDataTypes.isEmpty() && listFoundObjects.isEmpty()) {
             if (listFoundDataTypes.size() == 1) {
-                System.out.println("Error: Für den Record " + recordToTest.getName() + " wird kein funktionaler Test " +
+                System.out.println("Error: Fuer den Record " + recordToTest.getName() + " wird kein funktionaler Test " +
                         "erstellt, da eine Komponente mit einem Nicht-Integer-Wert gefunden wurde:\n" +
                         listFoundDataTypes.get(0));
             } else {
-                System.out.println("Error: Für den Record " + recordToTest.getName() + " wird kein funktionaler Test " +
+                System.out.println("Error: Fuer den Record " + recordToTest.getName() + " wird kein funktionaler Test " +
                         "erstellt, da Komponenten mit Nicht-Integer-Werten gefunden wurden: ");
                 for (String foundTypes : listFoundDataTypes) {
                     System.out.println(foundTypes);
@@ -512,12 +512,12 @@ public class RecordExtractor {
 
         } else if (!listFoundObjects.isEmpty() && listFoundDataTypes.isEmpty()) {
             if (listFoundObjects.size() == 1) {
-                System.out.println("Warnung: Für den Record " + recordToTest.getName() + " wird kein funktionaler " +
+                System.out.println("Warnung: Fuer den Record " + recordToTest.getName() + " wird kein funktionaler " +
                         "Test erstellt, da eine Komponente mit einem Objekt gefunden wurde:\n" +
                         listFoundObjects.get(0) + "\nHinweis: Objekte koennen weiterhin veraendert werden! Dies " +
                         "koennte die gewuenschte Funktionalitaet des Records beeintraechtigen!");
             } else {
-                System.out.println("Warnung: Für den Record " + recordToTest.getName() + " wird kein funktionaler " +
+                System.out.println("Warnung: Fuer den Record " + recordToTest.getName() + " wird kein funktionaler " +
                         "Test erstellt, da Komponenten mit Objekten gefunden wurden: ");
                 for (String foundObjects : listFoundObjects) {
                     System.out.println(foundObjects);
@@ -528,7 +528,7 @@ public class RecordExtractor {
 
         } else if (!listFoundDataTypes.isEmpty()) {
             //Warnung, wenn Komponente ein Objekt ist -> Objekte koennen weiterhin veraendert werden
-            System.out.println("Warnung: Für den Record " + recordToTest.getName() + " wird kein funktionaler Test " +
+            System.out.println("Warnung: Fuer den Record " + recordToTest.getName() + " wird kein funktionaler Test " +
                     "erstellt, da Komponenten mit Nicht-Integer-Werten gefunden wurden: ");
             for (String foundTypes : listFoundDataTypes) {
                 System.out.println(foundTypes);

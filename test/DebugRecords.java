@@ -1,17 +1,17 @@
 import java.util.ArrayList;
 
 public class DebugRecords {
-    //keine Ausführung - check
+    //keine Ausfuehrung - check
     record test1() {
     }
 
-    //keine Ausführung funktional - check
+    //keine Ausfuehrung funktional - check
     //Leistungseffizienz -> effizient - check
     //Wartbarkeit -> keine Smells - check
     record test2(int x) {
     }
 
-    //keine Ausführung funktional - check
+    //keine Ausfuehrung funktional - check
     //Leistungseffizienz -> kein Test, da mehr als 10 Komponenten! - check
     //Wartbarkeit -> mehr als 10 Felder (Large Class), mehr als 5 Komponenten (Long Parameter List) - check
     record test25(int x, int y, int z, int a, int b, int c, int d, int e, int f, int g, int h, int i) {
@@ -28,7 +28,7 @@ public class DebugRecords {
         public static int hello11;
     }
 
-    //Ausführung -> alle JUnit-Tests laufen durch (mit benutzerdef. Grenzwerten) - check
+    //Ausfuehrung -> alle JUnit-Tests laufen durch (mit benutzerdef. Grenzwerten) - check
     //Leistungseffizienz -> effizient - check
     //Wartbarkeit -> keine Smells - check
     record test3(int x) {
@@ -37,7 +37,7 @@ public class DebugRecords {
         }
     }
 
-    //Ausführung -> JUnit-Tests schlagen fehl - check
+    //Ausfuehrung -> JUnit-Tests schlagen fehl - check
     //Leistungseffizienz -> effizient - check
     //Wartbarkeit -> keine Smells - check
     record test4(int x) {
@@ -46,22 +46,22 @@ public class DebugRecords {
         }
     }
 
-    //keine Ausführung - check
+    //keine Ausfuehrung - check
     record test5(String s) {
     }
 
-    //keine Ausführung -> Warnung Object - check
+    //keine Ausfuehrung -> Warnung Object - check
     record test55(Object o) {
         public Object o() {
             return o;
         }
     }
 
-    //Ausführung -> Fehlermeldung String - check
+    //Ausfuehrung -> Fehlermeldung String - check
     record test6(String s, int x) {
     }
 
-    //Ausführung -> Fehlermeldung String - check
+    //Ausfuehrung -> Fehlermeldung String - check
     record test7(String s, int x) {
 
         public int x() {
@@ -69,7 +69,7 @@ public class DebugRecords {
         }
     }
 
-    //Ausführung -> Fehlermeldung Objekte - check
+    //Ausfuehrung -> Fehlermeldung Objekte - check
     record test8(String s, int x, ArrayList<String>listString, Object o) {
 
         public int x() {
@@ -77,7 +77,7 @@ public class DebugRecords {
         }
     }
 
-    //Ausführung -
+    //Ausfuehrung -
     // -> Fehlermeldung Objekte -> keine JUnit-Tests - check
     // Kein Test auf Wartbarkeit und Leistungseffizienz - check
     record test9(String s, int x, int y) {
@@ -103,7 +103,7 @@ public class DebugRecords {
 
             int r = 0;
 
-            //lange Ausführung
+            //lange Ausfuehrung
             for (int i = 0; i < Integer.MAX_VALUE; i++) {
                 r = i + 1 - 1;
 
@@ -113,12 +113,12 @@ public class DebugRecords {
             }
         }
 
-        //Überschriebener Akzessor
+        //Ueberschriebener Akzessor
         public int x() {
             return x + 1;
         }
 
-        //Überschriebener Akzessor
+        //Ueberschriebener Akzessor
         public int y() {
             return y;
         }
@@ -221,7 +221,7 @@ public class DebugRecords {
         }
     }
 
-    //Ausführung
+    //Ausfuehrung
     // -> JUnit-Tests schlagen fehl - check
     // -> Long Parameter List (12 Parameter Methode, 6 Parameter Klasse) - check
     // -> Large Class (180 LOC, 11 Felder, 16 Methoden) - check
@@ -263,23 +263,23 @@ public class DebugRecords {
 
             int r = 0;
 
-            //lange Ausführung
+            //lange Ausfuehrung
             for (int i = 0; i < Integer.MAX_VALUE / 2; i++) {
                 r = i + 1 - 1;
             }
         }
 
-        //Keine überschriebene Methode
+        //Keine ueberschriebene Methode
         public boolean equals() {
             return true;
         }
 
-        //Überschriebener Akzessor
+        //Ueberschriebener Akzessor
         public int x() {
             return x + 1;
         }
 
-        //Überschriebener Akzessor
+        //Ueberschriebener Akzessor
         public int y() {
             return y;
         }
@@ -409,7 +409,7 @@ public class DebugRecords {
         }
     }
 
-    //Ausführung
+    //Ausfuehrung
     // -> JUnit-Tests schlagen fehl - check
     // -> Long Parameter List (doSomething2, doSomething3) - check
     // -> Large Class (12 Felder) - check
@@ -450,7 +450,7 @@ public class DebugRecords {
         }
     }
 
-    //Ausführung
+    //Ausfuehrung
     // -> Kein funktionaler Test - check
     // -> Long Function (doSomething1) - check
     //Leistungseffizienz -> effizient - check

@@ -274,12 +274,12 @@ public class TestGenerator {
                 "public void testeFunktionalitaetToStringPositivtest(){";
 
         String errorMessageEquals = "ToStringPositivtest: Um die Invariante toString() zu testen, sollte equals() " +
-                "true ergeben. Der Test wird nicht weiter ausgeführt.";
+                "true ergeben. Der Test wird nicht weiter ausgefuehrt.";
         fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod, errorMessageEquals);
 
         //erstelle Assertions mit toString
         String errorMessageToString = "ToStringPositivtest: Die Invariante toString() wurde verletzt. Die toString-" +
-                "Rückgabewerte sind unterschiedlich. Die Funktionalität des Records ist beeinträchtigt.";
+                "Rueckgabewerte sind unterschiedlich. Die Funktionalitaet des Records ist beeintraechtigt.";
         for (String listTestRecordName : listTestRecordNames) {
             sb.append("assertEquals(").append(listTestRecordName)
                     .append(".toString(),").append(listTestRecordName).append("copy.toString(),")
@@ -308,13 +308,13 @@ public class TestGenerator {
                 "public void testeFunktionalitaetHashCodePositivtest(){";
 
         String errorMessageEquals = "HashCodePositivtest: Um die Invariante hashCode() zu testen, sollte equals() " +
-                "true ergeben. Der Test wird nicht weiter ausgeführt.";
+                "true ergeben. Der Test wird nicht weiter ausgefuehrt.";
         fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod, errorMessageEquals);
 
 
         //erstelle Assertions mit hashCode
         String errorMessageHashCode = "HashCodePositivtest: Die Invariante hashCode() wurde verletzt. Die " +
-                "hashCode-Rückgabewerte sind unterschiedlich. Die Funktionalität des Records ist beeinträchtigt.";
+                "hashCode-Rueckgabewerte sind unterschiedlich. Die Funktionalitaet des Records ist beeintraechtigt.";
         for (String listTestRecordName : listTestRecordNames) {
             sb.append("assertEquals(").append(listTestRecordName)
                     .append(".hashCode(),").append(listTestRecordName).append("copy.hashCode(),")
@@ -354,7 +354,7 @@ public class TestGenerator {
      *
      * @param sb           StringBuilder
      * @param headerMethod headerMethod als String
-     * @param errorMessage Message, wenn equals fehlschlägt
+     * @param errorMessage Message, wenn equals fehlschlaegt
      */
     private void fuegeTestRecordsMitEqualsAnHeader(StringBuilder sb, String headerMethod, String errorMessage) {
         sb.append(headerMethod);
@@ -413,12 +413,12 @@ public class TestGenerator {
     }
 
     /**
-     * Erstellt den Inhalt des Negativtests und die Überprüfung, ob die equals()-Methode falsch, d.h. mit "return true"
-     * überschrieben wurde
+     * Erstellt den Inhalt des Negativtests und die Ueberpruefung, ob die equals()-Methode falsch, d.h. mit "return true"
+     * ueberschrieben wurde
      *
      * @param testRecordOriginal TestRecord Original
      * @param testRecordKopie    TestRecord Kopie des Originals
-     * @return Inhalt der Negativtest Überprüfung als String
+     * @return Inhalt der Negativtest Ueberpruefung als String
      */
     private String erstelleUeberpruefungNegativTest(TestRecord testRecordOriginal, TestRecord testRecordKopie) {
         StringBuilder sb = new StringBuilder();
@@ -441,18 +441,18 @@ public class TestGenerator {
         }
 
         //error message
-        String errorMessage = "EqualsNegativtest: Die Methode equals() wurde so überschrieben, dass die " +
-                "Funktionalität des Records beeinträchtigt ist.";
+        String errorMessage = "EqualsNegativtest: Die Methode equals() wurde so ueberschrieben, dass die " +
+                "Funktionalitaet des Records beeintraechtigt ist.";
         sb.append("){\n" + "            fail(\"").append(errorMessage).append("\");\n").append("        }");
 
         return sb.toString();
     }
 
     /**
-     * Erstellt einen Testrecord mit dem Integer-Wert valueForComponent für jede Komponente. Erstellt einen
+     * Erstellt einen Testrecord mit dem Integer-Wert valueForComponent fuer jede Komponente. Erstellt einen
      * originalen oder eine Kopie, je nach boolean recordShouldBeCopy
      *
-     * @param valueForComponent  Integer-Wert für jede Komponente
+     * @param valueForComponent  Integer-Wert fuer jede Komponente
      * @param recordShouldBeCopy Boolean, ob TestRecord eine Kopie sein soll
      * @return TestRecord
      */
@@ -473,7 +473,7 @@ public class TestGenerator {
         sb.append(initializedTestRecord);
 
         for (int i = 0; i < recordToTest.getAmountComponents(); i++) {
-            //Wert für jede Komponente setzen
+            //Wert fuer jede Komponente setzen
             sb.append(valueForComponent);
             if (i != recordToTest.getAmountComponents() - 1) {
                 sb.append(",");
@@ -501,7 +501,7 @@ public class TestGenerator {
                 "public void testeFunktionalitaetEqualsPositivtest(){";
 
         String errorMessage = "EqualsPositivtest: Die Invariante equals() wurde verletzt. Die beiden erstellten " +
-                "Records sind nach equals nicht gleich. Die Funktionalität des Records ist beeinträchtigt.";
+                "Records sind nach equals nicht gleich. Die Funktionalitaet des Records ist beeintraechtigt.";
         fuegeTestRecordsMitEqualsAnHeader(sb, headerMethod, errorMessage);
 
         //schließe Methode ab

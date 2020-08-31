@@ -1,16 +1,16 @@
 package anwendungsfaelle;
 
 /**
- * Datei mit Record für zweiten Durchlauf
+ * Datei mit Record fuer zweiten Durchlauf
  * - nur Integer-Werte
  * - Konstruktor ueberschreiben (Invariante nicht verletzen)
  * - Ineffiziente Implementierung (wegen Leistungseffizienztest)
- * - zu lange Methode (24 LOC) mit zu vielen Parametern (10 Parameter) für Wartbarkeitstest
+ * - zu lange Methode (24 LOC) mit zu vielen Parametern (10 Parameter) fuer Wartbarkeitstest
  * -> Funktionalitaetstest, Leistungseffizienztest, Wartbarkeitstest
  */
 public class Anwendungsfall2 {
     record test2(int x, int y, int z) {
-        //Überschriebener Konstruktor
+        //Ueberschriebener Konstruktor
         public test2 {
             if (x > y) {
                 try {
