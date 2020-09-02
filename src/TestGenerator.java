@@ -385,11 +385,11 @@ public class TestGenerator {
         StringBuilder sb = new StringBuilder();
 
         //erstelle originalen und Kopie des originalen TestRecords
-        TestRecord testRecordOriginal = erstelleTestRecordFuerNegativTest(0, false);
-        TestRecord testRecordKopie = erstelleTestRecordFuerNegativTest(5, true);
+        TestRecord testRecordEins = erstelleTestRecordFuerNegativTest(0, 0);
+        TestRecord testRecordZwei = erstelleTestRecordFuerNegativTest(5, 1);
 
         //erstelle TestRecord Copies
-        String ueberpruefungNegativtest = erstelleUeberpruefungNegativTest(testRecordOriginal, testRecordKopie);
+        String ueberpruefungNegativtest = erstelleUeberpruefungNegativTest(testRecordEins, testRecordZwei);
 
         String headerMethod = "@Test" + "\n" +
                 "public void testeFunktionalitaetEqualsNegativtest(){";
@@ -397,9 +397,9 @@ public class TestGenerator {
         sb.append("\n");
 
         //fuege initialisierten originalen TestRecord und Kopie an StringBuilder an
-        sb.append(testRecordOriginal.getInitializedRecord());
+        sb.append(testRecordEins.getInitializedRecord());
         sb.append("\n");
-        sb.append(testRecordKopie.getInitializedRecord());
+        sb.append(testRecordZwei.getInitializedRecord());
         sb.append("\n");
 
         //fuege ueberpruefungNegativtest an StringBuilder an
@@ -453,19 +453,15 @@ public class TestGenerator {
      * originalen oder eine Kopie, je nach boolean recordShouldBeCopy
      *
      * @param valueForComponent  Integer-Wert fuer jede Komponente
-     * @param recordShouldBeCopy Boolean, ob TestRecord eine Kopie sein soll
+     * @param numberForName Integer-Wert, der an Name von Record rangehaengt wird
      * @return TestRecord
      */
-    private TestRecord erstelleTestRecordFuerNegativTest(int valueForComponent, boolean recordShouldBeCopy) {
+    private TestRecord erstelleTestRecordFuerNegativTest(int valueForComponent, int numberForName) {
         StringBuilder sb = new StringBuilder();
 
         TestRecord testRecord = new TestRecord();
-        String testRecordName;
-        if (recordShouldBeCopy) {
-            testRecordName = recordToTest.getName() + "copy";
-        } else {
-            testRecordName = recordToTest.getName();
-        }
+        String testRecordName = recordToTest.getName() + numberForName;
+
         testRecord.setName(testRecordName);
 
         String initializedTestRecord = recordToTest.getName() + " " + testRecordName + " = new " +
