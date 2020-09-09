@@ -67,7 +67,7 @@ public class Main {
                         TestGenerator testGenerator = new TestGenerator();
 
                         //Generiere funktionale Testfaelle
-                        testGenerator.generierefunktionaleTestfaelle(recordToTest);
+                        testGenerator.generiereFunktionaleTestfaelle(recordToTest);
                     }
 
                     //nicht funktionaler Testfaelle

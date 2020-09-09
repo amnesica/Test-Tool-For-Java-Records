@@ -260,8 +260,8 @@ public class TestExecutor {
         } else {
             //Hinweis auf bewusst geringe Funktionalitaet von Records
             System.out.println("Hinweis: Eine Long Function, Large Class oder Long Parameter List kann ein Indiz " +
-                    "dafuer sein, dass der Record " + recordToTest.getName() + " zuviel Funktionalitaet enthaelt und " +
-                    "eine normale Klasse hier eventuell besser geeignet waere. Bei Records soll bewusst auf zuviel " +
+                    "dafuer sein, dass der Record " + recordToTest.getName() + " zu viel Funktionalitaet enthaelt und " +
+                    "eine normale Klasse hier eventuell besser geeignet waere. Bei Records soll bewusst auf zu viel " +
                     "Funktionalitaet verzichtet werden.");
         }
         System.out.println("--------------------------------------------------------");

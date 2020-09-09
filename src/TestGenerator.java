@@ -33,7 +33,7 @@ public class TestGenerator {
      *
      * @param recordToTest RecordToTest
      */
-    void generierefunktionaleTestfaelle(RecordToTest recordToTest) {
+    void generiereFunktionaleTestfaelle(RecordToTest recordToTest) {
 
         //Speichere recordToTest als Feld ab
         this.recordToTest = recordToTest;
