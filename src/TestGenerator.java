@@ -441,8 +441,8 @@ public class TestGenerator {
         }
 
         //error message
-        String errorMessage = "EqualsNegativtest: Die Methode equals() wurde so ueberschrieben, dass die " +
-                "Funktionalitaet des Records beeintraechtigt ist.";
+        String errorMessage = "EqualsNegativtest: Die Invariante equals() koennte durch eine ueberschriebene " +
+                "equals-Methode verletzt sein. Die Funktionalitaet des Records koennte beeintraechtigt sein.";
         sb.append("){\n" + "            fail(\"").append(errorMessage).append("\");\n").append("        }");
 
         return sb.toString();
