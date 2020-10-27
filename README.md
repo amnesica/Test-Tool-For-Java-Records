@@ -23,7 +23,7 @@ java --enable-preview Main <PathToClassWithRecords>
 
 ## Screenshot
 <div style="display:flex;">
-<img alt="Screenshot" src="/static/Screenshot.png" width="23%">
+<img alt="Screenshot" src="/static/Screenshot.png" width="100%">
 </div>
 
 
